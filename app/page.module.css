@@ -1,0 +1,389 @@
+.page {
+  width: min(960px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 56px 0 72px;
+}
+
+.giftModule {
+  margin-bottom: 32px;
+  padding: 30px;
+  border-radius: 32px;
+  border: 1px solid rgba(215, 197, 171, 0.92);
+  background: linear-gradient(180deg, rgba(255, 252, 247, 0.96), rgba(255, 243, 241, 0.98));
+  box-shadow: 0 22px 72px rgba(114, 83, 74, 0.12);
+}
+
+.moduleHeader {
+  margin-bottom: 24px;
+}
+
+.moduleEyebrow {
+  margin: 0 0 10px;
+  font-size: 0.82rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #b6716f;
+}
+
+.moduleHeader h2 {
+  margin: 0;
+  font-size: clamp(1.7rem, 4vw, 2.5rem);
+}
+
+.moduleLead {
+  margin: 14px 0 0;
+  line-height: 1.8;
+  color: rgba(31, 26, 23, 0.72);
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.field span {
+  font-size: 0.95rem;
+  color: rgba(31, 26, 23, 0.76);
+}
+
+.field input,
+.field textarea {
+  width: 100%;
+  border: 1px solid rgba(215, 197, 171, 0.96);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.84);
+  padding: 15px 18px;
+  color: var(--ink);
+  font: inherit;
+  outline: none;
+  transition: box-shadow 160ms ease, border-color 160ms ease, transform 160ms ease;
+}
+
+.field input:focus,
+.field textarea:focus {
+  border-color: rgba(201, 140, 145, 0.92);
+  box-shadow: 0 0 0 4px rgba(231, 193, 199, 0.34);
+  transform: translateY(-1px);
+}
+
+.field textarea {
+  resize: vertical;
+  min-height: 140px;
+}
+
+.fieldFull {
+  grid-column: 1 / -1;
+}
+
+.templateSection {
+  margin-top: 20px;
+}
+
+.templateHeader {
+  margin-bottom: 14px;
+}
+
+.templateEyebrow {
+  margin: 0;
+  font-size: 0.88rem;
+  color: #8b5f65;
+}
+
+.templateLead {
+  margin: 8px 0 0;
+  line-height: 1.8;
+  color: rgba(31, 26, 23, 0.72);
+}
+
+.templateGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.templateCard {
+  appearance: none;
+  width: 100%;
+  border: 1px solid rgba(215, 197, 171, 0.92);
+  border-radius: 24px;
+  background: rgba(255, 252, 248, 0.88);
+  padding: 18px;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--ink);
+  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease, background 160ms ease;
+}
+
+.templateCard:hover,
+.templateCard:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 32px rgba(114, 83, 74, 0.1);
+}
+
+.templateCardSelected {
+  border-color: rgba(201, 140, 145, 0.96);
+  background: linear-gradient(180deg, rgba(255, 246, 247, 0.96), rgba(252, 239, 241, 0.98));
+  box-shadow: 0 18px 34px rgba(185, 143, 152, 0.2);
+}
+
+.templateCategory {
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #b07d82;
+}
+
+.templateTitle {
+  font-size: 1.05rem;
+  color: #7c565b;
+}
+
+.templateMessage {
+  line-height: 1.8;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: rgba(31, 26, 23, 0.76);
+}
+
+.primaryActionRow {
+  margin-top: 22px;
+}
+
+.refreshHint {
+  margin: 14px 0 0;
+  color: #9a6870;
+  line-height: 1.8;
+}
+
+.primaryGiftButton,
+.secondaryButton,
+.lineButton {
+  appearance: none;
+  border: 0;
+  border-radius: 999px;
+  padding: 14px 20px;
+  font: inherit;
+  cursor: pointer;
+  transition: transform 160ms ease, box-shadow 160ms ease, opacity 160ms ease;
+}
+
+.primaryGiftButton {
+  min-width: 230px;
+  background: linear-gradient(135deg, #c9a9ab, #b98f98);
+  color: #fffdfb;
+  box-shadow: 0 16px 28px rgba(185, 143, 152, 0.28);
+}
+
+.secondaryButton {
+  background: rgba(255, 250, 247, 0.94);
+  color: #7b5b57;
+  border: 1px solid rgba(215, 197, 171, 0.96);
+}
+
+.lineButton {
+  background: linear-gradient(135deg, #2ac161, #1b9d4a);
+  color: #ffffff;
+  box-shadow: 0 14px 24px rgba(42, 193, 97, 0.22);
+}
+
+.primaryGiftButton:hover,
+.secondaryButton:hover,
+.lineButton:hover,
+.primaryGiftButton:focus-visible,
+.secondaryButton:focus-visible,
+.lineButton:focus-visible {
+  transform: translateY(-1px);
+}
+
+.resultCard {
+  margin-top: 24px;
+  border-radius: 26px;
+  border: 1px solid rgba(215, 197, 171, 0.92);
+  background: rgba(255, 252, 248, 0.88);
+  padding: 22px;
+}
+
+.resultNames {
+  margin: 0;
+  font-size: 1.15rem;
+  color: #8b5f65;
+}
+
+.resultLink {
+  margin: 12px 0 0;
+  line-height: 1.8;
+  color: rgba(31, 26, 23, 0.74);
+  word-break: break-word;
+}
+
+.resultActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.hero {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.eyebrow {
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-size: 0.82rem;
+  margin-bottom: 12px;
+}
+
+.hero h1 {
+  font-size: clamp(2.4rem, 6vw, 4.8rem);
+  margin: 0;
+}
+
+.subtitle {
+  width: min(640px, 100%);
+  margin: 16px auto 0;
+  line-height: 1.7;
+  color: rgba(31, 26, 23, 0.8);
+}
+
+.card {
+  background: linear-gradient(180deg, rgba(255, 250, 241, 0.96), rgba(255, 247, 236, 0.98));
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  padding: 28px;
+  box-shadow: 0 24px 80px rgba(93, 58, 39, 0.12);
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  color: rgba(31, 26, 23, 0.7);
+  font-size: 0.95rem;
+  margin-bottom: 20px;
+}
+
+.card h2 {
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  margin: 0 0 16px;
+}
+
+.fortune {
+  font-size: 1.1rem;
+  line-height: 1.9;
+  margin: 0;
+}
+
+.metaRow {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+  color: rgba(31, 26, 23, 0.74);
+  font-size: 0.95rem;
+}
+
+.blessingBlock {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+}
+
+.blessingBlock h3 {
+  margin: 0 0 12px;
+  color: var(--accent);
+}
+
+.actions {
+  margin-top: 28px;
+}
+
+.drawButton {
+  appearance: none;
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #c7512d, #9f3418);
+  color: #fff8f0;
+  padding: 14px 22px;
+  cursor: pointer;
+  min-width: 220px;
+  transition: transform 160ms ease, opacity 160ms ease;
+}
+
+.drawButton:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.drawButton:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.errorText {
+  margin-top: 14px;
+  color: #a12727;
+  line-height: 1.7;
+}
+
+.blessingBlock p,
+.empty,
+.notes p {
+  line-height: 1.8;
+  margin: 0;
+}
+
+.notes {
+  margin-top: 24px;
+  padding: 20px 22px;
+  border-radius: 18px;
+  background: rgba(255, 250, 241, 0.72);
+  border: 1px dashed var(--line);
+}
+
+.notes p + p {
+  margin-top: 8px;
+}
+
+@media (max-width: 640px) {
+  .page {
+    padding-top: 32px;
+    padding-bottom: 48px;
+  }
+
+  .giftModule,
+  .card {
+    padding: 22px;
+  }
+
+  .formGrid,
+  .templateGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .primaryGiftButton,
+  .secondaryButton,
+  .lineButton,
+  .drawButton {
+    width: 100%;
+  }
+
+  .cardHeader {
+    flex-direction: column;
+  }
+
+  .resultActions {
+    flex-direction: column;
+  }
+}

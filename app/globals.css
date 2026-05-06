@@ -1,0 +1,37 @@
+:root {
+  color-scheme: light;
+  --bg: #f6f1e8;
+  --paper: #fffaf1;
+  --ink: #1f1a17;
+  --accent: #c7512d;
+  --accent-soft: #e9c9a4;
+  --line: #d7c5ab;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  background:
+    radial-gradient(circle at top, rgba(199, 81, 45, 0.14), transparent 35%),
+    linear-gradient(180deg, #f7efe3 0%, var(--bg) 100%);
+  color: var(--ink);
+  font-family: Georgia, "Noto Serif TC", serif;
+}
+
+a {
+  color: inherit;
+}
+
+button {
+  font: inherit;
+}
+
+main {
+  min-height: 100vh;
+}
