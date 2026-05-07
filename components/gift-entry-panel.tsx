@@ -57,6 +57,10 @@ function buildGiftLink({ from, to, message }: FormState) {
   return `${origin}/confirm?${params.toString()}`;
 }
 
+function buildShareText(fromName: string, toName: string, url: string) {
+  return `🥕 ${fromName} → ${toName}\n\n我準備了一份祝福給你。\n\n點開信封：\n${url}`;
+}
+
 export function GiftEntryPanel() {
   const [form, setForm] = useState<FormState>({ from: "", to: "", message: "" });
   const [giftLink, setGiftLink] = useState("");
@@ -115,7 +119,11 @@ export function GiftEntryPanel() {
       return;
     }
 
-    await navigator.clipboard.writeText(giftLink);
+    const fromName = form.from.trim() || "送禮人";
+    const toName = form.to.trim() || "收禮人";
+    const shareText = buildShareText(fromName, toName, giftLink);
+
+    await navigator.clipboard.writeText(shareText);
     setCopyLabel("已複製連結");
   }
 
@@ -124,7 +132,9 @@ export function GiftEntryPanel() {
       return;
     }
 
-    const shareText = `${summary}\n${giftLink}`;
+    const fromName = form.from.trim() || "送禮人";
+    const toName = form.to.trim() || "收禮人";
+    const shareText = buildShareText(fromName, toName, giftLink);
     window.open(`https://line.me/R/msg/text/?${encodeURIComponent(shareText)}`, "_blank");
   }
 
