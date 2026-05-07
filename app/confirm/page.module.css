@@ -1,0 +1,55 @@
+.page {
+  min-height: 100vh;
+  padding: 40px 16px 56px;
+  display: grid;
+  place-items: center;
+}
+
+.card {
+  width: min(720px, 100%);
+  border-radius: 32px;
+  padding: 32px 24px;
+  background: linear-gradient(180deg, rgba(255, 252, 247, 0.96), rgba(255, 243, 241, 0.98));
+  border: 1px solid rgba(215, 197, 171, 0.92);
+  box-shadow: 0 22px 72px rgba(114, 83, 74, 0.12);
+}
+
+.eyebrow {
+  margin: 0;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #b6716f;
+  font-size: 0.82rem;
+}
+
+.title {
+  margin: 12px 0 0;
+  font-size: clamp(2rem, 5vw, 3.4rem);
+}
+
+.fromText {
+  margin: 10px 0 0;
+  line-height: 1.8;
+  color: rgba(31, 26, 23, 0.76);
+}
+
+.messageCard {
+  margin-top: 24px;
+  padding: 22px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(215, 197, 171, 0.92);
+  line-height: 1.9;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+@media (max-width: 640px) {
+  .page {
+    padding-bottom: 56px;
+  }
+
+  .card {
+    padding: 28px 20px;
+  }
+}
