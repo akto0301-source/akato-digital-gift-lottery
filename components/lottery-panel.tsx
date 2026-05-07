@@ -17,14 +17,16 @@ type LotteryResponse = {
 
 const demoBlessing = "願今天有一點光，剛好照進你的心裡。";
 
-function getDisplayText(value?: string, category?: string) {
-  const normalized = value?.trim();
+function isIncompleteLot(lot: ContentLot) {
+  return lot.category === "sample" || !lot.fortune?.trim() || !lot.blessing?.trim();
+}
 
-  if (!normalized || normalized === "請提供此籤文內容。" || normalized === "請提供祝福" || category === "sample") {
+function getResultBlessing(lot: ContentLot) {
+  if (isIncompleteLot(lot)) {
     return demoBlessing;
   }
 
-  return normalized;
+  return lot.blessing!.trim();
 }
 
 export function LotteryPanel({ library, initialLot }: LotteryPanelProps) {
@@ -67,16 +69,8 @@ export function LotteryPanel({ library, initialLot }: LotteryPanelProps) {
 
         {lot ? (
           <>
-            <h2>{lot.title}</h2>
-            <p className={styles.fortune}>{getDisplayText(lot.fortune, lot.category)}</p>
-            <div className={styles.metaRow}>
-              <span>分類：{lot.category ?? "未分類"}</span>
-              <span>編號：{lot.order}</span>
-            </div>
-            <div className={styles.blessingBlock}>
-              <h3>祝賀語</h3>
-              <p>{getDisplayText(lot.blessing, lot.category)}</p>
-            </div>
+            <h2>{isIncompleteLot(lot) ? "籤詩" : lot.title}</h2>
+            <p className={styles.fortune}>{getResultBlessing(lot)}</p>
           </>
         ) : (
           <p className={styles.empty}>{library.fallbackMessages.empty}</p>
