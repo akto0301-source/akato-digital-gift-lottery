@@ -15,6 +15,18 @@ type LotteryResponse = {
   lot?: ContentLot;
 };
 
+const demoBlessing = "願今天有一點光，剛好照進你的心裡。";
+
+function getDisplayText(value?: string, category?: string) {
+  const normalized = value?.trim();
+
+  if (!normalized || normalized === "請提供此籤文內容。" || normalized === "請提供祝福" || category === "sample") {
+    return demoBlessing;
+  }
+
+  return normalized;
+}
+
 export function LotteryPanel({ library, initialLot }: LotteryPanelProps) {
   const [lot, setLot] = useState<ContentLot | null>(initialLot);
   const [error, setError] = useState<string | null>(null);
@@ -56,14 +68,14 @@ export function LotteryPanel({ library, initialLot }: LotteryPanelProps) {
         {lot ? (
           <>
             <h2>{lot.title}</h2>
-            <p className={styles.fortune}>{lot.fortune}</p>
+            <p className={styles.fortune}>{getDisplayText(lot.fortune, lot.category)}</p>
             <div className={styles.metaRow}>
               <span>分類：{lot.category ?? "未分類"}</span>
               <span>編號：{lot.order}</span>
             </div>
             <div className={styles.blessingBlock}>
               <h3>祝賀語</h3>
-              <p>{lot.blessing}</p>
+              <p>{getDisplayText(lot.blessing, lot.category)}</p>
             </div>
           </>
         ) : (
@@ -79,11 +91,6 @@ export function LotteryPanel({ library, initialLot }: LotteryPanelProps) {
         {error ? <p className={styles.errorText}>{error}</p> : null}
       </section>
 
-      <section className={styles.notes}>
-        <p>正式 25 籤與祝賀語內容請填入 `data/content-library.json`。</p>
-        <p>LINE Webhook endpoint: `/api/line/webhook`</p>
-        <p>隨機抽籤 API: `GET /api/lots/random`</p>
-      </section>
     </>
   );
 }

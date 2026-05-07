@@ -219,7 +219,7 @@ export function GiftEntryPanel() {
       {giftLink ? (
         <div className={styles.resultCard}>
           <p className={styles.resultNames}>{summary}</p>
-          <p className={styles.resultLink}>{giftLink}</p>
+          <p className={styles.resultStatus}>祝福連結已產生</p>
           <div className={styles.resultActions}>
             <button type="button" className={styles.secondaryButton} onClick={copyGiftLink}>
               {copyLabel}

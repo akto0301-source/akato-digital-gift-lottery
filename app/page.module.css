@@ -219,11 +219,10 @@
   color: #8b5f65;
 }
 
-.resultLink {
+.resultStatus {
   margin: 12px 0 0;
   line-height: 1.8;
   color: rgba(31, 26, 23, 0.74);
-  word-break: break-word;
 }
 
 .resultActions {
