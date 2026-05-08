@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { getContentLibrary } from "@/lib/content";
 import styles from "@/app/page.module.css";
 
 const DEFAULT_ORIGIN = "https://akato-gift.vercel.app";
@@ -44,14 +45,13 @@ const blessingTemplates = [
   },
 ] as const;
 
-const extraMessages = [
-  "願你在平凡的日子裡，也總能遇見剛剛好的溫柔。",
-  "希望這份心意，替你把今天多留下一點柔軟和光。",
-  "願你被在乎、被惦記，也被世界輕輕善待。",
-  "如果最近有點累，願這一句話剛好替你擋住一點風。",
-  "願你抬頭時有光，低頭時有安心，回頭時有溫暖的人。",
-  "希望你送出的不只是祝福，還有被好好放在心上的感覺。",
-] as const;
+const vintageBlessingMessages = getContentLibrary().lots
+  .filter((lot) => lot.active !== false)
+  .flatMap((lot) => {
+    const blessing = lot.blessing?.trim();
+    const wish = lot.wish?.trim();
+    return [blessing, wish].filter((message): message is string => Boolean(message));
+  });
 
 type FormState = {
   from: string;
@@ -71,14 +71,16 @@ function buildShareText(fromName: string, toName: string, url: string) {
 }
 
 function pickNextMessage(currentMessage: string) {
-  if (extraMessages.length <= 1) {
-    return currentMessage || extraMessages[0];
+  const candidates = Array.from(new Set(vintageBlessingMessages));
+
+  if (candidates.length <= 1) {
+    return currentMessage || candidates[0] || blessingTemplates[0].message;
   }
 
   let nextMessage = currentMessage;
 
   while (nextMessage === currentMessage) {
-    nextMessage = extraMessages[Math.floor(Math.random() * extraMessages.length)] ?? extraMessages[0];
+    nextMessage = candidates[Math.floor(Math.random() * candidates.length)] ?? candidates[0];
   }
 
   return nextMessage;
