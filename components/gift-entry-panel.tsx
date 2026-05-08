@@ -85,10 +85,10 @@ function pickNextMessage(currentMessage: string) {
 }
 
 export function GiftEntryPanel() {
-  const [form, setForm] = useState<FormState>({ from: "", to: "", message: "" });
+  const [form, setForm] = useState<FormState>({ from: "", to: "", message: blessingTemplates[0].message });
   const [giftLink, setGiftLink] = useState("");
   const [copyLabel, setCopyLabel] = useState("複製祝福連結");
-  const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(null);
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(blessingTemplates[0].id);
   const [needsRegeneration, setNeedsRegeneration] = useState(false);
 
   const summary = useMemo(() => {
@@ -210,7 +210,7 @@ export function GiftEntryPanel() {
       <div className={styles.templateSection}>
         <div className={styles.templateHeader}>
           <p className={styles.templateEyebrow}>選擇祝福籤詩</p>
-          <p className={styles.templateLead}>先挑一張溫柔的籤詩，再依照心意微調內容。</p>
+          <p className={styles.templateLead}>點開其中一張，直接把祝福寫進那張復古籤紙裡。</p>
         </div>
 
         <div className={styles.templateGrid}>
@@ -218,50 +218,49 @@ export function GiftEntryPanel() {
             const isSelected = template.id === selectedTemplateId;
 
             return (
-              <button
+              <section
                 key={template.id}
-                type="button"
                 className={`${styles.templateCard} ${isSelected ? styles.templateCardSelected : ""}`}
-                onClick={() => chooseTemplate(template.id)}
               >
-                {isSelected ? <span className={styles.templateSeal}>已選</span> : null}
-                <span className={styles.templateCategory}>{template.category}</span>
-                <strong className={styles.templateTitle}>{template.title}</strong>
-                <span className={styles.templateDivider} aria-hidden="true" />
-                <span className={styles.templateMessage}>{template.message}</span>
-              </button>
+                <button
+                  type="button"
+                  className={styles.templateCardTrigger}
+                  onClick={() => chooseTemplate(template.id)}
+                >
+                  {isSelected ? <span className={styles.templateSeal}>已選</span> : null}
+                  <span className={styles.templateCategory}>{template.category}</span>
+                  <strong className={styles.templateTitle}>{template.title}</strong>
+                  <span className={styles.templateDivider} aria-hidden="true" />
+                  {!isSelected ? <span className={styles.templateMessage}>{template.message}</span> : null}
+                </button>
+
+                {isSelected ? (
+                  <div className={styles.templateEditor}>
+                    <p className={styles.templateEditorHint}>把想說的話寫進這張祝福籤裡。</p>
+                    <div className={styles.templatePaper}>
+                      <div className={styles.templatePaperInner}>
+                        <textarea
+                          value={form.message}
+                          onChange={(event) => updateField("message", event.target.value)}
+                          placeholder="例如：願你抬頭時有光，低頭時有安心。"
+                          rows={6}
+                        />
+                      </div>
+                    </div>
+                    <div className={styles.shufflePanel}>
+                      <div className={styles.shuffleCopy}>
+                        <p className={styles.shuffleLead}>這份心意還想對你說⋯</p>
+                      </div>
+                      <button type="button" className={styles.shuffleButton} onClick={shuffleMessage}>
+                        換一句看看
+                      </button>
+                    </div>
+                  </div>
+                ) : null}
+              </section>
             );
           })}
         </div>
-      </div>
-
-      <div className={styles.formGrid}>
-        <label className={`${styles.field} ${styles.fieldFull}`}>
-          <div className={styles.messageComposer}>
-            <div className={styles.messageCardHeader}>
-              <span className={styles.messageCardTitle}>祝賀語</span>
-              <p className={styles.messageCardHint}>把想說的話寫進這張祝福籤裡。</p>
-            </div>
-            <div className={styles.messagePaper}>
-              <div className={styles.messagePaperInner}>
-                <textarea
-                  value={form.message}
-                  onChange={(event) => updateField("message", event.target.value)}
-                  placeholder="例如：願你抬頭時有光，低頭時有安心。"
-                  rows={5}
-                />
-              </div>
-            </div>
-            <div className={styles.shufflePanel}>
-              <div className={styles.shuffleCopy}>
-                <p className={styles.shuffleLead}>這份心意還想對你說⋯</p>
-              </div>
-              <button type="button" className={styles.shuffleButton} onClick={shuffleMessage}>
-                換一句看看
-              </button>
-            </div>
-          </div>
-        </label>
       </div>
 
       <div className={styles.primaryActionRow}>

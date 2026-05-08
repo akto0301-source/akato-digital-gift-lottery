@@ -200,10 +200,6 @@
   min-height: 160px;
 }
 
-.fieldFull {
-  grid-column: 1 / -1;
-}
-
 .templateSection {
   margin-top: 22px;
 }
@@ -228,25 +224,17 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
+  align-items: start;
 }
 
 .templateCard {
-  appearance: none;
   position: relative;
-  width: 100%;
   min-height: 220px;
   border: 1px solid rgba(182, 139, 120, 0.52);
   border-radius: 26px;
   background:
     linear-gradient(180deg, rgba(255, 252, 246, 0.98), rgba(251, 244, 235, 0.96)),
     linear-gradient(135deg, rgba(235, 216, 198, 0.22), rgba(255, 255, 255, 0));
-  padding: 22px 20px 20px;
-  text-align: left;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  color: var(--ink);
   box-shadow:
     0 16px 30px rgba(114, 83, 74, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.72);
@@ -276,7 +264,7 @@
 }
 
 .templateCard:hover,
-.templateCard:focus-visible {
+.templateCard:focus-within {
   transform: translateY(-2px) rotate(-0.2deg);
   box-shadow:
     0 20px 36px rgba(114, 83, 74, 0.12),
@@ -291,6 +279,22 @@
   box-shadow:
     0 22px 38px rgba(185, 143, 152, 0.22),
     inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.templateCardTrigger {
+  appearance: none;
+  position: relative;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  padding: 22px 20px 20px;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  color: inherit;
+  font: inherit;
 }
 
 .templateSeal {
@@ -349,72 +353,27 @@
   color: rgba(31, 26, 23, 0.74);
 }
 
-.messageComposer {
-  position: relative;
+.templateEditor {
   display: grid;
-  gap: 18px;
-  padding: 26px 24px 22px;
-  border-radius: 30px;
-  border: 1px solid rgba(182, 140, 121, 0.54);
-  background:
-    radial-gradient(circle at top right, rgba(246, 220, 214, 0.34), transparent 32%),
-    linear-gradient(180deg, rgba(255, 251, 245, 0.98), rgba(248, 239, 231, 0.96));
-  box-shadow:
-    0 20px 38px rgba(114, 83, 74, 0.09),
-    inset 0 1px 0 rgba(255, 255, 255, 0.78);
-  overflow: hidden;
+  gap: 16px;
+  padding: 0 20px 20px;
 }
 
-.messageComposer::before {
-  content: "";
-  position: absolute;
-  inset: 12px;
-  border-radius: 22px;
-  border: 1px solid rgba(200, 170, 150, 0.18);
-  pointer-events: none;
-}
-
-.messageComposer::after {
-  content: "祝福籤";
-  position: absolute;
-  top: 18px;
-  right: 24px;
-  font-size: 0.72rem;
-  letter-spacing: 0.2em;
-  color: rgba(164, 120, 109, 0.5);
-}
-
-.messageCardHeader {
-  position: relative;
-  z-index: 1;
-  padding-right: 72px;
-}
-
-.messageCardTitle {
-  display: block;
-  font-size: 1.3rem;
-  line-height: 1.4;
-  letter-spacing: 0.08em;
-  color: #6f4a44;
-  font-weight: 600;
-}
-
-.messageCardHint {
-  margin: 8px 0 0;
+.templateEditorHint {
+  margin: 0;
   color: rgba(110, 81, 74, 0.76);
   line-height: 1.8;
 }
 
-.messagePaper {
+.templatePaper {
   position: relative;
-  z-index: 1;
   padding: 14px;
   border-radius: 26px;
   background: linear-gradient(180deg, rgba(246, 230, 221, 0.72), rgba(241, 219, 208, 0.48));
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.56);
 }
 
-.messagePaperInner {
+.templatePaperInner {
   border-radius: 20px;
   padding: 8px;
   background:
@@ -426,8 +385,7 @@
     0 8px 20px rgba(114, 83, 74, 0.06);
 }
 
-.messagePaper textarea {
-  position: relative;
+.templatePaper textarea {
   display: block;
   width: 100%;
   min-height: 240px;
@@ -448,19 +406,17 @@
   outline: none;
 }
 
-.messagePaper textarea:focus {
+.templatePaper textarea:focus {
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.72),
     0 0 0 3px rgba(223, 190, 186, 0.42);
 }
 
-.messagePaper textarea::placeholder {
+.templatePaper textarea::placeholder {
   color: rgba(138, 108, 99, 0.66);
 }
 
 .shufflePanel {
-  position: relative;
-  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
