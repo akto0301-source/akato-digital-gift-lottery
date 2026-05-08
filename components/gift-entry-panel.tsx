@@ -6,52 +6,52 @@ import styles from "@/app/page.module.css";
 
 const DEFAULT_ORIGIN = "https://akato-gift.vercel.app";
 
-const blessingTemplates = [
-  {
-    id: "gentle-healing",
-    title: "溫柔療癒",
-    category: "Gentle Care",
-    message: "願你今天被溫柔對待，\n所有美好都剛好發生。",
-  },
-  {
-    id: "peaceful-days",
-    title: "平安順心",
-    category: "Calm Wishes",
-    message: "願你心有安定，\n所遇皆是溫柔的風景。",
-  },
-  {
-    id: "thank-you",
-    title: "感謝有你",
-    category: "Grateful Light",
-    message: "謝謝你成為某些日子裡，\n讓人安心的光。",
-  },
-  {
-    id: "late-gift",
-    title: "晚到的心意",
-    category: "Tender Arrival",
-    message: "雖然祝福晚了一點，\n但心意剛好抵達你身邊。",
-  },
-  {
-    id: "birthday",
-    title: "生日祝福",
-    category: "Birthday Bloom",
-    message: "願新的一歲，\n有花、有光、有剛剛好的好運。",
-  },
-  {
-    id: "shared-love",
-    title: "合送祝福",
-    category: "Shared Blessing",
-    message: "這份心意由我們一起送上，\n願你被滿滿的祝福包圍。",
-  },
-] as const;
-
-const vintageBlessingMessages = getContentLibrary().lots
+const vintageMessageLibrary = getContentLibrary().lots
   .filter((lot) => lot.active !== false)
   .flatMap((lot) => {
     const blessing = lot.blessing?.trim();
     const wish = lot.wish?.trim();
     return [blessing, wish].filter((message): message is string => Boolean(message));
   });
+
+const blessingTemplates = [
+  {
+    id: "gentle-healing",
+    title: "溫柔療癒",
+    category: "Gentle Care",
+    message: vintageMessageLibrary[0] ?? "願今天有一點光，剛好照進你的心裡。",
+  },
+  {
+    id: "peaceful-days",
+    title: "平安順心",
+    category: "Calm Wishes",
+    message: vintageMessageLibrary[1] ?? vintageMessageLibrary[0] ?? "願你所遇，慢慢都成為好風景。",
+  },
+  {
+    id: "thank-you",
+    title: "感謝有你",
+    category: "Grateful Light",
+    message: vintageMessageLibrary[2] ?? vintageMessageLibrary[0] ?? "願你在忙碌之中，也能被一杯熱茶似的溫柔照顧。",
+  },
+  {
+    id: "late-gift",
+    title: "晚到的心意",
+    category: "Tender Arrival",
+    message: vintageMessageLibrary[3] ?? vintageMessageLibrary[0] ?? "願你的期待，都有被溫柔成全的一天。",
+  },
+  {
+    id: "birthday",
+    title: "生日祝福",
+    category: "Birthday Bloom",
+    message: vintageMessageLibrary[4] ?? vintageMessageLibrary[0] ?? "願你在夜色裡，也有自己的安心去處。",
+  },
+  {
+    id: "shared-love",
+    title: "合送祝福",
+    category: "Shared Blessing",
+    message: vintageMessageLibrary[5] ?? vintageMessageLibrary[0] ?? "願你每一步都算數，每一天都有微光。",
+  },
+] as const;
 
 type FormState = {
   from: string;
@@ -71,7 +71,7 @@ function buildShareText(fromName: string, toName: string, url: string) {
 }
 
 function pickNextMessage(currentMessage: string) {
-  const candidates = Array.from(new Set(vintageBlessingMessages));
+  const candidates = Array.from(new Set(vintageMessageLibrary));
 
   if (candidates.length <= 1) {
     return currentMessage || candidates[0] || blessingTemplates[0].message;
