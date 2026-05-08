@@ -352,16 +352,16 @@
 .messageComposer {
   position: relative;
   display: grid;
-  gap: 16px;
-  padding: 24px 22px 20px;
-  border-radius: 28px;
-  border: 1px solid rgba(186, 144, 124, 0.5);
+  gap: 18px;
+  padding: 26px 24px 22px;
+  border-radius: 30px;
+  border: 1px solid rgba(182, 140, 121, 0.54);
   background:
-    radial-gradient(circle at top right, rgba(247, 226, 220, 0.42), transparent 34%),
-    linear-gradient(180deg, rgba(255, 252, 246, 0.98), rgba(250, 243, 233, 0.96));
+    radial-gradient(circle at top right, rgba(246, 220, 214, 0.34), transparent 32%),
+    linear-gradient(180deg, rgba(255, 251, 245, 0.98), rgba(248, 239, 231, 0.96));
   box-shadow:
-    0 18px 34px rgba(114, 83, 74, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.74);
+    0 20px 38px rgba(114, 83, 74, 0.09),
+    inset 0 1px 0 rgba(255, 255, 255, 0.78);
   overflow: hidden;
 }
 
@@ -369,19 +369,30 @@
   content: "";
   position: absolute;
   inset: 12px;
-  border-radius: 20px;
+  border-radius: 22px;
   border: 1px solid rgba(200, 170, 150, 0.18);
   pointer-events: none;
+}
+
+.messageComposer::after {
+  content: "祝福籤";
+  position: absolute;
+  top: 18px;
+  right: 24px;
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  color: rgba(164, 120, 109, 0.5);
 }
 
 .messageCardHeader {
   position: relative;
   z-index: 1;
+  padding-right: 72px;
 }
 
 .messageCardTitle {
   display: block;
-  font-size: 1.28rem;
+  font-size: 1.3rem;
   line-height: 1.4;
   letter-spacing: 0.08em;
   color: #6f4a44;
@@ -394,27 +405,56 @@
   line-height: 1.8;
 }
 
-.messageComposer textarea {
+.messagePaper {
   position: relative;
   z-index: 1;
-  border: 1px solid rgba(195, 157, 139, 0.52);
-  border-radius: 24px;
+  padding: 14px;
+  border-radius: 26px;
+  background: linear-gradient(180deg, rgba(246, 230, 221, 0.72), rgba(241, 219, 208, 0.48));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.56);
+}
+
+.messagePaperInner {
+  border-radius: 20px;
+  padding: 8px;
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.66), transparent 24%),
+    linear-gradient(180deg, rgba(255, 251, 245, 0.98), rgba(253, 247, 239, 0.98));
+  border: 1px solid rgba(197, 161, 143, 0.42);
+  box-shadow:
+    inset 0 2px 10px rgba(168, 129, 112, 0.06),
+    0 8px 20px rgba(114, 83, 74, 0.06);
+}
+
+.messagePaper textarea {
+  position: relative;
+  display: block;
+  width: 100%;
+  min-height: 240px;
+  border: 0;
+  border-radius: 16px;
   background:
     repeating-linear-gradient(
       180deg,
-      rgba(255, 250, 243, 0.96) 0,
-      rgba(255, 250, 243, 0.96) 33px,
-      rgba(229, 210, 199, 0.34) 33px,
-      rgba(229, 210, 199, 0.34) 34px
+      rgba(255, 250, 243, 0.98) 0,
+      rgba(255, 250, 243, 0.98) 35px,
+      rgba(227, 208, 197, 0.34) 35px,
+      rgba(227, 208, 197, 0.34) 36px
     );
-  box-shadow:
-    inset 0 2px 10px rgba(153, 119, 104, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.66);
-  line-height: 34px;
-  padding: 18px 18px 16px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+  line-height: 36px;
+  padding: 18px 18px 14px;
+  resize: vertical;
+  outline: none;
 }
 
-.messageComposer textarea::placeholder {
+.messagePaper textarea:focus {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.72),
+    0 0 0 3px rgba(223, 190, 186, 0.42);
+}
+
+.messagePaper textarea::placeholder {
   color: rgba(138, 108, 99, 0.66);
 }
 
@@ -425,10 +465,15 @@
   align-items: center;
   justify-content: space-between;
   gap: 14px;
-  padding: 14px 16px;
-  border-radius: 20px;
-  background: rgba(255, 247, 241, 0.76);
+  padding: 16px 18px;
+  border-radius: 22px;
+  background: rgba(255, 245, 238, 0.78);
   border: 1px solid rgba(219, 195, 183, 0.88);
+}
+
+.shuffleCopy {
+  display: grid;
+  gap: 4px;
 }
 
 .shuffleLead {

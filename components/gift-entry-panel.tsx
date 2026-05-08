@@ -242,14 +242,20 @@ export function GiftEntryPanel() {
               <span className={styles.messageCardTitle}>祝賀語</span>
               <p className={styles.messageCardHint}>把想說的話寫進這張祝福籤裡。</p>
             </div>
-            <textarea
-              value={form.message}
-              onChange={(event) => updateField("message", event.target.value)}
-              placeholder="例如：願你抬頭時有光，低頭時有安心。"
-              rows={5}
-            />
+            <div className={styles.messagePaper}>
+              <div className={styles.messagePaperInner}>
+                <textarea
+                  value={form.message}
+                  onChange={(event) => updateField("message", event.target.value)}
+                  placeholder="例如：願你抬頭時有光，低頭時有安心。"
+                  rows={5}
+                />
+              </div>
+            </div>
             <div className={styles.shufflePanel}>
-              <p className={styles.shuffleLead}>這份心意還想對你說⋯</p>
+              <div className={styles.shuffleCopy}>
+                <p className={styles.shuffleLead}>這份心意還想對你說⋯</p>
+              </div>
               <button type="button" className={styles.shuffleButton} onClick={shuffleMessage}>
                 換一句看看
               </button>
