@@ -227,54 +227,126 @@
 .templateGrid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
+  gap: 16px;
 }
 
 .templateCard {
   appearance: none;
+  position: relative;
   width: 100%;
-  border: 1px solid rgba(215, 197, 171, 0.92);
-  border-radius: 24px;
-  background: rgba(255, 252, 248, 0.88);
-  padding: 18px;
+  min-height: 220px;
+  border: 1px solid rgba(182, 139, 120, 0.52);
+  border-radius: 26px;
+  background:
+    linear-gradient(180deg, rgba(255, 252, 246, 0.98), rgba(251, 244, 235, 0.96)),
+    linear-gradient(135deg, rgba(235, 216, 198, 0.22), rgba(255, 255, 255, 0));
+  padding: 22px 20px 20px;
   text-align: left;
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
   color: var(--ink);
-  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease, background 160ms ease;
+  box-shadow:
+    0 16px 30px rgba(114, 83, 74, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72);
+  overflow: hidden;
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease, background 180ms ease;
+}
+
+.templateCard::before {
+  content: "";
+  position: absolute;
+  inset: 12px;
+  border-radius: 18px;
+  border: 1px solid rgba(200, 170, 150, 0.18);
+  pointer-events: none;
+}
+
+.templateCard::after {
+  content: "";
+  position: absolute;
+  right: -18px;
+  top: -18px;
+  width: 72px;
+  height: 72px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(238, 207, 198, 0.24) 0%, rgba(238, 207, 198, 0) 72%);
+  pointer-events: none;
 }
 
 .templateCard:hover,
 .templateCard:focus-visible {
-  transform: translateY(-1px);
-  box-shadow: 0 16px 32px rgba(114, 83, 74, 0.1);
+  transform: translateY(-2px) rotate(-0.2deg);
+  box-shadow:
+    0 20px 36px rgba(114, 83, 74, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.78);
 }
 
 .templateCardSelected {
-  border-color: rgba(201, 140, 145, 0.96);
-  background: linear-gradient(180deg, rgba(255, 246, 247, 0.96), rgba(252, 239, 241, 0.98));
-  box-shadow: 0 18px 34px rgba(185, 143, 152, 0.2);
+  border-color: rgba(188, 126, 132, 0.74);
+  background:
+    radial-gradient(circle at top right, rgba(247, 220, 224, 0.72), transparent 34%),
+    linear-gradient(180deg, rgba(255, 246, 247, 0.98), rgba(251, 237, 239, 0.96));
+  box-shadow:
+    0 22px 38px rgba(185, 143, 152, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.templateSeal {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 50px;
+  height: 50px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.22), rgba(185, 101, 101, 0) 38%), linear-gradient(180deg, rgba(196, 97, 96, 0.92), rgba(164, 72, 72, 0.96));
+  color: rgba(255, 248, 244, 0.94);
+  font-size: 0.74rem;
+  letter-spacing: 0.16em;
+  text-indent: 0.16em;
+  box-shadow: 0 10px 18px rgba(164, 72, 72, 0.18);
 }
 
 .templateCategory {
-  font-size: 0.78rem;
-  letter-spacing: 0.12em;
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(191, 153, 133, 0.36);
+  background: rgba(255, 248, 241, 0.84);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: #b07d82;
+  color: #a06f66;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
 }
 
 .templateTitle {
-  font-size: 1.05rem;
-  color: #7c565b;
+  margin-top: 8px;
+  font-size: 1.26rem;
+  line-height: 1.35;
+  letter-spacing: 0.06em;
+  color: #6f4a44;
+  font-weight: 600;
+}
+
+.templateDivider {
+  width: 54px;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(182, 139, 120, 0.68), rgba(182, 139, 120, 0));
 }
 
 .templateMessage {
-  line-height: 1.8;
+  line-height: 1.9;
   white-space: pre-wrap;
   word-break: break-word;
-  color: rgba(31, 26, 23, 0.76);
+  color: rgba(31, 26, 23, 0.74);
 }
 
 .messageComposer {

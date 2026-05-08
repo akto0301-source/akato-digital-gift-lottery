@@ -224,8 +224,10 @@ export function GiftEntryPanel() {
                 className={`${styles.templateCard} ${isSelected ? styles.templateCardSelected : ""}`}
                 onClick={() => chooseTemplate(template.id)}
               >
+                {isSelected ? <span className={styles.templateSeal}>已選</span> : null}
                 <span className={styles.templateCategory}>{template.category}</span>
                 <strong className={styles.templateTitle}>{template.title}</strong>
+                <span className={styles.templateDivider} aria-hidden="true" />
                 <span className={styles.templateMessage}>{template.message}</span>
               </button>
             );
