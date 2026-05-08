@@ -1,11 +1,42 @@
 .page {
+  position: relative;
   min-height: 100vh;
   padding: 40px 16px 56px;
   display: grid;
   place-items: center;
+  overflow: hidden;
+}
+
+.petalsLayer {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.petal {
+  position: absolute;
+  top: -14%;
+  left: var(--left);
+  width: var(--size);
+  height: calc(var(--size) * 1.4);
+  opacity: 0.82;
+  border-radius: 70% 30% 65% 35% / 58% 44% 56% 42%;
+  background:
+    radial-gradient(circle at 30% 28%, rgba(255, 255, 255, 0.9), transparent 38%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.38), transparent 72%),
+    var(--petal-color);
+  box-shadow: inset -1px -6px 10px rgba(191, 132, 132, 0.12);
+  transform-origin: center;
+  animation: petalFall var(--fall-duration) linear infinite;
+  animation-delay: var(--delay);
+  filter: blur(0.15px);
 }
 
 .card {
+  position: relative;
+  z-index: 2;
   width: min(720px, 100%);
   border-radius: 32px;
   padding: 32px 24px;
@@ -44,12 +75,109 @@
   word-break: break-word;
 }
 
+.extraSection {
+  margin-top: 20px;
+  padding: 18px 20px 20px;
+  border-radius: 22px;
+  background: rgba(255, 250, 247, 0.74);
+  border: 1px solid rgba(229, 210, 202, 0.92);
+}
+
+.extraLead {
+  margin: 0;
+  color: rgba(120, 84, 78, 0.92);
+  font-size: 0.98rem;
+  letter-spacing: 0.04em;
+}
+
+.extraMessage {
+  margin: 12px 0 0;
+  min-height: 3.8em;
+  color: rgba(59, 42, 38, 0.88);
+  line-height: 1.9;
+  white-space: pre-wrap;
+}
+
+.extraMessageVisible {
+  animation: fadeInMessage 0.5s ease;
+}
+
+.shuffleButton {
+  margin-top: 14px;
+  padding: 10px 18px;
+  border: 1px solid rgba(192, 140, 129, 0.7);
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255, 248, 246, 0.98), rgba(247, 231, 226, 0.94));
+  color: #8f5c56;
+  cursor: pointer;
+  transition: transform 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
+  box-shadow: 0 10px 24px rgba(180, 124, 114, 0.14);
+}
+
+.shuffleButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 28px rgba(180, 124, 114, 0.18);
+}
+
+.shuffleButton:active {
+  transform: translateY(0);
+}
+
+.shuffleButton:focus-visible {
+  outline: 2px solid rgba(182, 113, 111, 0.42);
+  outline-offset: 3px;
+}
+
+@keyframes petalFall {
+  0% {
+    transform: translate3d(0, -12vh, 0) rotate(0deg);
+  }
+
+  25% {
+    transform: translate3d(calc(var(--drift) * 0.4), 28vh, 0) rotate(95deg);
+  }
+
+  50% {
+    transform: translate3d(calc(var(--drift) * -0.3), 58vh, 0) rotate(180deg);
+  }
+
+  75% {
+    transform: translate3d(calc(var(--drift) * 0.8), 84vh, 0) rotate(275deg);
+  }
+
+  100% {
+    transform: translate3d(var(--drift), 116vh, 0) rotate(360deg);
+  }
+}
+
+@keyframes fadeInMessage {
+  0% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @media (max-width: 640px) {
   .page {
-    padding-bottom: 56px;
+    padding: 28px 14px 56px;
   }
 
   .card {
     padding: 28px 20px;
+  }
+
+  .messageCard,
+  .extraSection {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  .petal {
+    opacity: 0.72;
   }
 }
