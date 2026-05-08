@@ -44,6 +44,15 @@ const blessingTemplates = [
   },
 ] as const;
 
+const extraMessages = [
+  "願你在平凡的日子裡，也總能遇見剛剛好的溫柔。",
+  "希望這份心意，替你把今天多留下一點柔軟和光。",
+  "願你被在乎、被惦記，也被世界輕輕善待。",
+  "如果最近有點累，願這一句話剛好替你擋住一點風。",
+  "願你抬頭時有光，低頭時有安心，回頭時有溫暖的人。",
+  "希望你送出的不只是祝福，還有被好好放在心上的感覺。",
+] as const;
+
 type FormState = {
   from: string;
   to: string;
@@ -59,6 +68,20 @@ function buildGiftLink({ from, to, message }: FormState) {
 
 function buildShareText(fromName: string, toName: string, url: string) {
   return `🥕 ${fromName} → ${toName}\n\n我準備了一份祝福給你。\n\n點開信封：\n${url}`;
+}
+
+function pickNextMessage(currentMessage: string) {
+  if (extraMessages.length <= 1) {
+    return currentMessage || extraMessages[0];
+  }
+
+  let nextMessage = currentMessage;
+
+  while (nextMessage === currentMessage) {
+    nextMessage = extraMessages[Math.floor(Math.random() * extraMessages.length)] ?? extraMessages[0];
+  }
+
+  return nextMessage;
 }
 
 export function GiftEntryPanel() {
@@ -102,6 +125,12 @@ export function GiftEntryPanel() {
 
     setSelectedTemplateId(template.id);
     setForm((current) => ({ ...current, message: template.message }));
+    invalidateGiftLink();
+  }
+
+  function shuffleMessage() {
+    const nextMessage = pickNextMessage(form.message.trim());
+    setForm((current) => ({ ...current, message: nextMessage }));
     invalidateGiftLink();
   }
 
@@ -207,12 +236,20 @@ export function GiftEntryPanel() {
       <div className={styles.formGrid}>
         <label className={`${styles.field} ${styles.fieldFull}`}>
           <span>祝福文字 message</span>
-          <textarea
-            value={form.message}
-            onChange={(event) => updateField("message", event.target.value)}
-            placeholder="寫下一段溫柔祝福，讓收禮頁面直接帶著你的心意。"
-            rows={5}
-          />
+          <div className={styles.messageComposer}>
+            <textarea
+              value={form.message}
+              onChange={(event) => updateField("message", event.target.value)}
+              placeholder="寫下一段溫柔祝福，讓收禮頁面直接帶著你的心意。"
+              rows={5}
+            />
+            <div className={styles.shufflePanel}>
+              <p className={styles.shuffleLead}>這份心意還想對你說⋯</p>
+              <button type="button" className={styles.shuffleButton} onClick={shuffleMessage}>
+                換一句看看
+              </button>
+            </div>
+          </div>
         </label>
       </div>
 

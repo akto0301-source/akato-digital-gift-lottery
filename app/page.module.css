@@ -1,15 +1,136 @@
 .page {
-  width: min(960px, calc(100% - 32px));
+  position: relative;
+  width: min(1040px, calc(100% - 32px));
   margin: 0 auto;
-  padding: 56px 0 72px;
+  padding: 56px 0 88px;
+  overflow: hidden;
+}
+
+.petalsLayer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.petal {
+  position: absolute;
+  top: -10%;
+  width: 16px;
+  height: 23px;
+  opacity: 0.42;
+  border-radius: 70% 30% 65% 35% / 58% 44% 56% 42%;
+  background:
+    radial-gradient(circle at 30% 28%, rgba(255, 255, 255, 0.88), transparent 38%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.32), transparent 72%),
+    linear-gradient(180deg, #f8dfe7 0%, #edc4d2 100%);
+  box-shadow: inset -1px -4px 8px rgba(191, 132, 132, 0.1);
+  animation: homepagePetalFall linear infinite;
+}
+
+.petalOne {
+  left: 10%;
+  animation-duration: 18s;
+  animation-delay: -3s;
+}
+
+.petalTwo {
+  left: 24%;
+  width: 13px;
+  height: 19px;
+  opacity: 0.34;
+  animation-duration: 22s;
+  animation-delay: -10s;
+}
+
+.petalThree {
+  left: 41%;
+  width: 18px;
+  height: 26px;
+  background:
+    radial-gradient(circle at 30% 28%, rgba(255, 255, 255, 0.88), transparent 38%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.32), transparent 72%),
+    linear-gradient(180deg, #fff6ee 0%, #f1dfd0 100%);
+  animation-duration: 20s;
+  animation-delay: -7s;
+}
+
+.petalFour {
+  left: 58%;
+  width: 14px;
+  height: 20px;
+  opacity: 0.3;
+  background:
+    radial-gradient(circle at 30% 28%, rgba(255, 255, 255, 0.88), transparent 38%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.32), transparent 72%),
+    linear-gradient(180deg, #f8e5d8 0%, #eec7b2 100%);
+  animation-duration: 24s;
+  animation-delay: -12s;
+}
+
+.petalFive {
+  left: 74%;
+  width: 17px;
+  height: 24px;
+  animation-duration: 19s;
+  animation-delay: -5s;
+}
+
+.petalSix {
+  left: 89%;
+  width: 12px;
+  height: 18px;
+  opacity: 0.28;
+  background:
+    radial-gradient(circle at 30% 28%, rgba(255, 255, 255, 0.88), transparent 38%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.32), transparent 72%),
+    linear-gradient(180deg, #fff5ee 0%, #efddcf 100%);
+  animation-duration: 23s;
+  animation-delay: -9s;
+}
+
+.hero,
+.giftModule,
+.lotterySection {
+  position: relative;
+  z-index: 1;
+}
+
+.hero {
+  text-align: center;
+  margin-bottom: 36px;
+  padding: 28px 20px 12px;
+}
+
+.eyebrow {
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-size: 0.82rem;
+  margin-bottom: 12px;
+}
+
+.hero h1 {
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  margin: 0;
+}
+
+.subtitle {
+  width: min(640px, 100%);
+  margin: 16px auto 0;
+  line-height: 1.85;
+  color: rgba(31, 26, 23, 0.8);
 }
 
 .giftModule {
-  margin-bottom: 32px;
-  padding: 30px;
-  border-radius: 32px;
+  margin-bottom: 36px;
+  padding: 34px 32px;
+  border-radius: 36px;
   border: 1px solid rgba(215, 197, 171, 0.92);
-  background: linear-gradient(180deg, rgba(255, 252, 247, 0.96), rgba(255, 243, 241, 0.98));
+  background:
+    radial-gradient(circle at top right, rgba(255, 240, 235, 0.92), transparent 34%),
+    linear-gradient(180deg, rgba(255, 252, 247, 0.96), rgba(255, 243, 241, 0.98));
   box-shadow: 0 22px 72px rgba(114, 83, 74, 0.12);
 }
 
@@ -25,7 +146,8 @@
   color: #b6716f;
 }
 
-.moduleHeader h2 {
+.moduleHeader h2,
+.lotteryIntro h2 {
   margin: 0;
   font-size: clamp(1.7rem, 4vw, 2.5rem);
 }
@@ -75,7 +197,7 @@
 
 .field textarea {
   resize: vertical;
-  min-height: 140px;
+  min-height: 160px;
 }
 
 .fieldFull {
@@ -83,7 +205,7 @@
 }
 
 .templateSection {
-  margin-top: 20px;
+  margin-top: 22px;
 }
 
 .templateHeader {
@@ -155,6 +277,48 @@
   color: rgba(31, 26, 23, 0.76);
 }
 
+.messageComposer {
+  display: grid;
+  gap: 14px;
+}
+
+.shufflePanel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: 20px;
+  background: rgba(255, 248, 244, 0.86);
+  border: 1px solid rgba(229, 210, 202, 0.92);
+}
+
+.shuffleLead {
+  margin: 0;
+  color: rgba(120, 84, 78, 0.92);
+  line-height: 1.7;
+}
+
+.shuffleButton {
+  appearance: none;
+  border: 1px solid rgba(192, 140, 129, 0.7);
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255, 248, 246, 0.98), rgba(247, 231, 226, 0.94));
+  color: #8f5c56;
+  padding: 10px 18px;
+  font: inherit;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: transform 160ms ease, box-shadow 160ms ease;
+  box-shadow: 0 10px 24px rgba(180, 124, 114, 0.14);
+}
+
+.shuffleButton:hover,
+.shuffleButton:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 28px rgba(180, 124, 114, 0.18);
+}
+
 .primaryActionRow {
   margin-top: 22px;
 }
@@ -167,7 +331,8 @@
 
 .primaryGiftButton,
 .secondaryButton,
-.lineButton {
+.lineButton,
+.drawButton {
   appearance: none;
   border: 0;
   border-radius: 999px;
@@ -196,12 +361,21 @@
   box-shadow: 0 14px 24px rgba(42, 193, 97, 0.22);
 }
 
+.drawButton {
+  min-width: 220px;
+  background: linear-gradient(135deg, #c29a87, #aa7367);
+  color: #fff9f5;
+  box-shadow: 0 16px 28px rgba(170, 115, 103, 0.22);
+}
+
 .primaryGiftButton:hover,
 .secondaryButton:hover,
 .lineButton:hover,
+.drawButton:hover,
 .primaryGiftButton:focus-visible,
 .secondaryButton:focus-visible,
-.lineButton:focus-visible {
+.lineButton:focus-visible,
+.drawButton:focus-visible {
   transform: translateY(-1px);
 }
 
@@ -232,33 +406,19 @@
   margin-top: 18px;
 }
 
-.hero {
-  text-align: center;
-  margin-bottom: 32px;
+.lotterySection {
+  margin-top: 8px;
 }
 
-.eyebrow {
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--accent);
-  font-size: 0.82rem;
-  margin-bottom: 12px;
-}
-
-.hero h1 {
-  font-size: clamp(2.4rem, 6vw, 4.8rem);
-  margin: 0;
-}
-
-.subtitle {
-  width: min(640px, 100%);
-  margin: 16px auto 0;
-  line-height: 1.7;
-  color: rgba(31, 26, 23, 0.8);
+.lotteryIntro {
+  margin-bottom: 18px;
+  padding: 0 8px;
 }
 
 .card {
-  background: linear-gradient(180deg, rgba(255, 250, 241, 0.96), rgba(255, 247, 236, 0.98));
+  background:
+    radial-gradient(circle at top right, rgba(255, 240, 232, 0.72), transparent 34%),
+    linear-gradient(180deg, rgba(255, 250, 241, 0.96), rgba(255, 247, 236, 0.98));
   border: 1px solid var(--line);
   border-radius: 28px;
   padding: 28px;
@@ -285,44 +445,8 @@
   margin: 0;
 }
 
-.metaRow {
-  display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
-  margin-top: 18px;
-  color: rgba(31, 26, 23, 0.74);
-  font-size: 0.95rem;
-}
-
-.blessingBlock {
-  margin-top: 24px;
-  padding-top: 24px;
-  border-top: 1px solid var(--line);
-}
-
-.blessingBlock h3 {
-  margin: 0 0 12px;
-  color: var(--accent);
-}
-
 .actions {
   margin-top: 28px;
-}
-
-.drawButton {
-  appearance: none;
-  border: 0;
-  border-radius: 999px;
-  background: linear-gradient(135deg, #c7512d, #9f3418);
-  color: #fff8f0;
-  padding: 14px 22px;
-  cursor: pointer;
-  min-width: 220px;
-  transition: transform 160ms ease, opacity 160ms ease;
-}
-
-.drawButton:hover:not(:disabled) {
-  transform: translateY(-1px);
 }
 
 .drawButton:disabled {
@@ -336,27 +460,36 @@
   line-height: 1.7;
 }
 
-.blessingBlock p,
-.empty,
-.notes p {
+.empty {
   line-height: 1.8;
   margin: 0;
 }
 
-.notes {
-  margin-top: 24px;
-  padding: 20px 22px;
-  border-radius: 18px;
-  background: rgba(255, 250, 241, 0.72);
-  border: 1px dashed var(--line);
-}
+@keyframes homepagePetalFall {
+  0% {
+    transform: translate3d(0, -12vh, 0) rotate(0deg);
+  }
 
-.notes p + p {
-  margin-top: 8px;
+  25% {
+    transform: translate3d(16px, 24vh, 0) rotate(90deg);
+  }
+
+  50% {
+    transform: translate3d(-10px, 52vh, 0) rotate(180deg);
+  }
+
+  75% {
+    transform: translate3d(20px, 80vh, 0) rotate(270deg);
+  }
+
+  100% {
+    transform: translate3d(-14px, 114vh, 0) rotate(360deg);
+  }
 }
 
 @media (max-width: 640px) {
   .page {
+    width: min(100%, calc(100% - 24px));
     padding-top: 32px;
     padding-bottom: 48px;
   }
@@ -371,10 +504,16 @@
     grid-template-columns: 1fr;
   }
 
+  .shufflePanel {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
   .primaryGiftButton,
   .secondaryButton,
   .lineButton,
-  .drawButton {
+  .drawButton,
+  .shuffleButton {
     width: 100%;
   }
 
@@ -384,5 +523,9 @@
 
   .resultActions {
     flex-direction: column;
+  }
+
+  .petal {
+    opacity: 0.24;
   }
 }
