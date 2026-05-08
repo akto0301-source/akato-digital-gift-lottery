@@ -1,6 +1,5 @@
 import { EnvelopeOpening } from "@/components/envelope-opening";
 
-import { ExtraMessagePanel } from "./extra-message-panel";
 import styles from "./page.module.css";
 
 type ConfirmPageProps = {
@@ -63,7 +62,6 @@ export default async function ConfirmPage({ searchParams }: ConfirmPageProps) {
           <div className={styles.messageCard}>
             {message || "願今天的心意，正好落在你最需要被溫柔接住的時候。"}
           </div>
-          <ExtraMessagePanel />
         </section>
       </EnvelopeOpening>
     </main>
