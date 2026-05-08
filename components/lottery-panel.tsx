@@ -17,12 +17,21 @@ type LotteryResponse = {
 
 const demoBlessing = "願今天有一點光，剛好照進你的心裡。";
 
-function isIncompleteLot(lot: ContentLot) {
-  return lot.category === "sample" || !lot.fortune?.trim() || !lot.blessing?.trim();
+function isIncompleteText(value?: string) {
+  const normalized = value?.trim();
+  return !normalized || normalized === "請提供此籤文內容。" || normalized === "請提供祝福";
 }
 
-function getResultBlessing(lot: ContentLot) {
-  if (isIncompleteLot(lot)) {
+function getFortuneText(lot: ContentLot) {
+  if (isIncompleteText(lot.fortune)) {
+    return demoBlessing;
+  }
+
+  return lot.fortune!.trim();
+}
+
+function getBlessingText(lot: ContentLot) {
+  if (isIncompleteText(lot.blessing)) {
     return demoBlessing;
   }
 
@@ -33,6 +42,8 @@ export function LotteryPanel({ library, initialLot }: LotteryPanelProps) {
   const [lot, setLot] = useState<ContentLot | null>(initialLot);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  const fallbackLots = library.lots.filter((item) => item.active !== false);
 
   async function drawLot() {
     setIsLoading(true);
@@ -49,7 +60,12 @@ export function LotteryPanel({ library, initialLot }: LotteryPanelProps) {
         throw new Error(data.error ?? library.fallbackMessages.error);
       }
 
-      setLot(data.lot);
+      const nextLot =
+        fallbackLots.length > 1 && lot?.id === data.lot.id
+          ? fallbackLots.find((item) => item.id !== lot.id) ?? data.lot
+          : data.lot;
+
+      setLot(nextLot);
     } catch (caughtError) {
       const message =
         caughtError instanceof Error ? caughtError.message : library.fallbackMessages.error;
@@ -69,8 +85,12 @@ export function LotteryPanel({ library, initialLot }: LotteryPanelProps) {
 
         {lot ? (
           <>
-            <h2>{isIncompleteLot(lot) ? "籤詩" : lot.title}</h2>
-            <p className={styles.fortune}>{getResultBlessing(lot)}</p>
+            <h2>{lot.title.trim() || "籤詩"}</h2>
+            <p className={styles.fortune}>{getFortuneText(lot)}</p>
+            <div className={styles.blessingBlock}>
+              <h3>祝賀語</h3>
+              <p>{getBlessingText(lot)}</p>
+            </div>
           </>
         ) : (
           <p className={styles.empty}>{library.fallbackMessages.empty}</p>

@@ -445,6 +445,23 @@
   margin: 0;
 }
 
+.blessingBlock {
+  margin-top: 24px;
+  padding-top: 22px;
+  border-top: 1px solid rgba(215, 197, 171, 0.92);
+}
+
+.blessingBlock h3 {
+  margin: 0 0 12px;
+  color: #8f5c56;
+  font-size: 1rem;
+}
+
+.blessingBlock p {
+  margin: 0;
+  line-height: 1.85;
+}
+
 .actions {
   margin-top: 28px;
 }
