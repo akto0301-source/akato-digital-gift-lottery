@@ -237,12 +237,15 @@ export function GiftEntryPanel() {
 
       <div className={styles.formGrid}>
         <label className={`${styles.field} ${styles.fieldFull}`}>
-          <span>祝福文字 message</span>
           <div className={styles.messageComposer}>
+            <div className={styles.messageCardHeader}>
+              <span className={styles.messageCardTitle}>祝賀語</span>
+              <p className={styles.messageCardHint}>把想說的話寫進這張祝福籤裡。</p>
+            </div>
             <textarea
               value={form.message}
               onChange={(event) => updateField("message", event.target.value)}
-              placeholder="寫下一段溫柔祝福，讓收禮頁面直接帶著你的心意。"
+              placeholder="例如：願你抬頭時有光，低頭時有安心。"
               rows={5}
             />
             <div className={styles.shufflePanel}>

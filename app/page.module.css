@@ -350,19 +350,85 @@
 }
 
 .messageComposer {
+  position: relative;
   display: grid;
-  gap: 14px;
+  gap: 16px;
+  padding: 24px 22px 20px;
+  border-radius: 28px;
+  border: 1px solid rgba(186, 144, 124, 0.5);
+  background:
+    radial-gradient(circle at top right, rgba(247, 226, 220, 0.42), transparent 34%),
+    linear-gradient(180deg, rgba(255, 252, 246, 0.98), rgba(250, 243, 233, 0.96));
+  box-shadow:
+    0 18px 34px rgba(114, 83, 74, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.74);
+  overflow: hidden;
+}
+
+.messageComposer::before {
+  content: "";
+  position: absolute;
+  inset: 12px;
+  border-radius: 20px;
+  border: 1px solid rgba(200, 170, 150, 0.18);
+  pointer-events: none;
+}
+
+.messageCardHeader {
+  position: relative;
+  z-index: 1;
+}
+
+.messageCardTitle {
+  display: block;
+  font-size: 1.28rem;
+  line-height: 1.4;
+  letter-spacing: 0.08em;
+  color: #6f4a44;
+  font-weight: 600;
+}
+
+.messageCardHint {
+  margin: 8px 0 0;
+  color: rgba(110, 81, 74, 0.76);
+  line-height: 1.8;
+}
+
+.messageComposer textarea {
+  position: relative;
+  z-index: 1;
+  border: 1px solid rgba(195, 157, 139, 0.52);
+  border-radius: 24px;
+  background:
+    repeating-linear-gradient(
+      180deg,
+      rgba(255, 250, 243, 0.96) 0,
+      rgba(255, 250, 243, 0.96) 33px,
+      rgba(229, 210, 199, 0.34) 33px,
+      rgba(229, 210, 199, 0.34) 34px
+    );
+  box-shadow:
+    inset 0 2px 10px rgba(153, 119, 104, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.66);
+  line-height: 34px;
+  padding: 18px 18px 16px;
+}
+
+.messageComposer textarea::placeholder {
+  color: rgba(138, 108, 99, 0.66);
 }
 
 .shufflePanel {
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 14px;
   padding: 14px 16px;
   border-radius: 20px;
-  background: rgba(255, 248, 244, 0.86);
-  border: 1px solid rgba(229, 210, 202, 0.92);
+  background: rgba(255, 247, 241, 0.76);
+  border: 1px solid rgba(219, 195, 183, 0.88);
 }
 
 .shuffleLead {
