@@ -394,8 +394,8 @@ export default function HuskyPage() {
         <section
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))",
-            gap: "22px",
+            gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+            gap: "18px",
           }}
         >
           {stickers.map((item) => {
@@ -407,8 +407,8 @@ export default function HuskyPage() {
                 key={item.id}
                 style={{
                   background: active ? "#fffdfc" : "#fcfcfc",
-                  borderRadius: "26px",
-                  padding: "18px",
+                  borderRadius: "24px",
+                  padding: "14px",
                   boxShadow: active
                     ? "0 12px 32px rgba(63,111,182,0.14)"
                     : "0 8px 24px rgba(0,0,0,0.05)",
@@ -421,13 +421,13 @@ export default function HuskyPage() {
                 <div
                   style={{
                     background: "#f7f7f7",
-                    borderRadius: "20px",
-                    minHeight: "220px",
+                    borderRadius: "18px",
+                    minHeight: "190px",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    padding: "12px",
-                    marginBottom: "16px",
+                    padding: "10px",
+                    marginBottom: "14px",
                   }}
                 >
                   <img
@@ -435,7 +435,7 @@ export default function HuskyPage() {
                     alt="阿哈 Husky 貼圖"
                     style={{
                       maxWidth: "100%",
-                      maxHeight: "190px",
+                      maxHeight: "165px",
                       objectFit: "contain",
                     }}
                   />
@@ -443,11 +443,11 @@ export default function HuskyPage() {
 
                 <p
                   style={{
-                    margin: "0 0 16px",
-                    fontSize: "18px",
+                    margin: "0 0 14px",
+                    fontSize: "17px",
                     lineHeight: 1.6,
                     color: "#4f4742",
-                    minHeight: "58px",
+                    minHeight: "54px",
                     fontWeight: 700,
                   }}
                 >
@@ -457,7 +457,7 @@ export default function HuskyPage() {
                 <div
                   style={{
                     display: "flex",
-                    gap: "10px",
+                    gap: "8px",
                     flexWrap: "wrap",
                   }}
                 >
@@ -467,9 +467,9 @@ export default function HuskyPage() {
                       border: "none",
                       background: "#efe6dc",
                       color: "#5a4940",
-                      padding: "10px 14px",
+                      padding: "9px 12px",
                       borderRadius: "999px",
-                      fontSize: "15px",
+                      fontSize: "14px",
                       fontWeight: 700,
                       cursor: "pointer",
                     }}
@@ -483,9 +483,9 @@ export default function HuskyPage() {
                       border: "none",
                       background: active ? "#3f6fb6" : "#1f2937",
                       color: "#fff",
-                      padding: "10px 14px",
+                      padding: "9px 12px",
                       borderRadius: "999px",
-                      fontSize: "15px",
+                      fontSize: "14px",
                       fontWeight: 700,
                       cursor: "pointer",
                     }}
