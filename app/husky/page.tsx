@@ -4,7 +4,6 @@ import { useMemo, useState } from "react";
 
 type StickerItem = {
   id: string;
-  name: string;
   src: string;
   captions: string[];
 };
@@ -12,103 +11,86 @@ type StickerItem = {
 const stickers: StickerItem[] = [
   {
     id: "happy",
-    name: "哈囉一下",
     src: "/husky/husky-happy.png",
     captions: ["哈囉一下", "我先可愛一下", "今天先微笑營業"],
   },
   {
     id: "chaos",
-    name: "精神狀態很哈士奇",
     src: "/husky/husky-chaos.png",
     captions: ["精神狀態很哈士奇", "我今天有點失控", "腦袋正在亂跑中"],
   },
   {
     id: "panic",
-    name: "先不要！",
     src: "/husky/husky-panic.png",
     captions: ["先不要！", "等一下等一下", "我還沒準備好啦"],
   },
   {
     id: "flat",
-    name: "躺平人生",
     src: "/husky/husky-flat.png",
     captions: ["躺平人生", "今天不想努力", "先休息再說"],
   },
   {
     id: "low-battery",
-    name: "本汪剩 1%",
     src: "/husky/husky-low-battery.png",
     captions: ["本汪剩 1%", "電量低到想關機", "我需要充電一下"],
   },
   {
     id: "corner",
-    name: "我先躲一下",
     src: "/husky/husky-corner.png",
     captions: ["我先躲一下", "先縮角落冷靜", "這題我先逃避"],
   },
   {
     id: "annoyed",
-    name: "我沒有不爽",
     src: "/husky/husky-annoyed.png",
     captions: ["我沒有不爽", "只是臉比較誠實", "我現在心情普通偏煩"],
   },
   {
     id: "tired",
-    name: "已停止運作",
     src: "/husky/husky-tired.png",
     captions: ["已停止運作", "我今天真的不行", "腦袋暫停服務中"],
   },
   {
     id: "awkward-smile",
-    name: "哈…哈哈…",
     src: "/husky/husky-awkward-smile.png",
     captions: ["哈…哈哈…", "這笑容有點勉強", "我先假裝沒事"],
   },
   {
     id: "speech",
-    name: "欸欸我跟你說",
     src: "/husky/husky-speech.png",
     captions: ["欸欸我跟你說", "我有話想講", "先聽我亂講一下"],
   },
   {
     id: "sleepy",
-    name: "再睡五分鐘",
     src: "/husky/husky-sleepy.png",
     captions: ["再睡五分鐘", "我先瞇一下", "今天先跟床在一起"],
   },
   {
     id: "procrastinate",
-    name: "等一下再弄",
     src: "/husky/husky-procrastinate.png",
     captions: ["等一下再弄", "我晚點一定會做", "先拖一下比較有靈感"],
   },
   {
     id: "give-up",
-    name: "算了啦",
     src: "/husky/husky-give-up.png",
     captions: ["算了啦", "我投降", "這次先放過自己"],
   },
   {
     id: "study-dead",
-    name: "讀到靈魂出走",
     src: "/husky/husky-study-dead.png",
     captions: ["讀到靈魂出走", "知識有進去嗎", "書有翻但我沒有懂"],
   },
   {
     id: "chat",
-    name: "我跟你說喔",
     src: "/husky/husky-chat.png",
     captions: ["我跟你說喔", "我有八卦", "這件事真的很好笑"],
   },
   {
     id: "grumpy",
-    name: "我真的有意見",
     src: "/husky/husky-grumpy.png",
     captions: ["我真的有意見", "氣噗噗", "現在不要惹我比較好"],
   },
   {
     id: "fake-smile",
-    name: "我很好 真的",
     src: "/husky/husky-fake-smile.png",
     captions: ["我很好 真的", "我看起來像沒事嗎", "先微笑再崩潰"],
   },
@@ -125,7 +107,10 @@ export default function HuskyPage() {
   const [captionIndexes, setCaptionIndexes] =
     useState<Record<string, number>>(initialCaptionIndexes);
 
-  const [customCaptions, setCustomCaptions] = useState<Record<string, string>>({});
+  const [customCaptions, setCustomCaptions] = useState<Record<string, string>>(
+    {}
+  );
+
   const [selectedId, setSelectedId] = useState<string>(stickers[0].id);
 
   const selectedSticker =
@@ -191,6 +176,7 @@ export default function HuskyPage() {
           >
             阿哈 Husky 貼圖實驗室
           </h1>
+
           <p
             style={{
               fontSize: "20px",
@@ -233,7 +219,7 @@ export default function HuskyPage() {
             >
               <img
                 src={selectedSticker.src}
-                alt={selectedSticker.name}
+                alt="阿哈 Husky 貼圖"
                 style={{
                   maxWidth: "100%",
                   maxHeight: "260px",
@@ -260,11 +246,12 @@ export default function HuskyPage() {
             <h2
               style={{
                 margin: "0 0 10px",
-                fontSize: "28px",
+                fontSize: "22px",
                 lineHeight: 1.3,
+                color: "#7a5a4a",
               }}
             >
-              {selectedSticker.name}
+              阿哈現在想說
             </h2>
 
             <p
@@ -291,7 +278,9 @@ export default function HuskyPage() {
               自己輸入一句
               <input
                 value={customCaptions[selectedSticker.id] ?? ""}
-                onChange={(event) => handleCustomCaptionChange(event.target.value)}
+                onChange={(event) =>
+                  handleCustomCaptionChange(event.target.value)
+                }
                 placeholder="例如：我今天只想躺著"
                 maxLength={20}
                 style={{
@@ -443,7 +432,7 @@ export default function HuskyPage() {
                 >
                   <img
                     src={item.src}
-                    alt={item.name}
+                    alt="阿哈 Husky 貼圖"
                     style={{
                       maxWidth: "100%",
                       maxHeight: "190px",
@@ -452,27 +441,17 @@ export default function HuskyPage() {
                   />
                 </div>
 
-                <h3
-                  style={{
-                    margin: "0 0 10px",
-                    fontSize: "22px",
-                    lineHeight: 1.35,
-                    fontWeight: 800,
-                  }}
-                >
-                  {item.name}
-                </h3>
-
                 <p
                   style={{
                     margin: "0 0 16px",
-                    fontSize: "17px",
+                    fontSize: "18px",
                     lineHeight: 1.6,
-                    color: "#5c5450",
-                    minHeight: "56px",
+                    color: "#4f4742",
+                    minHeight: "58px",
+                    fontWeight: 700,
                   }}
                 >
-                  {caption}
+                  「{caption}」
                 </p>
 
                 <div
