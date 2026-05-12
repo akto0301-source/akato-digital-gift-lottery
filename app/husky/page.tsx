@@ -8,25 +8,81 @@ export default function HuskyPage() {
         fontFamily: "sans-serif",
       }}
     >
-      <h1 style={{ fontSize: "32px", marginBottom: "12px" }}>
+      <h1
+        style={{
+          fontSize: "32px",
+          marginBottom: "12px",
+        }}
+      >
         阿哈 Husky 貼圖實驗室
       </h1>
 
-      <p style={{ marginBottom: "32px" }}>
+      <p
+        style={{
+          marginBottom: "32px",
+          color: "#555",
+        }}
+      >
         哈士奇正在努力生成迷因中⋯
       </p>
 
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit,minmax(140px,1fr))",
-          gap: "20px",
+          gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))",
+          gap: "24px",
+          marginTop: "32px",
         }}
       >
-        <img src="/husky/husky-happy.png" />
-        <img src="/husky/husky-chaos.png" />
-        <img src="/husky/husky-panic.png" />
-        <img src="/husky/husky-flat.png" />
+        <img
+          src="/husky/husky-happy.png"
+          style={{
+            width: "100%",
+            borderRadius: "24px",
+            background: "#fff",
+            padding: "12px",
+          }}
+        />
+
+        <img
+          src="/husky/husky-chaos.png"
+          style={{
+            width: "100%",
+            borderRadius: "24px",
+            background: "#fff",
+            padding: "12px",
+          }}
+        />
+
+        <img
+          src="/husky/husky-panic.png"
+          style={{
+            width: "100%",
+            borderRadius: "24px",
+            background: "#fff",
+            padding: "12px",
+          }}
+        />
+
+        <img
+          src="/husky/husky-flat.png"
+          style={{
+            width: "100%",
+            borderRadius: "24px",
+            background: "#fff",
+            padding: "12px",
+          }}
+        />
+
+        <img
+          src="/husky/husky-tired.png"
+          style={{
+            width: "100%",
+            borderRadius: "24px",
+            background: "#fff",
+            padding: "12px",
+          }}
+        />
       </div>
     </main>
   );
