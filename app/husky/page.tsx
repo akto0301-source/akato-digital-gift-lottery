@@ -125,16 +125,28 @@ export default function HuskyPage() {
   const [captionIndexes, setCaptionIndexes] =
     useState<Record<string, number>>(initialCaptionIndexes);
 
+  const [customCaptions, setCustomCaptions] = useState<Record<string, string>>({});
   const [selectedId, setSelectedId] = useState<string>(stickers[0].id);
 
   const selectedSticker =
     stickers.find((item) => item.id === selectedId) ?? stickers[0];
 
   const getCurrentCaption = (item: StickerItem) => {
+    const custom = customCaptions[item.id];
+
+    if (custom && custom.trim().length > 0) {
+      return custom;
+    }
+
     return item.captions[captionIndexes[item.id] ?? 0];
   };
 
   const handleChangeCaption = (id: string) => {
+    setCustomCaptions((prev) => ({
+      ...prev,
+      [id]: "",
+    }));
+
     setCaptionIndexes((prev) => {
       const sticker = stickers.find((item) => item.id === id);
       if (!sticker) return prev;
@@ -147,6 +159,13 @@ export default function HuskyPage() {
         [id]: nextIndex,
       };
     });
+  };
+
+  const handleCustomCaptionChange = (value: string) => {
+    setCustomCaptions((prev) => ({
+      ...prev,
+      [selectedSticker.id]: value,
+    }));
   };
 
   return (
@@ -180,7 +199,7 @@ export default function HuskyPage() {
               lineHeight: 1.7,
             }}
           >
-            選一張喜歡的 Husky，按「換一句看看」，挑一句最符合你心情的話。
+            選一張喜歡的 Husky，換一句看看，也可以自己輸入一句。
           </p>
         </header>
 
@@ -251,30 +270,82 @@ export default function HuskyPage() {
             <p
               style={{
                 margin: "0 0 18px",
-                fontSize: "22px",
+                fontSize: "24px",
                 lineHeight: 1.6,
                 color: "#3e3733",
-                fontWeight: 700,
+                fontWeight: 800,
               }}
             >
               「{getCurrentCaption(selectedSticker)}」
             </p>
 
-            <button
-              onClick={() => handleChangeCaption(selectedSticker.id)}
+            <label
               style={{
-                border: "none",
-                background: "#3f6fb6",
-                color: "#fff",
-                padding: "12px 18px",
-                borderRadius: "999px",
-                fontSize: "16px",
+                display: "block",
+                marginBottom: "14px",
+                fontSize: "15px",
                 fontWeight: 700,
-                cursor: "pointer",
+                color: "#5a514d",
               }}
             >
-              換一句看看
-            </button>
+              自己輸入一句
+              <input
+                value={customCaptions[selectedSticker.id] ?? ""}
+                onChange={(event) => handleCustomCaptionChange(event.target.value)}
+                placeholder="例如：我今天只想躺著"
+                maxLength={20}
+                style={{
+                  display: "block",
+                  width: "100%",
+                  marginTop: "8px",
+                  padding: "12px 14px",
+                  borderRadius: "16px",
+                  border: "1px solid #ddd0c8",
+                  fontSize: "16px",
+                  outline: "none",
+                  boxSizing: "border-box",
+                }}
+              />
+            </label>
+
+            <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+              <button
+                onClick={() => handleChangeCaption(selectedSticker.id)}
+                style={{
+                  border: "none",
+                  background: "#3f6fb6",
+                  color: "#fff",
+                  padding: "12px 18px",
+                  borderRadius: "999px",
+                  fontSize: "16px",
+                  fontWeight: 700,
+                  cursor: "pointer",
+                }}
+              >
+                換一句看看
+              </button>
+
+              <button
+                onClick={() =>
+                  setCustomCaptions((prev) => ({
+                    ...prev,
+                    [selectedSticker.id]: "",
+                  }))
+                }
+                style={{
+                  border: "none",
+                  background: "#efe6dc",
+                  color: "#5a4940",
+                  padding: "12px 18px",
+                  borderRadius: "999px",
+                  fontSize: "16px",
+                  fontWeight: 700,
+                  cursor: "pointer",
+                }}
+              >
+                清除自訂
+              </button>
+            </div>
           </div>
 
           <div
@@ -305,8 +376,8 @@ export default function HuskyPage() {
               }}
             >
               <div>1. 先挑一張最像你現在心情的 Husky。</div>
-              <div>2. 如果字句不夠貼切，就按「換一句看看」。</div>
-              <div>3. 選到喜歡的那張後，就可以再往下做下載、分享或套用。</div>
+              <div>2. 按「換一句看看」，切換阿哈自己的語氣。</div>
+              <div>3. 想更貼近心情，就自己輸入一句。</div>
             </div>
 
             <div
@@ -320,13 +391,13 @@ export default function HuskyPage() {
                 lineHeight: 1.7,
               }}
             >
-              之後還可以再加：
-              <br />
-              ・自己輸入文字
+              下一階段可以再加：
               <br />
               ・一鍵下載 PNG
               <br />
-              ・分享 LINE 貼圖語氣圖
+              ・分享到 LINE
+              <br />
+              ・AI 幫你亂配一句
             </div>
           </div>
         </section>
@@ -384,7 +455,7 @@ export default function HuskyPage() {
                 <h3
                   style={{
                     margin: "0 0 10px",
-                    fontSize: "24px",
+                    fontSize: "22px",
                     lineHeight: 1.35,
                     fontWeight: 800,
                   }}
@@ -395,10 +466,10 @@ export default function HuskyPage() {
                 <p
                   style={{
                     margin: "0 0 16px",
-                    fontSize: "18px",
+                    fontSize: "17px",
                     lineHeight: 1.6,
                     color: "#5c5450",
-                    minHeight: "58px",
+                    minHeight: "56px",
                   }}
                 >
                   {caption}
