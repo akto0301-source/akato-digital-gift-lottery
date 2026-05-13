@@ -94,6 +94,26 @@ const stickers: StickerItem[] = [
     src: "/husky/husky-fake-smile.png",
     captions: ["我很好 真的", "我看起來像沒事嗎", "先微笑再崩潰"],
   },
+  {
+    id: "bite",
+    src: "/husky/husky-bite.png",
+    captions: ["我咬一口", "先咬一下再說", "這口是情緒管理失敗"],
+  },
+  {
+    id: "guilty",
+    src: "/husky/husky-guilty.png",
+    captions: ["我有罪", "我先道歉", "事情變成這樣一定有原因"],
+  },
+  {
+    id: "broken",
+    src: "/husky/husky-broken.png",
+    captions: ["我裂開了", "我的靈魂離線中", "請稍後再試"],
+  },
+  {
+    id: "sorry",
+    src: "/husky/husky-sorry.png",
+    captions: ["Sorry", "我先道歉", "對不起啦", "這次是我的鍋", "我有在反省一點點"],
+  },
 ];
 
 export default function HuskyPage() {
