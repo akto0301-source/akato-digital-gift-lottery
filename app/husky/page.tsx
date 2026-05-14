@@ -501,28 +501,13 @@ const handleCopyCaption = async (item: StickerItem) => {
     cursor: "pointer",
   }}
 >  {copiedId === selectedSticker.id ? "已複製" : "複製這句"}
-</button> <button
-  onClick={() => handleCopyCaption(selectedSticker)}
-  style={{
-    border: "none",
-    background: copiedId === selectedSticker.id ? "#8fbc8f" : "#1f2937",
-    color: "#fff",
-    padding: "12px 18px",
-    borderRadius: "999px",
-    fontSize: "16px",
-    fontWeight: 700,
-    cursor: "pointer",
-  }}
->
-  {copiedId === selectedSticker.id ? "已複製" : "複製這句"}
-</button>
 
 <button
   onClick={() => handleDownloadImage(selectedSticker)}
   style={{
     border: "none",
-    background: "#7a5a4a",
-    color: "#fff",
+    background: "#efe6dc",
+color: "#5a4940",
     padding: "12px 18px",
     borderRadius: "999px",
     fontSize: "16px",
