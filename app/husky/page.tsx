@@ -2,140 +2,173 @@
 
 import { useMemo, useState } from "react";
 
+type Category = "mood" | "sorry" | "debug";
+
 type StickerItem = {
   id: string;
+  category: Category;
   src: string;
   captions: string[];
 };
 
+const categories: { id: "all" | Category; label: string }[] = [
+  { id: "all", label: "全部" },
+  { id: "mood", label: "心情崩潰" },
+  { id: "sorry", label: "道歉裝死" },
+  { id: "debug", label: "工程救援" },
+];
+
 const stickers: StickerItem[] = [
   {
     id: "happy",
+    category: "mood",
     src: "/husky/husky-happy.png",
     captions: ["哈囉一下", "我先可愛一下", "今天先微笑營業"],
   },
   {
     id: "chaos",
+    category: "mood",
     src: "/husky/husky-chaos.png",
     captions: ["精神狀態很哈士奇", "我今天有點失控", "腦袋正在亂跑中"],
   },
   {
     id: "panic",
+    category: "mood",
     src: "/husky/husky-panic.png",
     captions: ["先不要！", "等一下等一下", "我還沒準備好啦"],
   },
   {
     id: "flat",
+    category: "mood",
     src: "/husky/husky-flat.png",
     captions: ["躺平人生", "今天不想努力", "先休息再說"],
   },
   {
     id: "low-battery",
+    category: "mood",
     src: "/husky/husky-low-battery.png",
     captions: ["本汪剩 1%", "電量低到想關機", "我需要充電一下"],
   },
   {
     id: "corner",
+    category: "mood",
     src: "/husky/husky-corner.png",
     captions: ["我先躲一下", "先縮角落冷靜", "這題我先逃避"],
   },
   {
     id: "annoyed",
+    category: "mood",
     src: "/husky/husky-annoyed.png",
     captions: ["我沒有不爽", "只是臉比較誠實", "我現在心情普通偏煩"],
   },
   {
     id: "tired",
+    category: "mood",
     src: "/husky/husky-tired.png",
     captions: ["已停止運作", "我今天真的不行", "腦袋暫停服務中"],
   },
   {
     id: "awkward-smile",
+    category: "mood",
     src: "/husky/husky-awkward-smile.png",
     captions: ["哈…哈哈…", "這笑容有點勉強", "我先假裝沒事"],
   },
   {
     id: "speech",
+    category: "mood",
     src: "/husky/husky-speech.png",
     captions: ["欸欸我跟你說", "我有話想講", "先聽我亂講一下"],
   },
   {
     id: "sleepy",
+    category: "mood",
     src: "/husky/husky-sleepy.png",
     captions: ["再睡五分鐘", "我先瞇一下", "今天先跟床在一起"],
   },
   {
     id: "procrastinate",
+    category: "mood",
     src: "/husky/husky-procrastinate.png",
     captions: ["等一下再弄", "我晚點一定會做", "先拖一下比較有靈感"],
   },
   {
     id: "give-up",
+    category: "mood",
     src: "/husky/husky-give-up.png",
     captions: ["算了啦", "我投降", "這次先放過自己"],
   },
   {
     id: "study-dead",
+    category: "mood",
     src: "/husky/husky-study-dead.png",
     captions: ["讀到靈魂出走", "知識有進去嗎", "書有翻但我沒有懂"],
   },
   {
     id: "chat",
+    category: "mood",
     src: "/husky/husky-chat.png",
     captions: ["我跟你說喔", "我有八卦", "這件事真的很好笑"],
   },
   {
     id: "grumpy",
+    category: "mood",
     src: "/husky/husky-grumpy.png",
     captions: ["我真的有意見", "氣噗噗", "現在不要惹我比較好"],
   },
   {
     id: "fake-smile",
+    category: "mood",
     src: "/husky/husky-fake-smile.png",
     captions: ["我很好 真的", "我看起來像沒事嗎", "先微笑再崩潰"],
   },
   {
     id: "bite",
+    category: "mood",
     src: "/husky/husky-bite.png",
     captions: ["我咬一口", "先咬一下再說", "這口是情緒管理失敗"],
   },
   {
-  id: "guilty",
-  src: "/husky/aha-husky-guilty-separated.png",
-  captions: ["我有罪", "我先道歉", "事情變成這樣一定有原因"],
-},
-{
-  id: "broken",
-  src: "/husky/aha-husky-burst-fixed.png",
-  captions: ["我裂開了", "我的靈魂離線中", "請稍後再試"],
-},
-{
-  id: "sorry",
-  src: "/husky/aha-husky-sorry.png",
-  captions: ["Sorry", "我先道歉", "對不起啦", "這次是我的鍋", "我有在反省一點點"],
+    id: "guilty",
+    category: "sorry",
+    src: "/husky/aha-husky-guilty-separated.png",
+    captions: ["我有罪", "我先道歉", "事情變成這樣一定有原因"],
   },
-{
-  id: "debug-chaos",
-  src: "/husky/husky-chaos.png",
-  captions: [
-    "嗷嗚～本汪聞到 bug 了",
-    "這不是世界末日，只是系統在裝死",
-    "紅毛毛蟲出現了，本汪來咬",
-    "先別崩，本汪陪你看錯誤訊息",
-    "這坨我們咬得動",
-  ],
-},
-{
-  id: "debug-speech",
-  src: "/husky/husky-speech.png",
-  captions: [
-    "截圖給本汪看看",
-    "先從第一行紅字開始聞",
-    "不要全刪，我們只拆這一段",
-    "貼好後再跑一次測試",
-    "錯誤變了，代表有進展",
-  ],
-},
+  {
+    id: "broken",
+    category: "mood",
+    src: "/husky/aha-husky-burst-fixed.png",
+    captions: ["我裂開了", "我的靈魂離線中", "請稍後再試"],
+  },
+  {
+    id: "sorry",
+    category: "sorry",
+    src: "/husky/aha-husky-sorry.png",
+    captions: ["Sorry", "我先道歉", "對不起啦", "這次是我的鍋", "我有在反省一點點"],
+  },
+  {
+    id: "debug-chaos",
+    category: "debug",
+    src: "/husky/husky-chaos.png",
+    captions: [
+      "嗷嗚～本汪聞到 bug 了",
+      "這不是世界末日，只是系統在裝死",
+      "紅毛毛蟲出現了，本汪來咬",
+      "先別崩，本汪陪你看錯誤訊息",
+      "這坨我們咬得動",
+    ],
+  },
+  {
+    id: "debug-speech",
+    category: "debug",
+    src: "/husky/husky-speech.png",
+    captions: [
+      "截圖給本汪看看",
+      "先從第一行紅字開始聞",
+      "不要全刪，我們只拆這一段",
+      "貼好後再跑一次測試",
+      "錯誤變了，代表有進展",
+    ],
+  },
 ];
 
 export default function HuskyPage() {
@@ -146,6 +179,8 @@ export default function HuskyPage() {
     }, {});
   }, []);
 
+  const [activeCategory, setActiveCategory] = useState<"all" | Category>("all");
+
   const [captionIndexes, setCaptionIndexes] =
     useState<Record<string, number>>(initialCaptionIndexes);
 
@@ -154,6 +189,11 @@ export default function HuskyPage() {
   );
 
   const [selectedId, setSelectedId] = useState<string>(stickers[0].id);
+
+  const filteredStickers =
+    activeCategory === "all"
+      ? stickers
+      : stickers.filter((item) => item.category === activeCategory);
 
   const selectedSticker =
     stickers.find((item) => item.id === selectedId) ?? stickers[0];
@@ -207,7 +247,7 @@ export default function HuskyPage() {
       }}
     >
       <div style={{ maxWidth: "1280px", margin: "0 auto" }}>
-        <header style={{ marginBottom: "28px" }}>
+        <header style={{ marginBottom: "24px" }}>
           <h1
             style={{
               fontSize: "42px",
@@ -230,6 +270,41 @@ export default function HuskyPage() {
             選一張喜歡的 Husky，換一句看看，也可以自己輸入一句。
           </p>
         </header>
+
+        <section
+          style={{
+            display: "flex",
+            gap: "10px",
+            flexWrap: "wrap",
+            marginBottom: "28px",
+          }}
+        >
+          {categories.map((category) => {
+            const active = activeCategory === category.id;
+
+            return (
+              <button
+                key={category.id}
+                onClick={() => setActiveCategory(category.id)}
+                style={{
+                  border: "none",
+                  background: active ? "#1f2937" : "#ffffff",
+                  color: active ? "#ffffff" : "#5a4940",
+                  padding: "10px 16px",
+                  borderRadius: "999px",
+                  fontSize: "15px",
+                  fontWeight: 800,
+                  cursor: "pointer",
+                  boxShadow: active
+                    ? "0 8px 20px rgba(31,41,55,0.16)"
+                    : "0 6px 18px rgba(0,0,0,0.06)",
+                }}
+              >
+                {category.label}
+              </button>
+            );
+          })}
+        </section>
 
         <section
           style={{
@@ -324,7 +399,7 @@ export default function HuskyPage() {
                   handleCustomCaptionChange(event.target.value)
                 }
                 placeholder="例如：我今天只想躺著"
-                maxLength={20}
+                maxLength={24}
                 style={{
                   display: "block",
                   width: "100%",
@@ -407,8 +482,9 @@ export default function HuskyPage() {
               }}
             >
               <div>1. 先挑一張最像你現在心情的 Husky。</div>
-              <div>2. 按「換一句看看」，切換阿哈自己的語氣。</div>
-              <div>3. 想更貼近心情，就自己輸入一句。</div>
+              <div>2. 按分類，切換不同使用情境。</div>
+              <div>3. 按「換一句看看」，切換阿哈自己的語氣。</div>
+              <div>4. 想更貼近心情，就自己輸入一句。</div>
             </div>
 
             <div
@@ -440,7 +516,7 @@ export default function HuskyPage() {
             gap: "18px",
           }}
         >
-          {stickers.map((item) => {
+          {filteredStickers.map((item) => {
             const active = item.id === selectedId;
             const caption = getCurrentCaption(item);
 
