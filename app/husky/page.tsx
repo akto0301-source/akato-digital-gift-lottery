@@ -114,6 +114,28 @@ const stickers: StickerItem[] = [
   src: "/husky/aha-husky-sorry.png",
   captions: ["Sorry", "我先道歉", "對不起啦", "這次是我的鍋", "我有在反省一點點"],
   },
+{
+  id: "debug-chaos",
+  src: "/husky/husky-chaos.png",
+  captions: [
+    "嗷嗚～本汪聞到 bug 了",
+    "這不是世界末日，只是系統在裝死",
+    "紅毛毛蟲出現了，本汪來咬",
+    "先別崩，本汪陪你看錯誤訊息",
+    "這坨我們咬得動",
+  ],
+},
+{
+  id: "debug-speech",
+  src: "/husky/husky-speech.png",
+  captions: [
+    "截圖給本汪看看",
+    "先從第一行紅字開始聞",
+    "不要全刪，我們只拆這一段",
+    "貼好後再跑一次測試",
+    "錯誤變了，代表有進展",
+  ],
+},
 ];
 
 export default function HuskyPage() {
