@@ -374,7 +374,7 @@ const handleCopyCaption = async (item: StickerItem) => {
                 marginBottom: "12px",
               }}
             >
-              目前選擇
+              我的阿哈貼圖・{categoryLabels[selectedSticker.category]}
             </div>
 
             <h2
@@ -385,7 +385,7 @@ const handleCopyCaption = async (item: StickerItem) => {
                 color: "#7a5a4a",
               }}
             >
-              阿哈現在想說
+              這張阿哈想說
             </h2>
 
             <p
@@ -399,6 +399,17 @@ const handleCopyCaption = async (item: StickerItem) => {
             >
               「{getCurrentCaption(selectedSticker)}」
             </p>
+            
+            <p
+  style={{
+    margin: "0 0 18px",
+    fontSize: "15px",
+    lineHeight: 1.7,
+    color: "#8a7b73",
+  }}
+>
+  可以複製這句，貼到 LINE、IG、訊息或回覆裡使用。
+</p>
 
             <label
               style={{
@@ -481,7 +492,7 @@ const handleCopyCaption = async (item: StickerItem) => {
     fontWeight: 700,
     cursor: "pointer",
   }}
->  {copiedId === selectedSticker.id ? "已複製" : "複製文字"}
+>  {copiedId === selectedSticker.id ? "已複製" : "複製這句"}
 </button>
   
             </div>
@@ -603,7 +614,7 @@ const handleCopyCaption = async (item: StickerItem) => {
                   }}
                 >
                   「{caption}」
-                </p>
+            </p>
 
                 <div
                   style={{
