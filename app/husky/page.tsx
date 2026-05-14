@@ -17,7 +17,11 @@ const categories: { id: "all" | Category; label: string }[] = [
   { id: "sorry", label: "道歉裝死" },
   { id: "debug", label: "工程救援" },
 ];
-
+const categoryLabels: Record<Category, string> = {
+  mood: "心情崩潰",
+  sorry: "道歉裝死",
+  debug: "工程救援",
+};
 const stickers: StickerItem[] = [
   {
     id: "happy",
@@ -189,7 +193,7 @@ export default function HuskyPage() {
   );
 
   const [selectedId, setSelectedId] = useState<string>(stickers[0].id);
-
+  const [copiedId, setCopiedId] = useState<string>("");
   const filteredStickers =
     activeCategory === "all"
       ? stickers
@@ -234,7 +238,20 @@ export default function HuskyPage() {
       [selectedSticker.id]: value,
     }));
   };
+const handleCopyCaption = async (item: StickerItem) => {
+  const text = getCurrentCaption(item);
 
+  try {
+    await navigator.clipboard.writeText(text);
+    setCopiedId(item.id);
+
+    window.setTimeout(() => {
+      setCopiedId("");
+    }, 1600);
+  } catch {
+    setCopiedId("");
+  }
+};
   return (
     <main
       style={{
@@ -451,6 +468,22 @@ export default function HuskyPage() {
               >
                 清除自訂
               </button>
+              
+              <button
+  onClick={() => handleCopyCaption(selectedSticker)}
+  style={{
+    border: "none",
+    background: copiedId === selectedSticker.id ? "#8fbc8f" : "#1f2937",
+    color: "#fff",
+    padding: "12px 18px",
+    borderRadius: "999px",
+    fontSize: "16px",
+    fontWeight: 700,
+    cursor: "pointer",
+  }}
+>  {copiedId === selectedSticker.id ? "已複製" : "複製文字"}
+</button>
+  
             </div>
           </div>
 
