@@ -106,14 +106,14 @@ export default function LetterPage() {
           AKATO GIFT LETTER
         </p>
 
-        {/* 收禮人 (調高 height 與 marginBottom 避免壓到標題) */}
+        {/* 收禮人 */}
         <div style={{ height: '32px', width: '100%', display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
           <p style={{ fontSize: '14px', fontWeight: 300, letterSpacing: '0.1em', color: '#8B8580', transition: 'all 0.6s ease-out', opacity: isOpened ? 0 : 1, transform: isOpened ? 'translateY(-8px)' : 'translateY(0)', pointerEvents: isOpened ? 'none' : 'auto' }}>
             {displayTo ? `給 ${displayTo}` : ''}
           </p>
         </div>
 
-        {/* 主標題 (增加 margin-top 確保與收禮人區塊有自然留白) */}
+        {/* 主標題 */}
         <h1 style={{ fontSize: 'clamp(28px, 5vw, 42px)', position: 'relative', width: '100%', maxWidth: '380px', margin: '8px auto 16px auto', display: 'flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1.4, fontWeight: 500, color: '#7A736E', minHeight: '5.5rem' }}>
           
           <span style={{ position: 'absolute', width: '100%', whiteSpace: 'normal', wordBreak: 'keep-all', transition: 'all 0.6s ease-out', opacity: isOpened ? 0 : 1, transform: isOpened ? 'translateY(-8px)' : 'translateY(0)', pointerEvents: isOpened ? 'none' : 'auto' }}>
@@ -126,8 +126,8 @@ export default function LetterPage() {
 
         </h1>
 
-        {/* 副標題 / 補充文字 / 送禮人 */}
-        <div style={{ height: '56px', position: 'relative', width: '100%', marginBottom: '8px', display: 'flex', justifyContent: 'center' }}>
+        {/* 副標題 / 補充文字 / 送禮人 (調高 height 避免開信後壓到下方信封) */}
+        <div style={{ height: '76px', position: 'relative', width: '100%', marginBottom: '8px', display: 'flex', justifyContent: 'center' }}>
           
           <p style={{ position: 'absolute', top: 0, transition: 'all 0.6s ease-out', fontSize: '15px', fontWeight: 300, letterSpacing: '0.1em', opacity: isOpened ? 0 : 1, transform: isOpened ? 'translateY(-4px)' : 'translateY(0)', pointerEvents: isOpened ? 'none' : 'auto' }}>
             有人為你留下了一份心意。
@@ -145,9 +145,9 @@ export default function LetterPage() {
         </div>
 
         {/* ==================================================== */}
-        {/* 信封 SVG (純 Inline Style 動畫，保證 Vercel 渲染成功不破圖) */}
+        {/* 信封 SVG (增加 marginTop 確保與上方文字有足夠留白) */}
         {/* ==================================================== */}
-        <div style={{ position: 'relative', width: '224px', height: '160px', marginTop: '24px', marginBottom: '32px', display: 'flex', justifyContent: 'center', cursor: 'default' }}>
+        <div style={{ position: 'relative', width: '224px', height: '160px', marginTop: '36px', marginBottom: '32px', display: 'flex', justifyContent: 'center', cursor: 'default' }}>
           <svg viewBox="0 0 200 140" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%', overflow: 'visible', filter: 'drop-shadow(0px 18px 36px rgba(120, 90, 60, 0.12))' }}>
             <defs>
               <linearGradient id="backGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#e8dcca" /><stop offset="100%" stopColor="#d5c3af" /></linearGradient>
