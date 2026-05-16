@@ -106,15 +106,15 @@ export default function LetterPage() {
           AKATO GIFT LETTER
         </p>
 
-        {/* 收禮人 */}
-        <div style={{ height: '24px', width: '100%', display: 'flex', justifyContent: 'center', marginBottom: '4px' }}>
+        {/* 收禮人 (調高 height 與 marginBottom 避免壓到標題) */}
+        <div style={{ height: '32px', width: '100%', display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
           <p style={{ fontSize: '14px', fontWeight: 300, letterSpacing: '0.1em', color: '#8B8580', transition: 'all 0.6s ease-out', opacity: isOpened ? 0 : 1, transform: isOpened ? 'translateY(-8px)' : 'translateY(0)', pointerEvents: isOpened ? 'none' : 'auto' }}>
             {displayTo ? `給 ${displayTo}` : ''}
           </p>
         </div>
 
-        {/* 主標題 (強制限制寬度，避免單字斷行) */}
-        <h1 style={{ fontSize: 'clamp(28px, 5vw, 42px)', position: 'relative', width: '100%', maxWidth: '380px', margin: '0 auto 16px auto', display: 'flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1.4, fontWeight: 500, color: '#7A736E', minHeight: '5.5rem' }}>
+        {/* 主標題 (增加 margin-top 確保與收禮人區塊有自然留白) */}
+        <h1 style={{ fontSize: 'clamp(28px, 5vw, 42px)', position: 'relative', width: '100%', maxWidth: '380px', margin: '8px auto 16px auto', display: 'flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1.4, fontWeight: 500, color: '#7A736E', minHeight: '5.5rem' }}>
           
           <span style={{ position: 'absolute', width: '100%', whiteSpace: 'normal', wordBreak: 'keep-all', transition: 'all 0.6s ease-out', opacity: isOpened ? 0 : 1, transform: isOpened ? 'translateY(-8px)' : 'translateY(0)', pointerEvents: isOpened ? 'none' : 'auto' }}>
             你收到一封來自<br/>Akato 的祝福信
