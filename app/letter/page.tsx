@@ -1,218 +1,93 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
+import React, { useState } from 'react';
 
-export default function LetterPage() {
-  const [isOpened, setIsOpened] = useState(false);
+export default function GiftEntryPanel() {
+  // 定義表單狀態
+  const [from, setFrom] = useState('');
+  const [to, setTo] = useState('');
+  const [message, setMessage] = useState('');
+
+  // 處理 LINE 分享的完整邏輯
+  const handleLineShare = () => {
+    // 1. 使用 URLSearchParams 安全處理參數與編碼，避免出現 undefined
+    const params = new URLSearchParams();
+    
+    // 2. 從表單狀態讀取送禮人與收禮人，並去除前後空白
+    if (from) params.append('from', from.trim());
+    if (to) params.append('to', to.trim());
+    
+    // 3. 組裝乾淨的收禮信封網址 (不再傳遞 message，直接指向 /letter)
+    const queryString = params.toString();
+    const letterUrl = `https://gift.akato.net/letter${queryString ? '?' + queryString : ''}`;
+    
+    // 4. 組合乾淨的 LINE 分享文字
+    const shareText = `你收到一封來自 Akato 的祝福信 ✉️\n\n點開信封：\n${letterUrl}`;
+    
+    // 5. 再次 encode 整個訊息並開啟 LINE 分享連結
+    const lineUrl = `https://line.me/R/msg/text/?${encodeURIComponent(shareText)}`;
+    window.open(lineUrl, '_blank');
+  };
 
   return (
-    <main style={styles.page}>
-      <div style={styles.petals} aria-hidden="true">
-        <span style={{ ...styles.petal, left: "12%", animationDelay: "0s" }} />
-        <span style={{ ...styles.petal, left: "24%", animationDelay: "2s" }} />
-        <span style={{ ...styles.petal, left: "38%", animationDelay: "4s" }} />
-        <span style={{ ...styles.petal, left: "57%", animationDelay: "1s" }} />
-        <span style={{ ...styles.petal, left: "73%", animationDelay: "3s" }} />
-        <span style={{ ...styles.petal, left: "86%", animationDelay: "5s" }} />
-      </div>
+    <div className="w-full max-w-md mx-auto p-8 bg-white/70 backdrop-blur-md rounded-2xl shadow-[0_8px_32px_rgba(139,133,128,0.05)] border border-[#D9C9B6]/40">
+      <h2 className="text-xl text-[#7A736E] mb-6 text-center font-medium tracking-[0.15em]">
+        填寫祝福心意
+      </h2>
 
-      <section style={styles.card}>
-        <p style={styles.kicker}>AKATO GIFT LETTER</p>
-
-        <h1 style={styles.title}>你收到一封來自 Akato 的祝福信</h1>
-
-        <p style={styles.subtitle}>有人為你留下了一份心意。</p>
-
-        <div
-          style={{
-            ...styles.envelope,
-            transform: isOpened ? "translateY(-4px)" : "translateY(0)",
-          }}
-        >
-          <div style={styles.envelopeFlap} />
-          <div style={styles.envelopeBody}>
-            <span style={styles.envelopeText}>✉️</span>
-          </div>
+      <div className="space-y-5">
+        {/* 收禮人輸入框 */}
+        <div>
+          <label className="block text-[13px] text-[#A39B95] mb-1.5 tracking-widest">
+            收禮人
+          </label>
+          <input
+            type="text"
+            value={to}
+            onChange={(e) => setTo(e.target.value)}
+            placeholder="你想送給誰？"
+            className="w-full px-4 py-3.5 rounded-xl bg-white/80 border border-[#D9C9B6]/60 focus:outline-none focus:border-[#D9C9B6] focus:ring-1 focus:ring-[#D9C9B6]/50 text-[#7A736E] placeholder-[#A39B95]/50 transition-all text-[15px]"
+          />
         </div>
 
-        {!isOpened ? (
-          <button style={styles.button} onClick={() => setIsOpened(true)}>
-            打開信封
+        {/* 送禮人輸入框 */}
+        <div>
+          <label className="block text-[13px] text-[#A39B95] mb-1.5 tracking-widest">
+            送禮人
+          </label>
+          <input
+            type="text"
+            value={from}
+            onChange={(e) => setFrom(e.target.value)}
+            placeholder="你的名字或暱稱"
+            className="w-full px-4 py-3.5 rounded-xl bg-white/80 border border-[#D9C9B6]/60 focus:outline-none focus:border-[#D9C9B6] focus:ring-1 focus:ring-[#D9C9B6]/50 text-[#7A736E] placeholder-[#A39B95]/50 transition-all text-[15px]"
+          />
+        </div>
+
+        {/* 祝福內容 (不帶入網址，純粹留存在面板或後續存檔使用) */}
+        <div>
+          <label className="block text-[13px] text-[#A39B95] mb-1.5 tracking-widest">
+            祝福內容 <span className="text-[11px] opacity-60">(選填)</span>
+          </label>
+          <textarea
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            placeholder="寫下你想說的話..."
+            rows={3}
+            className="w-full px-4 py-3.5 rounded-xl bg-white/80 border border-[#D9C9B6]/60 focus:outline-none focus:border-[#D9C9B6] focus:ring-1 focus:ring-[#D9C9B6]/50 text-[#7A736E] placeholder-[#A39B95]/50 transition-all resize-none text-[15px]"
+          />
+        </div>
+
+        {/* LINE 分享按鈕 */}
+        <div className="pt-4">
+          <button
+            onClick={handleLineShare}
+            className="w-full py-4 rounded-full bg-[#7A9B7A] text-white text-[15px] font-medium tracking-[0.2em] hover:bg-[#688768] active:scale-[0.98] transition-all duration-300 shadow-sm flex items-center justify-center gap-2"
+          >
+            透過 LINE 送出祝福
           </button>
-        ) : (
-          <div style={styles.messageBox}>
-            <p style={styles.message}>願今天的你，被溫柔地接住。</p>
-            <p style={styles.messageSmall}>
-              慢慢來也沒關係，這份祝福會陪你一下。
-            </p>
-          </div>
-        )}
-
-        <Link href="/" style={styles.homeLink}>
-          我也想送出一封祝福
-        </Link>
-      </section>
-
-      <style jsx>{`
-        @keyframes fall {
-          0% {
-            transform: translateY(-20px) rotate(0deg);
-            opacity: 0;
-          }
-          15% {
-            opacity: 0.75;
-          }
-          100% {
-            transform: translateY(110vh) rotate(220deg);
-            opacity: 0;
-          }
-        }
-
-        @media (max-width: 520px) {
-          main {
-            padding: 28px 16px !important;
-          }
-        }
-      `}</style>
-    </main>
+        </div>
+      </div>
+    </div>
   );
 }
-
-const styles: Record<string, React.CSSProperties> = {
-  page: {
-    minHeight: "100vh",
-    padding: "56px 20px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    background:
-      "radial-gradient(circle at top, #fff7ef 0%, #f8e6dc 38%, #fffaf4 100%)",
-    color: "#2b2421",
-    position: "relative",
-    overflow: "hidden",
-  },
-  petals: {
-    position: "fixed",
-    inset: 0,
-    pointerEvents: "none",
-    overflow: "hidden",
-  },
-  petal: {
-    position: "absolute",
-    top: "-24px",
-    width: "14px",
-    height: "20px",
-    borderRadius: "14px 14px 14px 4px",
-    background: "rgba(245, 190, 198, 0.55)",
-    animation: "fall 9s linear infinite",
-  },
-  card: {
-    width: "min(720px, 100%)",
-    padding: "48px 28px",
-    borderRadius: "32px",
-    border: "1px solid rgba(210, 170, 145, 0.48)",
-    background: "rgba(255, 252, 247, 0.82)",
-    boxShadow: "0 24px 80px rgba(120, 80, 54, 0.13)",
-    textAlign: "center",
-    backdropFilter: "blur(10px)",
-    position: "relative",
-    zIndex: 1,
-  },
-  kicker: {
-    margin: 0,
-    color: "#c85d45",
-    fontSize: "13px",
-    letterSpacing: "0.22em",
-    fontWeight: 700,
-  },
-  title: {
-    margin: "18px auto 0",
-    fontSize: "clamp(26px, 4.2vw, 40px)",
-    lineHeight: 1.15,
-    fontWeight: 700,
-    letterSpacing: "-0.04em",
-  },
-  subtitle: {
-    margin: "18px auto 0",
-    color: "#6e625c",
-    fontSize: "18px",
-    lineHeight: 1.8,
-  },
-  envelope: {
-  width: "210px",
- height: "148px",
-    margin: "38px auto 28px",
-    position: "relative",
-    transition: "transform 0.6s ease",
-  },
-  envelopeFlap: {
-    position: "absolute",
-    top: 0,
-    left: "50%",
-  width: "144px",
-height: "144px",
-    transform: "translateX(-50%) rotate(45deg)",
-    background: "#f4cfc4",
-    borderRadius: "18px",
-    border: "1px solid rgba(197, 137, 119, 0.38)",
-  },
-  envelopeBody: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    bottom: 0,
-    height: "102px",
-    borderRadius: "18px",
-    background:
-      "linear-gradient(135deg, #fff8f0 0%, #f7d9cf 55%, #fff3ea 100%)",
-    border: "1px solid rgba(197, 137, 119, 0.45)",
-    boxShadow: "0 14px 32px rgba(130, 87, 64, 0.16)",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  envelopeText: {
-    fontSize: "42px",
-  },
-  button: {
-    appearance: "none",
-    border: "none",
-    borderRadius: "999px",
-    padding: "14px 34px",
-    background: "#c85d45",
-    color: "#fff",
-    fontSize: "17px",
-    fontWeight: 700,
-    cursor: "pointer",
-    boxShadow: "0 12px 28px rgba(200, 93, 69, 0.24)",
-  },
-  messageBox: {
-    margin: "0 auto",
-    maxWidth: "520px",
-    padding: "24px 22px",
-    borderRadius: "24px",
-    background: "rgba(255, 246, 240, 0.95)",
-    border: "1px solid rgba(210, 170, 145, 0.4)",
-    animation: "fadeIn 0.5s ease",
-  },
-  message: {
-    margin: 0,
-    fontSize: "25px",
-    lineHeight: 1.7,
-    fontWeight: 700,
-  },
-  messageSmall: {
-    margin: "12px 0 0",
-    color: "#756860",
-    fontSize: "16px",
-    lineHeight: 1.8,
-  },
-  homeLink: {
-    display: "inline-block",
-    marginTop: "26px",
-    color: "#9f4d3d",
-    fontSize: "15px",
-    textDecoration: "none",
-  },
-};
