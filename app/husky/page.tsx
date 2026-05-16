@@ -500,7 +500,8 @@ const handleCopyCaption = async (item: StickerItem) => {
     fontWeight: 700,
     cursor: "pointer",
   }}
->  {copiedId === selectedSticker.id ? "已複製" : "複製這句"}
+  > {copiedId === selectedSticker.id ? "已複製" : "複製這句"}
+</button>
 
 <button
   onClick={() => handleDownloadImage(selectedSticker)}
