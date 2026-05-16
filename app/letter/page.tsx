@@ -108,7 +108,7 @@ const styles: Record<string, React.CSSProperties> = {
     animation: "fall 9s linear infinite",
   },
   card: {
-    width: "min(720px, 100%)",
+    width: "min(560px, 100%)",
     padding: "48px 28px",
     borderRadius: "32px",
     border: "1px solid rgba(210, 170, 145, 0.48)",
@@ -128,7 +128,7 @@ const styles: Record<string, React.CSSProperties> = {
   },
   title: {
     margin: "18px auto 0",
-    fontSize: "clamp(34px, 6vw, 64px)",
+    fontSize: "clamp(30px, 5vw, 46px)",
     lineHeight: 1.15,
     fontWeight: 700,
     letterSpacing: "-0.04em",
@@ -140,8 +140,8 @@ const styles: Record<string, React.CSSProperties> = {
     lineHeight: 1.8,
   },
   envelope: {
-    width: "220px",
-    height: "150px",
+    width: "180px",
+    height: "128px",
     margin: "38px auto 28px",
     position: "relative",
     transition: "transform 0.6s ease",
