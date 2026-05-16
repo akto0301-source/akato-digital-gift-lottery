@@ -24,15 +24,31 @@ export default function LetterPage() {
 
         <p style={styles.subtitle}>有人為你留下了一份心意。</p>
 
-        <div
-          style={{
-            ...styles.envelope,
-            transform: isOpened ? "translateY(-4px)" : "translateY(0)",
-          }}
-        >
-          <div style={styles.envelopeFlap} />
-          <div style={styles.envelopeBody}>
-            <span style={styles.envelopeText}>✉️</span>
+        <div style={styles.envelopeArea}>
+          <div
+            style={{
+              ...styles.envelope,
+              transform: isOpened ? "translateY(-4px)" : "translateY(0)",
+            }}
+          >
+            <div style={styles.envelopeFlap} />
+            <div style={styles.envelopeBody}>
+              <span style={styles.envelopeText}>✉️</span>
+            </div>
+          </div>
+
+          <div
+            style={{
+              ...styles.messageBox,
+              opacity: isOpened ? 1 : 0,
+              transform: isOpened ? "translateY(0)" : "translateY(10px)",
+              pointerEvents: isOpened ? "auto" : "none",
+            }}
+          >
+            <p style={styles.message}>願今天的你，被溫柔地接住。</p>
+            <p style={styles.messageSmall}>
+              慢慢來也沒關係，這份祝福會陪你一下。
+            </p>
           </div>
         </div>
 
@@ -40,14 +56,7 @@ export default function LetterPage() {
           <button style={styles.button} onClick={() => setIsOpened(true)}>
             打開信封
           </button>
-        ) : (
-          <div style={styles.messageBox}>
-            <p style={styles.message}>願今天的你，被溫柔地接住。</p>
-            <p style={styles.messageSmall}>
-              慢慢來也沒關係，這份祝福會陪你一下。
-            </p>
-          </div>
-        )}
+        ) : null}
 
         <Link href="/" style={styles.homeLink}>
           我也想送出一封祝福
@@ -128,7 +137,7 @@ const styles: Record<string, React.CSSProperties> = {
   },
   title: {
     margin: "18px auto 0",
-    fontSize: "clamp(30px, 5vw, 46px)",
+    fontSize: "clamp(26px, 4.2vw, 40px)",
     lineHeight: 1.15,
     fontWeight: 700,
     letterSpacing: "-0.04em",
@@ -139,10 +148,17 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: "18px",
     lineHeight: 1.8,
   },
-  envelope: {
-    width: "180px",
-    height: "128px",
+  envelopeArea: {
     margin: "38px auto 28px",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    gap: "18px",
+  },
+  envelope: {
+    width: "210px",
+    height: "148px",
+    margin: 0,
     position: "relative",
     transition: "transform 0.6s ease",
   },
@@ -150,8 +166,8 @@ const styles: Record<string, React.CSSProperties> = {
     position: "absolute",
     top: 0,
     left: "50%",
-    width: "150px",
-    height: "150px",
+    width: "144px",
+    height: "144px",
     transform: "translateX(-50%) rotate(45deg)",
     background: "#f4cfc4",
     borderRadius: "18px",
@@ -162,7 +178,7 @@ const styles: Record<string, React.CSSProperties> = {
     left: 0,
     right: 0,
     bottom: 0,
-    height: "105px",
+    height: "102px",
     borderRadius: "18px",
     background:
       "linear-gradient(135deg, #fff8f0 0%, #f7d9cf 55%, #fff3ea 100%)",
@@ -194,7 +210,7 @@ const styles: Record<string, React.CSSProperties> = {
     borderRadius: "24px",
     background: "rgba(255, 246, 240, 0.95)",
     border: "1px solid rgba(210, 170, 145, 0.4)",
-    animation: "fadeIn 0.5s ease",
+    transition: "opacity 0.5s ease, transform 0.5s ease",
   },
   message: {
     margin: 0,
