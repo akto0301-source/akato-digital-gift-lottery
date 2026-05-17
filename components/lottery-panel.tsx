@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import type { ContentLibrary, ContentLot } from "@/lib/content";
 
-// 定義籤詩與資料流介面
+// 內部 UI 專用的籤詩結構
 interface Lot {
   id: number;
   name: string;
@@ -15,10 +16,10 @@ interface Lot {
   blessing: string;    // 祝賀語
 }
 
-interface LotteryPanelProps {
-  library?: any;       // 相容首頁傳入之各種資料格式
-  initialLot?: Lot;
-}
+type LotteryPanelProps = {
+  library: ContentLibrary;
+  initialLot?: ContentLot | null; // 修正此處型別，允許接受 null，與首頁完美契合
+};
 
 // ==========================================
 // 預設經典籤詩庫（與您的設計圖完美對齊）
@@ -60,10 +61,37 @@ const DEFAULT_LIBRARY: Lot[] = [
 ];
 
 // ==========================================
-// 自動資料結構轉換解析器 (保障首頁資料對接不崩潰)
+// 高防禦性資料正規化轉換函式 (防範未填欄位或型別衝突)
 // ==========================================
-const extractLots = (lib: any): Lot[] => {
-  if (!lib) return DEFAULT_LIBRARY;
+function normalizeLot(lot: ContentLot | null | undefined): Lot | null {
+  if (!lot) return null;
+
+  // 嘗試取得 poem 欄位，若不存在則降級讀取 description
+  let parsedPoem: string[] | string = "";
+  if (lot.poem) {
+    parsedPoem = lot.poem;
+  } else if ((lot as any).description) {
+    parsedPoem = (lot as any).description;
+  }
+
+  return {
+    id: Number(lot.id ?? 0),
+    name: lot.name ?? "",
+    fortune: lot.fortune ?? (lot as any).title ?? "",
+    poem: parsedPoem,
+    love: lot.love ?? "",
+    career: lot.career ?? "",
+    wealth: lot.wealth ?? "",
+    reminder: lot.reminder ?? "",
+    blessing: lot.blessing ?? (lot as any).wish ?? "",
+  };
+}
+
+// ==========================================
+// 自動資料結構轉換解析器
+// ==========================================
+const extractLots = (lib: any): any[] => {
+  if (!lib) return [];
   if (Array.isArray(lib)) return lib;
   
   if (typeof lib === 'object') {
@@ -76,7 +104,7 @@ const extractLots = (lib: any): Lot[] => {
       if (Array.isArray(lib[key])) return lib[key];
     }
   }
-  return DEFAULT_LIBRARY;
+  return [];
 };
 
 function LotteryPanel({ library, initialLot }: LotteryPanelProps) {
@@ -86,14 +114,25 @@ function LotteryPanel({ library, initialLot }: LotteryPanelProps) {
   const [currentLot, setCurrentLot] = useState<Lot | null>(null);
   const [isCopied, setIsCopied] = useState(false);
 
-  // 解析安全的籤詩陣列
-  const lotsArray = extractLots(library);
+  // 解析安全的籤詩陣列，並使用 useMemo 進行極致的效能緩存，避免觸發 useEffect 的無限迴圈
+  const lotsArray = useMemo(() => {
+    const rawLots = extractLots(library);
+    if (rawLots.length === 0) {
+      return DEFAULT_LIBRARY; // 降級機制：使用設計圖對齊的預設好籤
+    }
+    return rawLots
+      .map(lot => normalizeLot(lot))
+      .filter((lot): lot is Lot => lot !== null);
+  }, [library]);
 
   useEffect(() => {
     setIsMounted(true);
-    // 預設或初始帶入第 1 籤，與您的設計圖完美對齊
+    // 關鍵修正：initialLot 進入 state 前先進行資料格式正規化，不直接帶入
     if (initialLot) {
-      setCurrentLot(initialLot);
+      const normalized = normalizeLot(initialLot);
+      if (normalized) {
+        setCurrentLot(normalized);
+      }
     } else if (lotsArray.length > 0) {
       setCurrentLot(lotsArray[0]);
     }
@@ -359,6 +398,41 @@ function LotteryPanel({ library, initialLot }: LotteryPanelProps) {
                 <svg className={`w-3.5 h-3.5 transform transition-transform duration-300 ${showExplain ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"/>
                 </svg>
+              </button>
+            </div>
+
+            {/* 細緻解籤展開面板 */}
+            {showExplain && (
+              <div className="mt-8 pt-6 border-t border-[#E6D9CC]/30 space-y-4 animate-fade-in pl-1 text-left">
+                <div>
+                  <h4 className="text-[12px] text-[#D29A90] font-semibold tracking-wider mb-1">感情</h4>
+                  <p className="text-[14px] font-light text-[#8B8580] leading-relaxed">{currentLot.love}</p>
+                </div>
+                <div>
+                  <h4 className="text-[12px] text-[#D29A90] font-semibold tracking-wider mb-1">事業</h4>
+                  <p className="text-[14px] font-light text-[#8B8580] leading-relaxed">{currentLot.career}</p>
+                </div>
+                <div>
+                  <h4 className="text-[12px] text-[#D29A90] font-semibold tracking-wider mb-1">財運</h4>
+                  <p className="text-[14px] font-light text-[#8B8580] leading-relaxed">{currentLot.wealth}</p>
+                </div>
+                <div>
+                  <h4 className="text-[12px] text-[#D29A90] font-semibold tracking-wider mb-1">今日提醒</h4>
+                  <p className="text-[14px] font-light text-[#8B8580] leading-relaxed">{currentLot.reminder}</p>
+                </div>
+              </div>
+            )}
+
+          </div>
+
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default LotteryPanel;
+export { LotteryPanel };                </svg>
               </button>
             </div>
 
