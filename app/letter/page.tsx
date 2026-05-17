@@ -167,56 +167,30 @@ const [giftMessage, setGiftMessage] = useState<string | null>(null);
       color: '#7A736E',
       letterSpacing: '0.08em',
       textAlign: 'center',
-      margin: 0,
+margin: 0,
+width: '100%',
+position: 'relative',
+zIndex: 3,
     }}
   >
     {giftMessage || '慢慢來也沒關係，這份祝福會陪你一下。'}
   </p>
 
   <p
-    style={{
-      fontSize: '14px',
-      fontWeight: 300,
-      letterSpacing: '0.1em',
-      color: '#A39B95',
-      margin: 0,
-    }}
-  >
-    {displayFrom ? `來自 ${displayFrom} 的祝福` : ''}
-  </p>
-</div>
   style={{
+    fontSize: '14px',
+    fontWeight: 300,
+    letterSpacing: '0.1em',
+    color: '#A39B95',
+    margin: '18px 0 0',
     position: 'relative',
-    width: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: '14px',
-    transition: 'all 0.8s ease-out',
-    marginTop: '18px',
-    marginBottom: '28px',
+    zIndex: 2,
   }}
 >
-          <p
-  style={{
-   fontSize: 'clamp(23px, 4.8vw, 30px)',
-fontWeight: 600,
-lineHeight: 1.55,
-maxWidth: '720px',
-    color: '#7A736E',
-    letterSpacing: '0.08em',
-    textAlign: 'center',
-    margin: 0,
-  }}
->
-  {giftMessage || '慢慢來也沒關係，這份祝福會陪你一下。'}
+  {displayFrom ? `來自 ${displayFrom} 的祝福` : ''}
 </p>
-            <p style={{ fontSize: '14px', fontWeight: 300, letterSpacing: '0.1em', color: '#A39B95' }}>
-              {displayFrom ? `來自 ${displayFrom} 的祝福` : ''}
-            </p>
-          </div>
+</div>
 
-        </div>
 
         {/* ==================================================== */}
         {/* 信封 SVG (增加 marginTop 確保與上方文字有足夠留白) */}
