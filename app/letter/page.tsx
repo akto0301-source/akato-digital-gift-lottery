@@ -123,29 +123,86 @@ const [giftMessage, setGiftMessage] = useState<string | null>(null);
             你收到一封來自<br/>Akato 的祝福信
           </span>
           
-          <span style={{ position: 'absolute', width: '100%', whiteSpace: 'normal', wordBreak: 'keep-all',fontSize: 'clamp(22px, 4vw, 28px)',
-fontWeight: 400,
-lineHeight: 1.6,
-color: '#8B8580',
-letterSpacing: '0.08em', transition: 'all 0.8s ease-out 0.45s', opacity: isOpened ? 1 : 0, transform: isOpened ? 'translateY(0)' : 'translateY(16px)', pointerEvents: isOpened ? 'auto' : 'none' }}>
-            願今天的你，<br/>被溫柔地接住。
-          </span>
+        <span
+  style={{
+    position: 'absolute',
+    width: '100%',
+    whiteSpace: 'normal',
+    wordBreak: 'keep-all',
+    fontSize: 'clamp(18px, 3.8vw, 24px)',
+    fontWeight: 400,
+    lineHeight: 1.5,
+    color: '#8B8580',
+    letterSpacing: '0.08em',
+    transition: 'all 0.8s ease-out 0.45s',
+    opacity: isOpened ? 1 : 0,
+    transform: isOpened ? 'translateY(0)' : 'translateY(16px)',
+    pointerEvents: 'none',
+  }}
+>
+  願今天的你，<br/>被溫柔地接住。
+</span>
 
         </h1>
 
         {/* 副標題 / 補充文字 / 送禮人 (調高 height 避免開信後壓到下方信封) */}
-        <div style={{ height: '76px', position: 'relative', width: '100%', marginBottom: '8px', display: 'flex', justifyContent: 'center' }}>
-          
-        <p style={{ fontSize: '15px', fontWeight: 300, letterSpacing: '0.1em' }}>
-        {giftMessage || '慢慢來也沒關係，這份祝福會陪你一下。'}
-        </p>
-          
-          <div style={{ position: 'absolute', top: 0, width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', transition: 'all 0.8s ease-out 0.65s', opacity: isOpened ? 1 : 0, transform: isOpened ? 'translateY(0)' : 'translateY(8px)', pointerEvents: isOpened ? 'auto' : 'none' }}>
+        <div
+  style={{
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: '14px',
+    transition: 'all 0.8s ease-out',
+    marginTop: '18px',
+    marginBottom: '28px',
+  }}
+>
+  <p
+    style={{
+      fontSize: 'clamp(23px, 4.8vw, 30px)',
+      fontWeight: 600,
+      lineHeight: 1.55,
+      maxWidth: '720px',
+      color: '#7A736E',
+      letterSpacing: '0.08em',
+      textAlign: 'center',
+      margin: 0,
+    }}
+  >
+    {giftMessage || '慢慢來也沒關係，這份祝福會陪你一下。'}
+  </p>
+
+  <p
+    style={{
+      fontSize: '14px',
+      fontWeight: 300,
+      letterSpacing: '0.1em',
+      color: '#A39B95',
+      margin: 0,
+    }}
+  >
+    {displayFrom ? `來自 ${displayFrom} 的祝福` : ''}
+  </p>
+</div>
+  style={{
+    position: 'relative',
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: '14px',
+    transition: 'all 0.8s ease-out',
+    marginTop: '18px',
+    marginBottom: '28px',
+  }}
+>
           <p
   style={{
-    fontSize: 'clamp(28px, 5.5vw, 36px)',
-    fontWeight: 600,
-    lineHeight: 1.7,
+   fontSize: 'clamp(23px, 4.8vw, 30px)',
+fontWeight: 600,
+lineHeight: 1.55,
+maxWidth: '720px',
     color: '#7A736E',
     letterSpacing: '0.08em',
     textAlign: 'center',
