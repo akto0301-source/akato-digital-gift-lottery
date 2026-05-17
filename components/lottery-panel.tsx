@@ -34,7 +34,7 @@ const DEFAULT_LIBRARY: Lot[] = [
     career: "眼前的停滯只是在累積養分，當下的努力正在為未來奠定深厚基石。",
     wealth: "細水長流，穩健的儲蓄與規劃將為你帶來豐碩的成果。",
     reminder: "放慢腳步，去感受那些正在悄悄發生的美好轉變。",
-    blessing: "願新的一歲，有花、有光，也有剛剛好的好運。"
+    blessing: "願新的一歲，有花、有光，也有剛剛好的好運."
   },
   {
     id: 2,
@@ -66,26 +66,27 @@ const DEFAULT_LIBRARY: Lot[] = [
 function normalizeLot(lot: ContentLot | null | undefined): Lot | null {
   if (!lot) return null;
 
-  // 嘗試取得 poem 欄位，若不存在則降級讀取 description
-  let parsedPoem: string[] | string = "";
-  if (lot.poem) {
-    parsedPoem = lot.poem;
-  } else if ((lot as any).description) {
-    parsedPoem = (lot as any).description;
-  }
+  const safeLot = lot as any;
+
+  const parsedPoem =
+    safeLot.poem ??
+    safeLot.description ??
+    safeLot.summary ??
+    "";
 
   return {
-    id: Number(lot.id ?? 0),
-    name: lot.name ?? "",
-    fortune: lot.fortune ?? (lot as any).title ?? "",
+    id: Number(safeLot.id ?? 0),
+    name: safeLot.name ?? "",
+    fortune: safeLot.fortune ?? safeLot.title ?? "",
     poem: parsedPoem,
-    love: lot.love ?? "",
-    career: lot.career ?? "",
-    wealth: lot.wealth ?? "",
-    reminder: lot.reminder ?? "",
-    blessing: lot.blessing ?? (lot as any).wish ?? "",
+    love: safeLot.love ?? "",
+    career: safeLot.career ?? "",
+    wealth: safeLot.wealth ?? "",
+    reminder: safeLot.reminder ?? "",
+    blessing: safeLot.blessing ?? safeLot.wish ?? "",
   };
 }
+   
 
 // ==========================================
 // 自動資料結構轉換解析器
@@ -398,41 +399,6 @@ function LotteryPanel({ library, initialLot }: LotteryPanelProps) {
                 <svg className={`w-3.5 h-3.5 transform transition-transform duration-300 ${showExplain ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"/>
                 </svg>
-              </button>
-            </div>
-
-            {/* 細緻解籤展開面板 */}
-            {showExplain && (
-              <div className="mt-8 pt-6 border-t border-[#E6D9CC]/30 space-y-4 animate-fade-in pl-1 text-left">
-                <div>
-                  <h4 className="text-[12px] text-[#D29A90] font-semibold tracking-wider mb-1">感情</h4>
-                  <p className="text-[14px] font-light text-[#8B8580] leading-relaxed">{currentLot.love}</p>
-                </div>
-                <div>
-                  <h4 className="text-[12px] text-[#D29A90] font-semibold tracking-wider mb-1">事業</h4>
-                  <p className="text-[14px] font-light text-[#8B8580] leading-relaxed">{currentLot.career}</p>
-                </div>
-                <div>
-                  <h4 className="text-[12px] text-[#D29A90] font-semibold tracking-wider mb-1">財運</h4>
-                  <p className="text-[14px] font-light text-[#8B8580] leading-relaxed">{currentLot.wealth}</p>
-                </div>
-                <div>
-                  <h4 className="text-[12px] text-[#D29A90] font-semibold tracking-wider mb-1">今日提醒</h4>
-                  <p className="text-[14px] font-light text-[#8B8580] leading-relaxed">{currentLot.reminder}</p>
-                </div>
-              </div>
-            )}
-
-          </div>
-
-        </div>
-      )}
-    </div>
-  );
-}
-
-export default LotteryPanel;
-export { LotteryPanel };                </svg>
               </button>
             </div>
 
