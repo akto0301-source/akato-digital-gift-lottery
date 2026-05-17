@@ -123,7 +123,11 @@ const [giftMessage, setGiftMessage] = useState<string | null>(null);
             你收到一封來自<br/>Akato 的祝福信
           </span>
           
-          <span style={{ position: 'absolute', width: '100%', whiteSpace: 'normal', wordBreak: 'keep-all', transition: 'all 0.8s ease-out 0.45s', opacity: isOpened ? 1 : 0, transform: isOpened ? 'translateY(0)' : 'translateY(16px)', pointerEvents: isOpened ? 'auto' : 'none' }}>
+          <span style={{ position: 'absolute', width: '100%', whiteSpace: 'normal', wordBreak: 'keep-all',fontSize: 'clamp(22px, 4vw, 28px)',
+fontWeight: 400,
+lineHeight: 1.6,
+color: '#8B8580',
+letterSpacing: '0.08em', transition: 'all 0.8s ease-out 0.45s', opacity: isOpened ? 1 : 0, transform: isOpened ? 'translateY(0)' : 'translateY(16px)', pointerEvents: isOpened ? 'auto' : 'none' }}>
             願今天的你，<br/>被溫柔地接住。
           </span>
 
@@ -137,9 +141,19 @@ const [giftMessage, setGiftMessage] = useState<string | null>(null);
         </p>
           
           <div style={{ position: 'absolute', top: 0, width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', transition: 'all 0.8s ease-out 0.65s', opacity: isOpened ? 1 : 0, transform: isOpened ? 'translateY(0)' : 'translateY(8px)', pointerEvents: isOpened ? 'auto' : 'none' }}>
-           <p style={{ fontSize: '15px', fontWeight: 300, letterSpacing: '0.1em' }}>
-         {giftMessage || '慢慢來也沒關係，這份祝福會陪你一下。'}
-         </p>
+          <p
+  style={{
+    fontSize: 'clamp(28px, 5.5vw, 36px)',
+    fontWeight: 600,
+    lineHeight: 1.7,
+    color: '#7A736E',
+    letterSpacing: '0.08em',
+    textAlign: 'center',
+    margin: 0,
+  }}
+>
+  {giftMessage || '慢慢來也沒關係，這份祝福會陪你一下。'}
+</p>
             <p style={{ fontSize: '14px', fontWeight: 300, letterSpacing: '0.1em', color: '#A39B95' }}>
               {displayFrom ? `來自 ${displayFrom} 的祝福` : ''}
             </p>
