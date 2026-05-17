@@ -63,7 +63,7 @@ function buildGiftLink({ from, to, message }: FormState) {
   const params = new URLSearchParams({ from, to, message });
   const origin = typeof window === "undefined" ? DEFAULT_ORIGIN : window.location.origin;
 
-  return `${origin}/confirm?${params.toString()}`;
+  return `${origin}/letter?${params.toString()}`;
 }
 
 function buildShareText(fromName: string, toName: string, url: string) {
