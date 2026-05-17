@@ -67,7 +67,8 @@ export default function LetterPage() {
   
   // URL 參數狀態
   const [fromName, setFromName] = useState<string | null>(null);
-  const [toName, setToName] = useState<string | null>(null);
+const [toName, setToName] = useState<string | null>(null);
+const [giftMessage, setGiftMessage] = useState<string | null>(null);
 
   // 初始化讀取 URL (僅在 Client 端執行，完全防範 Hydration Error)
   useEffect(() => {
@@ -76,9 +77,11 @@ export default function LetterPage() {
       const searchParams = new URLSearchParams(window.location.search);
       const urlFrom = searchParams.get('from');
       const urlTo = searchParams.get('to');
+      const urlMessage = searchParams.get('message');
       
       if (urlFrom && urlFrom.trim() !== '') setFromName(urlFrom.trim());
       if (urlTo && urlTo.trim() !== '') setToName(urlTo.trim());
+      if (urlMessage && urlMessage.trim() !== '') setGiftMessage(urlMessage.trim());
     }
   }, []);
 
@@ -129,14 +132,14 @@ export default function LetterPage() {
         {/* 副標題 / 補充文字 / 送禮人 (調高 height 避免開信後壓到下方信封) */}
         <div style={{ height: '76px', position: 'relative', width: '100%', marginBottom: '8px', display: 'flex', justifyContent: 'center' }}>
           
-          <p style={{ position: 'absolute', top: 0, transition: 'all 0.6s ease-out', fontSize: '15px', fontWeight: 300, letterSpacing: '0.1em', opacity: isOpened ? 0 : 1, transform: isOpened ? 'translateY(-4px)' : 'translateY(0)', pointerEvents: isOpened ? 'none' : 'auto' }}>
-            有人為你留下了一份心意。
-          </p>
+        <p style={{ fontSize: '15px', fontWeight: 300, letterSpacing: '0.1em' }}>
+        {giftMessage || '慢慢來也沒關係，這份祝福會陪你一下。'}
+        </p>
           
           <div style={{ position: 'absolute', top: 0, width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', transition: 'all 0.8s ease-out 0.65s', opacity: isOpened ? 1 : 0, transform: isOpened ? 'translateY(0)' : 'translateY(8px)', pointerEvents: isOpened ? 'auto' : 'none' }}>
-            <p style={{ fontSize: '15px', fontWeight: 300, letterSpacing: '0.1em' }}>
-              慢慢來也沒關係，這份祝福會陪你一下。
-            </p>
+           <p style={{ fontSize: '15px', fontWeight: 300, letterSpacing: '0.1em' }}>
+         {giftMessage || '慢慢來也沒關係，這份祝福會陪你一下。'}
+         </p>
             <p style={{ fontSize: '14px', fontWeight: 300, letterSpacing: '0.1em', color: '#A39B95' }}>
               {displayFrom ? `來自 ${displayFrom} 的祝福` : ''}
             </p>
