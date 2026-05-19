@@ -146,7 +146,8 @@ const [giftMessage, setGiftMessage] = useState<string | null>(null);
         </h1>
 
         {/* 副標題 / 補充文字 / 送禮人 (調高 height 避免開信後壓到下方信封) */}
-        <div
+        {isOpened ? (
+      <div
   style={{
     width: '100%',
     display: 'flex',
@@ -190,6 +191,7 @@ zIndex: 3,
   {displayFrom ? `來自 ${displayFrom} 的祝福` : ''}
 </p>
 </div>
+    ) : null}
 
 
         {/* ==================================================== */}
