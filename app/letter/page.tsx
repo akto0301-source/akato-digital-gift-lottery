@@ -22,7 +22,11 @@ export default function LetterPage() {
 
         <h1 style={styles.title}>你收到一封來自 Akato 的祝福信</h1>
 
-        <p style={styles.subtitle}>有人為你留下了一份心意。</p>
+        <p style={styles.subtitle}>
+          {isOpened
+            ? "有人為你留下了一份心意。"
+            : "點開信封，收下這份祝福。"}
+        </p>
 
         <div style={styles.envelopeArea}>
           <div
@@ -37,19 +41,21 @@ export default function LetterPage() {
             </div>
           </div>
 
-          <div
-            style={{
-              ...styles.messageBox,
-              opacity: isOpened ? 1 : 0,
-              transform: isOpened ? "translateY(0)" : "translateY(10px)",
-              pointerEvents: isOpened ? "auto" : "none",
-            }}
-          >
-            <p style={styles.message}>願今天的你，被溫柔地接住。</p>
-            <p style={styles.messageSmall}>
-              慢慢來也沒關係，這份祝福會陪你一下。
-            </p>
-          </div>
+          {isOpened ? (
+            <div
+              style={{
+                ...styles.messageBox,
+                opacity: 1,
+                transform: "translateY(0)",
+                pointerEvents: "auto",
+              }}
+            >
+              <p style={styles.message}>願今天的你，被溫柔地接住。</p>
+              <p style={styles.messageSmall}>
+                慢慢來也沒關係，這份祝福會陪你一下。
+              </p>
+            </div>
+          ) : null}
         </div>
 
         {!isOpened ? (
