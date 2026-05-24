@@ -21,14 +21,35 @@ function getOrigin() {
   return typeof window === "undefined" ? DEFAULT_ORIGIN : window.location.origin;
 }
 
-function pickInitialMessage(locale: GiftLocale, cardId: string) {
-  const card = blessingCards.find((item) => item.id === cardId);
+function getCardById(cardId: string) {
+  return blessingCards.find((item) => item.id === cardId) ?? null;
+}
+
+function getCardMessages(locale: GiftLocale, cardId: string) {
+  const card = getCardById(cardId);
 
   if (!card) {
-    return "";
+    return [];
   }
 
-  return (locale === "ja" ? card.ja.messages : card.zh.messages)[0] ?? "";
+  return locale === "ja" ? card.ja.messages : card.zh.messages;
+}
+
+function pickInitialMessage(locale: GiftLocale, cardId: string) {
+  return getCardMessages(locale, cardId)[0] ?? "";
+}
+
+function pickAnotherMessage(messages: string[], currentMessage: string) {
+  if (messages.length <= 1) {
+    return currentMessage;
+  }
+
+  const candidates = messages.filter((message) => message !== currentMessage);
+  if (candidates.length === 0) {
+    return currentMessage;
+  }
+
+  return candidates[Math.floor(Math.random() * candidates.length)] ?? currentMessage;
 }
 
 export function GiftEntryPanel({ locale }: GiftEntryPanelProps) {
@@ -41,6 +62,7 @@ export function GiftEntryPanel({ locale }: GiftEntryPanelProps) {
   const [isGenerating, setIsGenerating] = useState(false);
 
   const canGenerate = !isGenerating && !!form.from.trim() && !!form.to.trim() && !!form.message.trim();
+  const canShuffleTemplateMessage = !!selectedTemplateId && getCardMessages(locale, selectedTemplateId).length > 1;
 
   const summary = useMemo(() => {
     if (!form.from.trim() || !form.to.trim()) {
@@ -70,6 +92,23 @@ export function GiftEntryPanel({ locale }: GiftEntryPanelProps) {
   function chooseTemplate(templateId: string) {
     setSelectedTemplateId(templateId);
     setForm((current) => ({ ...current, message: pickInitialMessage(locale, templateId) }));
+    invalidateGiftLink();
+  }
+
+  function shuffleTemplateMessage() {
+    if (!selectedTemplateId) {
+      return;
+    }
+
+    const messages = getCardMessages(locale, selectedTemplateId);
+    if (messages.length === 0) {
+      return;
+    }
+
+    setForm((current) => ({
+      ...current,
+      message: pickAnotherMessage(messages, current.message),
+    }));
     invalidateGiftLink();
   }
 
@@ -204,6 +243,14 @@ export function GiftEntryPanel({ locale }: GiftEntryPanelProps) {
           />
         </label>
       </div>
+
+      {canShuffleTemplateMessage ? (
+        <div className={styles.primaryActionRow}>
+          <button type="button" className={styles.secondaryButton} onClick={shuffleTemplateMessage}>
+            {copy.entry.shuffleButton}
+          </button>
+        </div>
+      ) : null}
 
       <div className={styles.primaryActionRow}>
         <button type="button" className={styles.primaryGiftButton} onClick={generateGiftLink} disabled={!canGenerate}>
