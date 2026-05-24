@@ -60,6 +60,7 @@ export function GiftEntryPanel({ locale }: GiftEntryPanelProps) {
   const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(null);
   const [needsRegeneration, setNeedsRegeneration] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const canGenerate = !isGenerating && !!form.from.trim() && !!form.to.trim() && !!form.message.trim();
   const canShuffleTemplateMessage = !!selectedTemplateId && getCardMessages(locale, selectedTemplateId).length > 1;
@@ -72,6 +73,11 @@ export function GiftEntryPanel({ locale }: GiftEntryPanelProps) {
     return `${form.from.trim()} ➜ ${form.to.trim()}`;
   }, [copy.entry.summaryFallback, form.from, form.to]);
 
+  function buildGiftLink(from: string, to: string, message: string, localeValue: GiftLocale) {
+    const params = new URLSearchParams({ from, to, message, locale: localeValue });
+    return `${getOrigin()}/letter?${params.toString()}`;
+  }
+
   function invalidateGiftLink() {
     setGiftLink((current) => {
       if (!current) {
@@ -82,6 +88,7 @@ export function GiftEntryPanel({ locale }: GiftEntryPanelProps) {
       return "";
     });
     setCopyLabel(copy.entry.copyButton);
+    setErrorMessage("");
   }
 
   function updateField(field: keyof FormState, value: string) {
@@ -122,24 +129,16 @@ export function GiftEntryPanel({ locale }: GiftEntryPanelProps) {
     }
 
     setIsGenerating(true);
+    setErrorMessage("");
 
     try {
-      const response = await fetch("/api/gift-links", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ from, to, message, locale }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to create gift link");
-      }
-
-      const data = (await response.json()) as { id: string };
-      setGiftLink(`${getOrigin()}/gift/${data.id}`);
+      const nextLink = buildGiftLink(from, to, message, locale);
+      setGiftLink(nextLink);
       setNeedsRegeneration(false);
       setCopyLabel(copy.entry.copyButton);
+    } catch {
+      setGiftLink("");
+      setErrorMessage(copy.entry.errorMessage);
     } finally {
       setIsGenerating(false);
     }
@@ -259,6 +258,7 @@ export function GiftEntryPanel({ locale }: GiftEntryPanelProps) {
       </div>
 
       {!canGenerate ? <p className={styles.refreshHint}>{copy.entry.formHint}</p> : needsRegeneration ? <p className={styles.refreshHint}>{copy.entry.refreshHint}</p> : null}
+      {errorMessage ? <p className={styles.refreshHint}>{errorMessage}</p> : null}
 
       {giftLink ? (
         <div className={styles.resultCard}>
