@@ -40,6 +40,8 @@ export function GiftEntryPanel({ locale }: GiftEntryPanelProps) {
   const [needsRegeneration, setNeedsRegeneration] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
 
+  const canGenerate = !isGenerating && !!form.from.trim() && !!form.to.trim() && !!form.message.trim();
+
   const summary = useMemo(() => {
     if (!form.from.trim() || !form.to.trim()) {
       return copy.entry.summaryFallback;
@@ -204,12 +206,12 @@ export function GiftEntryPanel({ locale }: GiftEntryPanelProps) {
       </div>
 
       <div className={styles.primaryActionRow}>
-        <button type="button" className={styles.primaryGiftButton} onClick={generateGiftLink} disabled={isGenerating}>
+        <button type="button" className={styles.primaryGiftButton} onClick={generateGiftLink} disabled={!canGenerate}>
           {isGenerating ? copy.entry.generatingButton : copy.entry.primaryButton}
         </button>
       </div>
 
-      {needsRegeneration ? <p className={styles.refreshHint}>{copy.entry.refreshHint}</p> : null}
+      {!canGenerate ? <p className={styles.refreshHint}>{copy.entry.formHint}</p> : needsRegeneration ? <p className={styles.refreshHint}>{copy.entry.refreshHint}</p> : null}
 
       {giftLink ? (
         <div className={styles.resultCard}>

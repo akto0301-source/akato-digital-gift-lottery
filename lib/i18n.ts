@@ -340,6 +340,7 @@ export function getLocaleCopy(locale: GiftLocale) {
         : "先挑一張溫柔的籤詩，再依照心意微調內容。",
       primaryButton: isJa ? "専用リンクを作成する" : "產生專屬祝福連結",
       generatingButton: isJa ? "作成中..." : "產生中...",
+      formHint: isJa ? "送る人・受け取る人・祝福の言葉をすべて入力してください。" : "請先填寫送禮人、收禮人，並選擇或填寫祝福內容。",
       copyButton: isJa ? "リンクをコピー" : "複製連結",
       copiedButton: isJa ? "コピーしました" : "已複製連結",
       shareButton: isJa ? "共有する" : "分享",

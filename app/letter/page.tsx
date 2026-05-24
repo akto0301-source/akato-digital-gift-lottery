@@ -2,6 +2,8 @@
 
 import React, { useMemo, useState } from 'react';
 import Link from 'next/link';
+import { ExtraMessagePanel } from '@/app/confirm/extra-message-panel';
+import { getLocaleCopy } from '@/lib/i18n';
 
 const PetalsBackground = () => {
   const petalConfigs = [
@@ -62,6 +64,7 @@ function getQueryValue(name: string) {
 }
 
 export default function LetterPage() {
+  const copy = getLocaleCopy('zh');
   const [isOpened, setIsOpened] = useState(false);
   const [isClicking, setIsClicking] = useState(false);
 
@@ -105,6 +108,7 @@ export default function LetterPage() {
             <p style={{ fontSize: '14px', fontWeight: 300, letterSpacing: '0.1em', color: '#A39B95', margin: '18px 0 0', position: 'relative', zIndex: 2 }}>
               {fromName ? `來自 ${fromName} 的祝福` : ''}
             </p>
+            <ExtraMessagePanel locale="zh" />
           </div>
         ) : null}
 
