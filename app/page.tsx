@@ -14,6 +14,13 @@ export function HomePage({ locale = "zh" }: HomePageProps) {
   const library = getContentLibrary();
   const initialLot = getRandomLot();
   const copy = getLocaleCopy(locale);
+  const isSampleLibrary = library.lots.some((lot) => {
+    const fortune = lot.fortune ?? "";
+    const blessing = lot.blessing ?? "";
+    const theme = lot.theme ?? "";
+
+    return lot.category === "sample" || fortune.includes("請提供") || blessing.includes("請提供") || theme.includes("sample");
+  });
 
   return (
     <main className={styles.page}>
@@ -46,7 +53,15 @@ export function HomePage({ locale = "zh" }: HomePageProps) {
       </section>
 
       <GiftEntryPanel locale={locale} />
-      <LotteryPanel library={library} initialLot={initialLot} locale={locale} />
+      {isSampleLibrary ? (
+        <section className={styles.lotteryModule}>
+          <p className={styles.moduleEyebrow}>今日好籤</p>
+          <h2>今日好籤正在準備中</h2>
+          <p className={styles.moduleLead}>稍後會帶著剛剛好的祝福回來。</p>
+        </section>
+      ) : (
+        <LotteryPanel library={library} initialLot={initialLot} locale={locale} />
+      )}
     </main>
   );
 }
