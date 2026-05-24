@@ -64,7 +64,9 @@ function getQueryValue(name: string) {
 }
 
 export default function LetterPage() {
-  const copy = getLocaleCopy('zh');
+  const localeParam = useMemo(() => getQueryValue('locale'), []);
+  const locale = localeParam === 'ja' ? 'ja' : 'zh';
+  const copy = getLocaleCopy(locale);
   const [isOpened, setIsOpened] = useState(false);
   const [isClicking, setIsClicking] = useState(false);
 
@@ -87,13 +89,13 @@ export default function LetterPage() {
 
         <div style={{ height: '32px', width: '100%', display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
           <p style={{ fontSize: '14px', fontWeight: 300, letterSpacing: '0.1em', color: '#8B8580', transition: 'all 0.6s ease-out', opacity: isOpened ? 0 : 1, transform: isOpened ? 'translateY(-8px)' : 'translateY(0)', pointerEvents: isOpened ? 'none' : 'auto' }}>
-            {toName ? `給 ${toName}` : ''}
+            {toName ? (locale === 'ja' ? `宛先 ${toName}` : `給 ${toName}`) : ''}
           </p>
         </div>
 
         <h1 style={{ fontSize: 'clamp(28px, 5vw, 42px)', position: 'relative', width: '100%', maxWidth: '380px', margin: '8px auto 16px auto', display: 'flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1.4, fontWeight: 500, color: '#7A736E', minHeight: '5.5rem' }}>
           <span style={{ position: 'absolute', width: '100%', whiteSpace: 'normal', wordBreak: 'keep-all', transition: 'all 0.6s ease-out', opacity: isOpened ? 0 : 1, transform: isOpened ? 'translateY(-8px)' : 'translateY(0)', pointerEvents: isOpened ? 'none' : 'auto' }}>
-            你收到一封來自<br />Akato 的祝福信
+            {locale === 'ja' ? <>Akato からの<br />祝福の手紙が届きました</> : <>你收到一封來自<br />Akato 的祝福信</>}
           </span>
           <span style={{ position: 'absolute', width: '100%', whiteSpace: 'normal', wordBreak: 'keep-all', fontSize: 'clamp(18px, 3.8vw, 24px)', fontWeight: 400, lineHeight: 1.5, color: '#8B8580', letterSpacing: '0.08em', transition: 'all 0.8s ease-out 0.45s', opacity: isOpened ? 1 : 0, transform: isOpened ? 'translateY(0)' : 'translateY(16px)', pointerEvents: 'none' }}>
             願今天的你，<br />被溫柔地接住。
@@ -106,9 +108,9 @@ export default function LetterPage() {
               {giftMessage || '慢慢來也沒關係，這份祝福會陪你一下。'}
             </p>
             <p style={{ fontSize: '14px', fontWeight: 300, letterSpacing: '0.1em', color: '#A39B95', margin: '18px 0 0', position: 'relative', zIndex: 2 }}>
-              {fromName ? `來自 ${fromName} 的祝福` : ''}
+              {fromName ? (locale === 'ja' ? `${fromName} からの祝福` : `來自 ${fromName} 的祝福`) : ''}
             </p>
-            <ExtraMessagePanel locale="zh" />
+            <ExtraMessagePanel locale={locale} />
           </div>
         ) : null}
 

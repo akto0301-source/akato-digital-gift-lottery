@@ -342,6 +342,7 @@ export function getLocaleCopy(locale: GiftLocale) {
       generatingButton: isJa ? "作成中..." : "產生中...",
       formHint: isJa ? "贈る人、受け取る人、伝えたい言葉を入力してください。" : "請先填寫送禮人、收禮人，並選擇或填寫祝福內容。",
       shuffleButton: isJa ? "ひとこと変えてみる" : "換一句看看",
+      errorMessage: isJa ? "リンクの作成に失敗しました。入力内容を確認して、もう一度お試しください。" : "產生連結失敗，請確認內容後再試一次。",
       copyButton: isJa ? "リンクをコピー" : "複製連結",
       copiedButton: isJa ? "コピーしました" : "已複製連結",
       shareButton: isJa ? "共有する" : "分享",
