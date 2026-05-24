@@ -1,57 +1,11 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { getContentLibrary } from "@/lib/content";
 import styles from "@/app/page.module.css";
+import { blessingCards, getLocaleCopy } from "@/lib/i18n";
+import type { GiftLocale } from "@/lib/gift-links";
 
-const DEFAULT_ORIGIN = "https://akato-gift.vercel.app";
-
-const vintageMessageLibrary = getContentLibrary().lots
-  .filter((lot) => lot.active !== false)
-  .flatMap((lot) => {
-    const blessing = lot.blessing?.trim();
-    const wish = lot.wish?.trim();
-    return [blessing, wish].filter((message): message is string => Boolean(message));
-  });
-
-const blessingTemplates = [
-  {
-    id: "gentle-healing",
-    title: "溫柔療癒",
-    category: "Gentle Care",
-    message: vintageMessageLibrary[0] ?? "願今天有一點光，剛好照進你的心裡。",
-  },
-  {
-    id: "peaceful-days",
-    title: "平安順心",
-    category: "Calm Wishes",
-    message: vintageMessageLibrary[1] ?? vintageMessageLibrary[0] ?? "願你所遇，慢慢都成為好風景。",
-  },
-  {
-    id: "thank-you",
-    title: "感謝有你",
-    category: "Grateful Light",
-    message: vintageMessageLibrary[2] ?? vintageMessageLibrary[0] ?? "願你在忙碌之中，也能被一杯熱茶似的溫柔照顧。",
-  },
-  {
-    id: "late-gift",
-    title: "晚到的心意",
-    category: "Tender Arrival",
-    message: vintageMessageLibrary[3] ?? vintageMessageLibrary[0] ?? "願你的期待，都有被溫柔成全的一天。",
-  },
-  {
-    id: "birthday",
-    title: "生日祝福",
-    category: "Birthday Bloom",
-    message: vintageMessageLibrary[4] ?? vintageMessageLibrary[0] ?? "願你在夜色裡，也有自己的安心去處。",
-  },
-  {
-    id: "shared-love",
-    title: "合送祝福",
-    category: "Shared Blessing",
-    message: vintageMessageLibrary[5] ?? vintageMessageLibrary[0] ?? "願你每一步都算數，每一天都有微光。",
-  },
-] as const;
+const DEFAULT_ORIGIN = "https://gift.akato.net";
 
 type FormState = {
   from: string;
@@ -59,47 +13,40 @@ type FormState = {
   message: string;
 };
 
-function buildGiftLink({ from, to, message }: FormState) {
-  const params = new URLSearchParams({ from, to, message });
-  const origin = typeof window === "undefined" ? DEFAULT_ORIGIN : window.location.origin;
+type GiftEntryPanelProps = {
+  locale: GiftLocale;
+};
 
-  return `${origin}/letter?${params.toString()}`;
+function getOrigin() {
+  return typeof window === "undefined" ? DEFAULT_ORIGIN : window.location.origin;
 }
 
-function buildShareText(fromName: string, toName: string, url: string) {
-  return `🥕 ${fromName} → ${toName}\n\n我準備了一份祝福給你。\n\n點開信封：\n${url}`;
-}
+function pickInitialMessage(locale: GiftLocale, cardId: string) {
+  const card = blessingCards.find((item) => item.id === cardId);
 
-function pickNextMessage(currentMessage: string) {
-  const candidates = Array.from(new Set(vintageMessageLibrary));
-
-  if (candidates.length <= 1) {
-    return currentMessage || candidates[0] || blessingTemplates[0].message;
+  if (!card) {
+    return "";
   }
 
-  let nextMessage = currentMessage;
-
-  while (nextMessage === currentMessage) {
-    nextMessage = candidates[Math.floor(Math.random() * candidates.length)] ?? candidates[0];
-  }
-
-  return nextMessage;
+  return (locale === "ja" ? card.ja.messages : card.zh.messages)[0] ?? "";
 }
 
-export function GiftEntryPanel() {
-  const [form, setForm] = useState<FormState>({ from: "", to: "", message: blessingTemplates[0].message });
+export function GiftEntryPanel({ locale }: GiftEntryPanelProps) {
+  const copy = getLocaleCopy(locale);
+  const [form, setForm] = useState<FormState>({ from: "", to: "", message: "" });
   const [giftLink, setGiftLink] = useState("");
-  const [copyLabel, setCopyLabel] = useState("複製祝福連結");
-  const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(blessingTemplates[0].id);
+  const [copyLabel, setCopyLabel] = useState(copy.entry.copyButton);
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(null);
   const [needsRegeneration, setNeedsRegeneration] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const summary = useMemo(() => {
     if (!form.from.trim() || !form.to.trim()) {
-      return "送禮人 ➜ 收禮人";
+      return copy.entry.summaryFallback;
     }
 
     return `${form.from.trim()} ➜ ${form.to.trim()}`;
-  }, [form.from, form.to]);
+  }, [copy.entry.summaryFallback, form.from, form.to]);
 
   function invalidateGiftLink() {
     setGiftLink((current) => {
@@ -110,7 +57,7 @@ export function GiftEntryPanel() {
       setNeedsRegeneration(true);
       return "";
     });
-    setCopyLabel("複製祝福連結");
+    setCopyLabel(copy.entry.copyButton);
   }
 
   function updateField(field: keyof FormState, value: string) {
@@ -119,30 +66,42 @@ export function GiftEntryPanel() {
   }
 
   function chooseTemplate(templateId: string) {
-    const template = blessingTemplates.find((item) => item.id === templateId);
+    setSelectedTemplateId(templateId);
+    setForm((current) => ({ ...current, message: pickInitialMessage(locale, templateId) }));
+    invalidateGiftLink();
+  }
 
-    if (!template) {
+  async function generateGiftLink() {
+    const from = form.from.trim();
+    const to = form.to.trim();
+    const message = form.message.trim();
+
+    if (!from || !to || !message) {
       return;
     }
 
-    setSelectedTemplateId(template.id);
-    setForm((current) => ({ ...current, message: template.message }));
-    invalidateGiftLink();
-  }
+    setIsGenerating(true);
 
-  function shuffleMessage() {
-    const nextMessage = pickNextMessage(form.message.trim());
-    setForm((current) => ({ ...current, message: nextMessage }));
-    invalidateGiftLink();
-  }
+    try {
+      const response = await fetch("/api/gift-links", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ from, to, message, locale }),
+      });
 
-  function generateGiftLink() {
-    setGiftLink(buildGiftLink({
-      from: form.from.trim(),
-      to: form.to.trim(),
-      message: form.message.trim(),
-    }));
-    setNeedsRegeneration(false);
+      if (!response.ok) {
+        throw new Error("Failed to create gift link");
+      }
+
+      const data = (await response.json()) as { id: string };
+      setGiftLink(`${getOrigin()}/gift/${data.id}`);
+      setNeedsRegeneration(false);
+      setCopyLabel(copy.entry.copyButton);
+    } finally {
+      setIsGenerating(false);
+    }
   }
 
   async function copyGiftLink() {
@@ -150,12 +109,8 @@ export function GiftEntryPanel() {
       return;
     }
 
-    const fromName = form.from.trim() || "送禮人";
-    const toName = form.to.trim() || "收禮人";
-    const shareText = buildShareText(fromName, toName, giftLink);
-
-    await navigator.clipboard.writeText(shareText);
-    setCopyLabel("已複製連結");
+    await navigator.clipboard.writeText(giftLink);
+    setCopyLabel(copy.entry.copiedButton);
   }
 
   function shareToLine() {
@@ -163,9 +118,7 @@ export function GiftEntryPanel() {
       return;
     }
 
-    const fromName = form.from.trim() || "送禮人";
-    const toName = form.to.trim() || "收禮人";
-    const shareText = buildShareText(fromName, toName, giftLink);
+    const shareText = copy.entry.shareText(form.from.trim(), form.to.trim(), giftLink);
     window.open(`https://line.me/R/msg/text/?${encodeURIComponent(shareText)}`, "_blank");
   }
 
@@ -180,114 +133,97 @@ export function GiftEntryPanel() {
   return (
     <section className={styles.giftModule}>
       <div className={styles.moduleHeader}>
-        <p className={styles.moduleEyebrow}>送禮入口</p>
-        <h2>為重要的人準備一頁專屬祝福</h2>
-        <p className={styles.moduleLead}>
-          填入送禮人、收禮人與祝福內容後，就能快速生成可分享的 Akato 祝福連結。
-        </p>
+        <p className={styles.moduleEyebrow}>{copy.entry.eyebrow}</p>
+        <h2>{copy.entry.title}</h2>
+        <p className={styles.moduleLead}>{copy.entry.lead}</p>
       </div>
 
       <div className={styles.formGrid}>
         <label className={styles.field}>
-          <span>送禮人 from</span>
+          <span>{copy.entry.fromLabel}</span>
           <input
             type="text"
             value={form.from}
             onChange={(event) => updateField("from", event.target.value)}
-            placeholder="例如：嫥慧"
+            placeholder={copy.entry.fromPlaceholder}
           />
         </label>
 
         <label className={styles.field}>
-          <span>收禮人 to</span>
+          <span>{copy.entry.toLabel}</span>
           <input
             type="text"
             value={form.to}
             onChange={(event) => updateField("to", event.target.value)}
-            placeholder="例如：鄭羽喬"
+            placeholder={copy.entry.toPlaceholder}
           />
         </label>
       </div>
 
       <div className={styles.templateSection}>
         <div className={styles.templateHeader}>
-          <p className={styles.templateEyebrow}>選擇祝福籤詩</p>
-          <p className={styles.templateLead}>點開其中一張，直接把祝福寫進那張復古籤紙裡。</p>
+          <p className={styles.templateEyebrow}>{copy.entry.templateEyebrow}</p>
+          <p className={styles.templateLead}>{copy.entry.templateLead}</p>
         </div>
 
         <div className={styles.templateGrid}>
-          {blessingTemplates.map((template) => {
-            const isSelected = template.id === selectedTemplateId;
+          {blessingCards.map((card) => {
+            const localized = locale === "ja" ? card.ja : card.zh;
+            const isSelected = card.id === selectedTemplateId;
 
             return (
-              <section
-                key={template.id}
+              <button
+                key={card.id}
+                type="button"
                 className={`${styles.templateCard} ${isSelected ? styles.templateCardSelected : ""}`}
+                onClick={() => chooseTemplate(card.id)}
               >
-                <button
-                  type="button"
-                  className={styles.templateCardTrigger}
-                  onClick={() => chooseTemplate(template.id)}
-                >
-                  {isSelected ? <span className={styles.templateSeal}>已選</span> : null}
-                  <span className={styles.templateCategory}>{template.category}</span>
-                  <strong className={styles.templateTitle}>{template.title}</strong>
-                  <span className={styles.templateDivider} aria-hidden="true" />
-                  {!isSelected ? <span className={styles.templateMessage}>{template.message}</span> : null}
-                </button>
-
-                {isSelected ? (
-                  <div className={styles.templateEditor}>
-                    <p className={styles.templateEditorHint}>把想說的話寫進這張祝福籤裡。</p>
-                    <div className={styles.templatePaper}>
-                      <div className={styles.templatePaperInner}>
-                        <textarea
-                          value={form.message}
-                          onChange={(event) => updateField("message", event.target.value)}
-                          placeholder="例如：願你抬頭時有光，低頭時有安心。"
-                          rows={6}
-                        />
-                      </div>
-                    </div>
-                    <div className={styles.shufflePanel}>
-                      <div className={styles.shuffleCopy}>
-                        <p className={styles.shuffleLead}>這份心意還想對你說⋯</p>
-                      </div>
-                      <button type="button" className={styles.shuffleButton} onClick={shuffleMessage}>
-                        換一句看看
-                      </button>
-                    </div>
-                  </div>
-                ) : null}
-              </section>
+                <div className={styles.templateCardTop}>
+                  <span className={styles.templateCategory}>{localized.label}</span>
+                  {isSelected ? <span className={styles.templateSelected}>{localized.selectedText}</span> : null}
+                </div>
+                <strong className={styles.templateTitle}>{localized.title}</strong>
+                <span className={styles.templateDescription}>{localized.description}</span>
+                <span className={styles.templateMessage}>{localized.messages[0]}</span>
+              </button>
             );
           })}
         </div>
       </div>
 
+      <div className={styles.formGrid}>
+        <label className={`${styles.field} ${styles.fieldFull}`}>
+          <span>{copy.entry.messageLabel}</span>
+          <textarea
+            value={form.message}
+            onChange={(event) => updateField("message", event.target.value)}
+            placeholder={copy.entry.messagePlaceholder}
+            rows={5}
+          />
+        </label>
+      </div>
+
       <div className={styles.primaryActionRow}>
-        <button type="button" className={styles.primaryGiftButton} onClick={generateGiftLink}>
-          產生專屬祝福連結
+        <button type="button" className={styles.primaryGiftButton} onClick={generateGiftLink} disabled={isGenerating}>
+          {isGenerating ? copy.entry.generatingButton : copy.entry.primaryButton}
         </button>
       </div>
 
-      {needsRegeneration ? (
-        <p className={styles.refreshHint}>內容已更新，請重新產生祝福連結 🌸</p>
-      ) : null}
+      {needsRegeneration ? <p className={styles.refreshHint}>{copy.entry.refreshHint}</p> : null}
 
       {giftLink ? (
         <div className={styles.resultCard}>
           <p className={styles.resultNames}>{summary}</p>
-          <p className={styles.resultStatus}>祝福連結已產生</p>
+          <p className={styles.resultLink}>{giftLink}</p>
           <div className={styles.resultActions}>
             <button type="button" className={styles.secondaryButton} onClick={copyGiftLink}>
               {copyLabel}
             </button>
             <button type="button" className={styles.lineButton} onClick={shareToLine}>
-              分享到 LINE
+              {copy.entry.shareButton}
             </button>
             <button type="button" className={styles.secondaryButton} onClick={previewGiftPage}>
-              預覽收禮頁面
+              {copy.entry.previewButton}
             </button>
           </div>
         </div>

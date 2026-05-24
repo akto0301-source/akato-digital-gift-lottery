@@ -273,3 +273,14 @@ type 範例：
 * 花禮影片
 * 節日情緒禮盒
 * Premium 會員限定賀禮
+
+## 10. 請最後輸出
+
+完成後請回報：
+
+1. 新增了哪個檔案
+2. 是否只新增文件、沒有修改功能程式
+3. 文件摘要
+4. 下一步建議
+5. commit message 使用：
+   Add Akato membership system planning document

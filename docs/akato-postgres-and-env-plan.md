@@ -228,3 +228,133 @@ AUTH_SECRET=
 AUTH_URL=http://localhost:3000
 DATABASE_URL=
 NODE_ENV=development
+```
+
+### 欄位說明
+
+#### `GOOGLE_CLIENT_ID`
+Google Cloud Console 建立 OAuth Client 後取得的 client id。
+
+#### `GOOGLE_CLIENT_SECRET`
+Google Cloud Console 建立 OAuth Client 後取得的 client secret。
+
+#### `AUTH_SECRET`
+未來 Auth.js / NextAuth 用於 session、token、加密簽章的 secret。
+
+#### `AUTH_URL`
+本地開發預設可先使用：
+- `http://localhost:3000`
+
+正式環境要改成：
+- `https://gift.akato.net`
+
+#### `DATABASE_URL`
+未來 Prisma 與 Postgres 連線所需的資料庫連線字串。
+
+#### `NODE_ENV`
+執行環境用途，開發期可先用：
+- `development`
+
+### 安全提醒
+- `GOOGLE_CLIENT_SECRET` 不可 commit
+- `.env.local` 不可 commit
+- `DATABASE_URL` 不可貼到公開文件
+- `AUTH_URL` 正式環境要改成 `https://gift.akato.net`
+
+### 補充說明
+`.env.example` 的作用是提供欄位範本，不是存放真實 secret。實際憑證、正式 database URL、正式 auth secret 應只存在本地安全設定與正式部署平台的 secrets 管理中。
+
+---
+
+## 7. 本地與正式環境設定
+
+未來實作時，本地與正式環境應清楚分開設定。
+
+### 本地
+- `AUTH_URL=http://localhost:3000`
+- `Google callback=http://localhost:3000/api/auth/callback/google`
+
+### 正式
+- `AUTH_URL=https://gift.akato.net`
+- `Google callback=https://gift.akato.net/api/auth/callback/google`
+
+### 說明
+本地與正式環境的 callback URL 必須和 Google Cloud Console 中設定的 Authorized redirect URIs 一致，否則登入流程無法正常完成。
+
+目前已知正式登入網域已定案為：
+- `https://gift.akato.net`
+
+因此未來正式 auth base URL 與正式 callback 都應圍繞這個網域設定。
+
+---
+
+## 8. 現階段不要做的事
+
+在這份資料庫與環境變數規劃階段，請明確不要做以下事情：
+
+- 不寫登入功能
+- 不改 `app/page.tsx`
+- 不改 `app/letter/page.tsx`
+- 不改 `package.json`
+- 不新增 `.env.local`
+- 不安裝 Prisma
+- 不接金流
+- 不做 gift/user 關聯
+- 不把 secret 放進 GitHub
+
+### 補充說明
+
+#### 不寫登入功能
+這份文件只是前置規劃，不代表現在就開始做 auth route、session 或 login UI。
+
+#### 不改 `app/page.tsx`
+送禮主流程仍應保持原樣，避免在規劃階段就動到核心功能頁。
+
+#### 不改 `app/letter/page.tsx`
+收禮信封頁不屬於這次規劃範圍。
+
+#### 不改 `package.json`
+這次不安裝任何套件，因此也不應修改依賴。
+
+#### 不新增 `.env.local`
+這次只做文件規劃，不建立實際本地 secret 檔案。
+
+#### 不安裝 Prisma
+Prisma 與資料庫連線屬於下一步正式實作範圍，不在本文件階段進行。
+
+#### 不接金流
+金流與 Premium 完全不屬於目前範圍。
+
+#### 不做 gift/user 關聯
+Gift 與 user 的資料關聯屬於下一階段的保存與收藏能力，不應在這一步提前處理。
+
+#### 不把 secret 放進 GitHub
+所有 secret、database URL、client secret 都不應出現在 GitHub repo 或公開文件中。
+
+---
+
+## 9. 下一步建議
+
+完成這份規劃後，下一步才會是：
+
+1. 建立正式 Postgres
+2. 新增 `.env.example`
+3. 安裝 Auth.js / NextAuth、Prisma、adapter
+4. 建立最小 `/account` 頁
+
+### 順序說明
+
+#### 1. 建立正式 Postgres
+先把正式資料庫基礎準備好，避免 auth 開始實作後又回頭重選資料庫。
+
+#### 2. 新增 `.env.example`
+把未來所有必要環境變數欄位整理成標準範本。
+
+#### 3. 安裝 Auth.js / NextAuth、Prisma、adapter
+等資料庫與 env 規劃都清楚後，再開始正式安裝依賴與建立登入基礎。
+
+#### 4. 建立最小 `/account` 頁
+在 auth 與 session 能力建立後，再做最小會員首頁，顯示 user 基本資料與 membership 狀態。
+
+### 本文件總結
+這份文件的角色，是讓 Akato 在正式進入 Phase 2 實作前，先把 Postgres 與環境變數規則定清楚，降低後續登入功能實作時的混亂與返工風險。

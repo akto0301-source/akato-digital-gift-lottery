@@ -1,8 +1,10 @@
-import { EnvelopeOpening } from "@/components/envelope-opening";
-
-import styles from "./page.module.css";
+import { getGiftRecord, type GiftLocale } from "@/lib/gift-links";
+import { getLocaleCopy } from "@/lib/i18n";
+import styles from "./confirm-page.module.css";
+import { ExtraMessagePanel } from "./extra-message-panel";
 
 type ConfirmPageProps = {
+  params?: Promise<{ id?: string }>;
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
 };
 
@@ -29,11 +31,24 @@ function pickValue(value: string | string[] | undefined) {
   return value ?? "";
 }
 
-export default async function ConfirmPage({ searchParams }: ConfirmPageProps) {
-  const params = searchParams ? await searchParams : {};
-  const from = pickValue(params.from);
-  const to = pickValue(params.to);
-  const message = pickValue(params.message);
+function resolveLocale(raw: string | undefined, fallback: GiftLocale = "zh"): GiftLocale {
+  if (raw === "ja" || raw === "zh") {
+    return raw;
+  }
+
+  return fallback;
+}
+
+export default async function ConfirmPage({ params, searchParams }: ConfirmPageProps) {
+  const routeParams = params ? await params : {};
+  const gift = routeParams.id ? await getGiftRecord(routeParams.id) : null;
+  const queryParams = searchParams ? await searchParams : {};
+
+  const locale = resolveLocale(gift?.locale ?? pickValue(queryParams.locale), "zh");
+  const copy = getLocaleCopy(locale);
+  const from = gift?.from ?? pickValue(queryParams.from);
+  const to = gift?.to ?? pickValue(queryParams.to);
+  const message = gift?.message ?? pickValue(queryParams.message);
 
   return (
     <main className={styles.page}>
@@ -54,16 +69,18 @@ export default async function ConfirmPage({ searchParams }: ConfirmPageProps) {
         ))}
       </div>
 
-      <EnvelopeOpening>
-        <section className={styles.card}>
-          <p className={styles.eyebrow}>Akato Gift</p>
-          <h1 className={styles.title}>{to || "收禮人"}</h1>
-          <p className={styles.fromText}>這份祝福由 {from || "送禮人"} 為你送上。</p>
-          <div className={styles.messageCard}>
-            {message || "願今天的心意，正好落在你最需要被溫柔接住的時候。"}
-          </div>
-        </section>
-      </EnvelopeOpening>
+      <section className={styles.card}>
+        <p className={styles.eyebrow}>{copy.confirm.eyebrow}</p>
+        <h1 className={styles.recipient}>{to || copy.confirm.recipientFallback}</h1>
+        <p className={styles.meta}>{copy.confirm.meta(from)}</p>
+        <div className={styles.messageCard}>{message || copy.confirm.messageFallback}</div>
+        <ExtraMessagePanel locale={locale} />
+        <div className={styles.footerAction}>
+          <a className={styles.backLink} href={copy.confirm.footerHref}>
+            {copy.confirm.footerButton}
+          </a>
+        </div>
+      </section>
     </main>
   );
 }

@@ -380,3 +380,5 @@ Phase 2 的重點只是建立最小會員基礎。若一次展開太多會員子
 
 也就是說，真正的第一個安全步驟，不是直接改頁面，而是先把 auth 與 database 基礎前提確認清楚。
 
+### 5. commit message 使用：
+`Add Akato membership phase 2 login plan`

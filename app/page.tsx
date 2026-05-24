@@ -1,39 +1,56 @@
+import Link from "next/link";
 import { GiftEntryPanel } from "@/components/gift-entry-panel";
 import { LotteryPanel } from "@/components/lottery-panel";
 import { getContentLibrary, getRandomLot } from "@/lib/content";
+import { getLocaleCopy } from "@/lib/i18n";
+import type { GiftLocale } from "@/lib/gift-links";
 import styles from "./page.module.css";
 
-export default function HomePage() {
+type HomePageProps = {
+  locale?: GiftLocale;
+};
+
+export function HomePage({ locale = "zh" }: HomePageProps) {
   const library = getContentLibrary();
   const initialLot = getRandomLot();
+  const copy = getLocaleCopy(locale);
 
   return (
     <main className={styles.page}>
-      <div className={styles.petalsLayer} aria-hidden="true">
-        <span className={`${styles.petal} ${styles.petalOne}`} />
-        <span className={`${styles.petal} ${styles.petalTwo}`} />
-        <span className={`${styles.petal} ${styles.petalThree}`} />
-        <span className={`${styles.petal} ${styles.petalFour}`} />
-        <span className={`${styles.petal} ${styles.petalFive}`} />
-        <span className={`${styles.petal} ${styles.petalSix}`} />
+      <div className={styles.topBar}>
+        <nav className={styles.languageSwitcher} aria-label="Language switcher">
+          <span className={locale === "zh" ? styles.languageCurrent : styles.languageLink}>中文</span>
+          <span className={styles.languageDivider}>|</span>
+          {locale === "ja" ? (
+            <span className={styles.languageCurrent}>日本語</span>
+          ) : (
+            <Link className={styles.languageLink} href="/ja">
+              日本語
+            </Link>
+          )}
+          {locale === "ja" ? (
+            <>
+              <span className={styles.languageDivider}>|</span>
+              <Link className={styles.languageLink} href="/">
+                中文
+              </Link>
+            </>
+          ) : null}
+        </nav>
       </div>
 
       <section className={styles.hero}>
-        <p className={styles.eyebrow}>Akato Gift Lottery</p>
-        <h1>{library.meta.title}</h1>
-        <p className={styles.subtitle}>{library.meta.subtitle}</p>
+        <p className={styles.eyebrow}>{copy.hero.eyebrow}</p>
+        <h1>{copy.hero.title}</h1>
+        <p className={styles.subtitle}>{copy.hero.subtitle}</p>
       </section>
 
-      <GiftEntryPanel />
-
-      <section className={styles.lotterySection}>
-        <div className={styles.lotteryIntro}>
-          <p className={styles.moduleEyebrow}>今日好籤</p>
-          <h2>抽一支今日好籤</h2>
-          <p className={styles.moduleLead}>讓一段剛剛好的祝福，落在今天最需要被輕輕接住的地方。</p>
-        </div>
-        <LotteryPanel library={library} initialLot={initialLot} />
-      </section>
+      <GiftEntryPanel locale={locale} />
+      <LotteryPanel library={library} initialLot={initialLot} locale={locale} />
     </main>
   );
+}
+
+export default function RootHomePage() {
+  return <HomePage locale="zh" />;
 }
