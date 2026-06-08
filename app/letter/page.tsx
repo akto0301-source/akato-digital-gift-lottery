@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { ExtraMessagePanel } from '@/app/confirm/extra-message-panel';
-import { getLocaleCopy } from '@/lib/i18n';
+import { blessingCards, getLocaleCopy } from '@/lib/i18n';
 
 const PetalsBackground = () => {
   const petalConfigs = [
@@ -57,22 +57,54 @@ const PetalsBackground = () => {
   );
 };
 
-function getQueryValue(name: string) {
-  if (typeof window === 'undefined') return null;
-  const value = new URLSearchParams(window.location.search).get(name);
+function getQueryValue(searchParams: URLSearchParams, name: string) {
+  const value = searchParams.get(name);
   return value && value.trim() !== '' ? value.trim() : null;
 }
 
+type LetterQuery = {
+  locale: 'zh' | 'ja';
+  fromName: string | null;
+  toName: string | null;
+  giftMessage: string | null;
+  categoryId: string | null;
+};
+
 export default function LetterPage() {
-  const localeParam = useMemo(() => getQueryValue('locale'), []);
-  const locale = localeParam === 'ja' ? 'ja' : 'zh';
+  const [letterQuery, setLetterQuery] = useState<LetterQuery>({
+    locale: 'zh',
+    fromName: null,
+    toName: null,
+    giftMessage: null,
+    categoryId: null,
+  });
+  const { locale, fromName, toName, giftMessage, categoryId } = letterQuery;
   const copy = getLocaleCopy(locale);
   const [isOpened, setIsOpened] = useState(false);
   const [isClicking, setIsClicking] = useState(false);
 
-  const fromName = useMemo(() => getQueryValue('from'), []);
-  const toName = useMemo(() => getQueryValue('to'), []);
-  const giftMessage = useMemo(() => getQueryValue('message'), []);
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      const searchParams = new URLSearchParams(window.location.search);
+      const localeParam = getQueryValue(searchParams, 'locale');
+
+      setLetterQuery({
+        locale: localeParam === 'ja' ? 'ja' : 'zh',
+        fromName: getQueryValue(searchParams, 'from'),
+        toName: getQueryValue(searchParams, 'to'),
+        giftMessage: getQueryValue(searchParams, 'message'),
+        categoryId: getQueryValue(searchParams, 'cardId') ?? getQueryValue(searchParams, 'category'),
+      });
+    }, 0);
+
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  const categoryCard = useMemo(
+    () => blessingCards.find((card) => card.id === categoryId) ?? null,
+    [categoryId],
+  );
+  const categoryCopy = categoryCard ? (locale === 'ja' ? categoryCard.ja : categoryCard.zh) : null;
 
   const handleOpenEnvelope = () => {
     setIsClicking(true);
@@ -104,6 +136,11 @@ export default function LetterPage() {
 
         {isOpened ? (
           <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '14px', transition: 'all 0.8s ease-out', marginTop: '18px', marginBottom: '28px' }}>
+            {categoryCopy ? (
+              <p style={{ fontSize: '12px', fontWeight: 400, letterSpacing: '0.16em', color: '#A39B95', margin: '0 0 2px', position: 'relative', zIndex: 3 }}>
+                {categoryCopy.label} · {categoryCopy.title}
+              </p>
+            ) : null}
             <p style={{ fontSize: 'clamp(23px, 4.8vw, 30px)', fontWeight: 600, lineHeight: 1.55, maxWidth: '720px', color: '#7A736E', letterSpacing: '0.08em', textAlign: 'center', margin: 0, width: '100%', position: 'relative', zIndex: 3 }}>
               {giftMessage || '慢慢來也沒關係，這份祝福會陪你一下。'}
             </p>
