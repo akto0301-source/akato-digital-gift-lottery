@@ -141,7 +141,7 @@ export default function LetterPage() {
                 {categoryCopy.label} · {categoryCopy.title}
               </p>
             ) : null}
-            <p style={{ fontSize: 'clamp(23px, 4.8vw, 30px)', fontWeight: 600, lineHeight: 1.55, maxWidth: '720px', color: '#7A736E', letterSpacing: '0.08em', textAlign: 'center', margin: 0, width: '100%', position: 'relative', zIndex: 3 }}>
+            <p style={{ fontSize: 'clamp(23px, 4.8vw, 30px)', fontWeight: 600, lineHeight: 1.65, maxWidth: '440px', color: '#7A736E', letterSpacing: '0.08em', textAlign: 'center', margin: '0 auto', width: '100%', position: 'relative', zIndex: 3, overflowWrap: 'anywhere' }}>
               {giftMessage || '慢慢來也沒關係，這份祝福會陪你一下。'}
             </p>
             <p style={{ fontSize: '14px', fontWeight: 300, letterSpacing: '0.1em', color: '#A39B95', margin: '18px 0 0', position: 'relative', zIndex: 2 }}>
