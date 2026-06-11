@@ -111,11 +111,12 @@
 }
 
 .extraMessage {
-  max-width: 420px;
+  width: min(100%, 82vw);
+  max-width: 360px;
   margin: 12px auto 0;
   min-height: 3.8em;
   color: rgba(59, 42, 38, 0.88);
-  line-height: 1.9;
+  line-height: 1.95;
   text-align: center;
   text-wrap: pretty;
   overflow-wrap: anywhere;
