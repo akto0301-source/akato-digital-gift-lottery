@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { ExtraMessagePanel } from '@/app/confirm/extra-message-panel';
-import { getLocaleCopy } from '@/lib/i18n';
+import { blessingCards, getLocaleCopy } from '@/lib/i18n';
 
 const PetalsBackground = () => {
   const petalConfigs = [
@@ -57,22 +57,54 @@ const PetalsBackground = () => {
   );
 };
 
-function getQueryValue(name: string) {
-  if (typeof window === 'undefined') return null;
-  const value = new URLSearchParams(window.location.search).get(name);
+function getQueryValue(searchParams: URLSearchParams, name: string) {
+  const value = searchParams.get(name);
   return value && value.trim() !== '' ? value.trim() : null;
 }
 
+type LetterQuery = {
+  locale: 'zh' | 'ja';
+  fromName: string | null;
+  toName: string | null;
+  giftMessage: string | null;
+  categoryId: string | null;
+};
+
 export default function LetterPage() {
-  const localeParam = useMemo(() => getQueryValue('locale'), []);
-  const locale = localeParam === 'ja' ? 'ja' : 'zh';
+  const [letterQuery, setLetterQuery] = useState<LetterQuery>({
+    locale: 'zh',
+    fromName: null,
+    toName: null,
+    giftMessage: null,
+    categoryId: null,
+  });
+  const { locale, fromName, toName, giftMessage, categoryId } = letterQuery;
   const copy = getLocaleCopy(locale);
   const [isOpened, setIsOpened] = useState(false);
   const [isClicking, setIsClicking] = useState(false);
 
-  const fromName = useMemo(() => getQueryValue('from'), []);
-  const toName = useMemo(() => getQueryValue('to'), []);
-  const giftMessage = useMemo(() => getQueryValue('message'), []);
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      const searchParams = new URLSearchParams(window.location.search);
+      const localeParam = getQueryValue(searchParams, 'locale');
+
+      setLetterQuery({
+        locale: localeParam === 'ja' ? 'ja' : 'zh',
+        fromName: getQueryValue(searchParams, 'from'),
+        toName: getQueryValue(searchParams, 'to'),
+        giftMessage: getQueryValue(searchParams, 'message'),
+        categoryId: getQueryValue(searchParams, 'cardId') ?? getQueryValue(searchParams, 'category'),
+      });
+    }, 0);
+
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  const categoryCard = useMemo(
+    () => blessingCards.find((card) => card.id === categoryId) ?? null,
+    [categoryId],
+  );
+  const categoryCopy = categoryCard ? (locale === 'ja' ? categoryCard.ja : categoryCard.zh) : null;
 
   const handleOpenEnvelope = () => {
     setIsClicking(true);
@@ -98,14 +130,19 @@ export default function LetterPage() {
             {locale === 'ja' ? <>Akato からの<br />祝福の手紙が届きました</> : <>你收到一封來自<br />Akato 的祝福信</>}
           </span>
           <span style={{ position: 'absolute', width: '100%', whiteSpace: 'normal', wordBreak: 'keep-all', fontSize: 'clamp(18px, 3.8vw, 24px)', fontWeight: 400, lineHeight: 1.5, color: '#8B8580', letterSpacing: '0.08em', transition: 'all 0.8s ease-out 0.45s', opacity: isOpened ? 1 : 0, transform: isOpened ? 'translateY(0)' : 'translateY(16px)', pointerEvents: 'none' }}>
-            願今天的你，<br />被溫柔地接住。
+            {locale === 'ja' ? <>今日のあなたが、<br />やさしさにそっと包まれますように。</> : <>願今天的你，<br />被溫柔地接住。</>}
           </span>
         </h1>
 
         {isOpened ? (
           <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '14px', transition: 'all 0.8s ease-out', marginTop: '18px', marginBottom: '28px' }}>
-            <p style={{ fontSize: 'clamp(23px, 4.8vw, 30px)', fontWeight: 600, lineHeight: 1.55, maxWidth: '720px', color: '#7A736E', letterSpacing: '0.08em', textAlign: 'center', margin: 0, width: '100%', position: 'relative', zIndex: 3 }}>
-              {giftMessage || '慢慢來也沒關係，這份祝福會陪你一下。'}
+            {categoryCopy ? (
+              <p style={{ fontSize: '12px', fontWeight: 400, letterSpacing: '0.16em', color: '#A39B95', margin: '0 0 2px', position: 'relative', zIndex: 3 }}>
+                {categoryCopy.label} · {categoryCopy.title}
+              </p>
+            ) : null}
+            <p style={{ fontSize: 'clamp(23px, 4.8vw, 30px)', fontWeight: 600, lineHeight: 1.65, maxWidth: '440px', color: '#7A736E', letterSpacing: '0.08em', textAlign: 'center', margin: '0 auto', width: '100%', position: 'relative', zIndex: 3, overflowWrap: 'anywhere' }}>
+              {giftMessage || (locale === 'ja' ? 'ゆっくりで大丈夫。この祝福が少しだけ寄り添えますように。' : '慢慢來也沒關係，這份祝福會陪你一下。')}
             </p>
             <p style={{ fontSize: '14px', fontWeight: 300, letterSpacing: '0.1em', color: '#A39B95', margin: '18px 0 0', position: 'relative', zIndex: 2 }}>
               {fromName ? (locale === 'ja' ? `${fromName} からの祝福` : `來自 ${fromName} 的祝福`) : ''}
@@ -161,12 +198,12 @@ export default function LetterPage() {
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px', width: '100%' }}>
           <div style={{ width: '100%', maxWidth: '240px', transition: 'all 0.7s ease-in-out', opacity: isOpened ? 0 : 1, height: isOpened ? 0 : '64px', overflow: 'hidden', pointerEvents: isOpened ? 'none' : 'auto' }}>
             <button onClick={handleOpenEnvelope} disabled={isClicking} style={{ width: '100%', height: '100%', borderRadius: '9999px', backgroundColor: 'rgba(255,255,255,0.7)', border: '1px solid #D9C9B6', color: '#7A736E', fontSize: '16px', letterSpacing: '0.2em', boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)', cursor: 'pointer', transition: 'all 0.3s', backdropFilter: 'blur(4px)' }}>
-              打開信封
+              {locale === 'ja' ? '封筒を開く' : '打開信封'}
             </button>
           </div>
           <div style={{ transition: 'all 0.9s ease-out 0.7s', transform: isOpened ? 'translateY(0)' : 'translateY(-20px)', opacity: 1 }}>
-            <Link href="/" style={{ fontSize: '14px', letterSpacing: '0.1em', color: '#A39B95', textDecoration: 'none', borderBottom: '1px solid rgba(163,155,149,0.3)', paddingBottom: '4px', transition: 'color 0.3s, border-color 0.3s' }}>
-              我也想送出一封祝福
+            <Link href={locale === 'ja' ? '/ja' : '/'} style={{ fontSize: '14px', letterSpacing: '0.1em', color: '#A39B95', textDecoration: 'none', borderBottom: '1px solid rgba(163,155,149,0.3)', paddingBottom: '4px', transition: 'color 0.3s, border-color 0.3s' }}>
+              {locale === 'ja' ? 'わたしも祝福を届けたい' : '我也想送出一封祝福'}
             </Link>
           </div>
         </div>

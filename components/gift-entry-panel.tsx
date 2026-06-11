@@ -73,8 +73,12 @@ export function GiftEntryPanel({ locale }: GiftEntryPanelProps) {
     return `${form.from.trim()} ➜ ${form.to.trim()}`;
   }, [copy.entry.summaryFallback, form.from, form.to]);
 
-  function buildGiftLink(from: string, to: string, message: string, localeValue: GiftLocale) {
+  function buildGiftLink(from: string, to: string, message: string, localeValue: GiftLocale, cardId?: string | null) {
     const params = new URLSearchParams({ from, to, message, locale: localeValue });
+    if (cardId) {
+      params.set("cardId", cardId);
+    }
+
     return `${getOrigin()}/letter?${params.toString()}`;
   }
 
@@ -132,7 +136,7 @@ export function GiftEntryPanel({ locale }: GiftEntryPanelProps) {
     setErrorMessage("");
 
     try {
-      const nextLink = buildGiftLink(from, to, message, locale);
+      const nextLink = buildGiftLink(from, to, message, locale, selectedTemplateId);
       setGiftLink(nextLink);
       setNeedsRegeneration(false);
       setCopyLabel(copy.entry.copyButton);
