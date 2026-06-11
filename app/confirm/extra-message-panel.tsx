@@ -7,7 +7,10 @@ import { getLocaleCopy } from "@/lib/i18n";
 import type { GiftLocale } from "@/lib/gift-links";
 
 const MAX_SHUFFLE_ATTEMPTS = 3;
-const FINAL_MESSAGE = "今日的溫柔已安放";
+const FINAL_MESSAGES: Record<GiftLocale, string> = {
+  zh: "今日的溫柔已安放",
+  ja: "今日のやさしさは、そっと届きました",
+};
 
 function pickNextIndex(currentIndex: number, max: number) {
   if (max <= 1) {
@@ -55,7 +58,7 @@ export function ExtraMessagePanel({ locale }: ExtraMessagePanelProps) {
     <div className={styles.extraSection}>
       <p className={styles.extraLead}>{copy.confirm.extraLead}</p>
       <p key={animateKey} className={`${styles.extraMessage} ${styles.extraMessageVisible}`}>
-        {isLimitReached ? FINAL_MESSAGE : messages[messageIndex]}
+        {isLimitReached ? FINAL_MESSAGES[locale] : messages[messageIndex]}
       </p>
       <button type="button" className={styles.shuffleButton} onClick={handleShuffle} disabled={isLimitReached}>
         {copy.confirm.shuffleButton}
