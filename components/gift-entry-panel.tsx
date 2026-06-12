@@ -175,7 +175,7 @@ export function GiftEntryPanel({ locale }: GiftEntryPanelProps) {
   }
 
   return (
-    <section className={styles.giftModule}>
+    <section className={styles.giftModule} id="gift-form">
       <div className={styles.moduleHeader}>
         <p className={styles.moduleEyebrow}>{copy.entry.eyebrow}</p>
         <h2>{copy.entry.title}</h2>

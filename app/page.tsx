@@ -1,7 +1,5 @@
 import Link from "next/link";
 import { GiftEntryPanel } from "@/components/gift-entry-panel";
-import { LotteryPanel } from "@/components/lottery-panel";
-import { getContentLibrary, getRandomLot } from "@/lib/content";
 import { getLocaleCopy } from "@/lib/i18n";
 import type { GiftLocale } from "@/lib/gift-links";
 import styles from "./page.module.css";
@@ -11,16 +9,7 @@ type HomePageProps = {
 };
 
 export function HomePage({ locale = "zh" }: HomePageProps) {
-  const library = getContentLibrary();
-  const initialLot = getRandomLot();
   const copy = getLocaleCopy(locale);
-  const isSampleLibrary = library.lots.some((lot) => {
-    const fortune = lot.fortune ?? "";
-    const blessing = lot.blessing ?? "";
-    const theme = lot.theme ?? "";
-
-    return lot.category === "sample" || fortune.includes("請提供") || blessing.includes("請提供") || theme.includes("sample");
-  });
 
   return (
     <main className={styles.page}>
@@ -50,6 +39,36 @@ export function HomePage({ locale = "zh" }: HomePageProps) {
         <p className={styles.eyebrow}>{copy.hero.eyebrow}</p>
         <h1>{copy.hero.title}</h1>
         <p className={styles.subtitle}>{copy.hero.subtitle}</p>
+      </section>
+
+      <section className={styles.entryChooser}>
+        <div className={styles.moduleHeader}>
+          <p className={styles.moduleEyebrow}>AKATO BLESSING ENTRY</p>
+          <h2>今天，想用哪一種方式送出祝福？</h2>
+          <p className={styles.moduleLead}>一封可以打開的信，或一張剛好遇見你的花籤，都可以成為送給某人的小小心意。</p>
+        </div>
+
+        <div className={styles.entryChooserGrid}>
+          <article className={styles.entryChooserCard}>
+            <span className={styles.entryChooserLabel}>LETTER</span>
+            <h3>寫一封祝福信</h3>
+            <p>自己寫下想說的話，選一張花箋，產生一封可以打開的專屬祝福信。</p>
+            <p className={styles.entryChooserFit}>生日、升遷、調動、感謝、合送、晚到祝福</p>
+            <Link className={styles.entryChooserButton} href="#gift-form">
+              製作數位回禮
+            </Link>
+          </article>
+
+          <article className={styles.entryChooserCard}>
+            <span className={styles.entryChooserLabel}>FLOWER LOT</span>
+            <h3>抽一張今日小花籤</h3>
+            <p>先抽一張今日花語，若剛好想到某個人，也可以把它做成一封祝福信送出去。</p>
+            <p className={styles.entryChooserFit}>輕量祝福、安慰朋友、臨時想傳一句話、LINE 分享</p>
+            <Link className={styles.entryChooserButton} href="/lot">
+              抽今日小花籤
+            </Link>
+          </article>
+        </div>
       </section>
 
       <GiftEntryPanel locale={locale} />
@@ -93,15 +112,14 @@ export function HomePage({ locale = "zh" }: HomePageProps) {
 
         <p className={styles.orderGuideNote}>若需要由 Akato 協助代製，可透過 LINE 聯繫。</p>
       </section>
-      {isSampleLibrary ? (
-        <section className={styles.lotteryModule}>
-          <p className={styles.moduleEyebrow}>今日好籤</p>
-          <h2>今日好籤正在準備中</h2>
-          <p className={styles.moduleLead}>稍後會帶著剛剛好的祝福回來。</p>
-        </section>
-      ) : (
-        <LotteryPanel library={library} initialLot={initialLot} locale={locale} showNotes={false} />
-      )}
+      <section className={styles.lotteryModule}>
+        <p className={styles.moduleEyebrow}>今日小花籤</p>
+        <h2>想完整體驗今日小花籤？</h2>
+        <p className={styles.moduleLead}>前往小花籤頁，抽一張今天剛好想陪你的花語。</p>
+        <Link className={styles.entryChooserButton} href="/lot">
+          前往今日小花籤
+        </Link>
+      </section>
     </main>
   );
 }
