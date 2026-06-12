@@ -62,6 +62,14 @@ function getQueryValue(searchParams: URLSearchParams, name: string) {
   return value && value.trim() !== '' ? value.trim() : null;
 }
 
+function isSharedFlowerLotMessage(categoryId: string | null, giftMessage: string | null) {
+  if (categoryId !== 'shared-blessing' || !giftMessage) {
+    return false;
+  }
+
+  return giftMessage.includes('第') && giftMessage.includes('小籤詩') && giftMessage.includes('今日花語');
+}
+
 type LetterQuery = {
   locale: 'zh' | 'ja';
   fromName: string | null;
@@ -105,6 +113,7 @@ export default function LetterPage() {
     [categoryId],
   );
   const categoryCopy = categoryCard ? (locale === 'ja' ? categoryCard.ja : categoryCard.zh) : null;
+  const isSharedFlowerLotLetter = isSharedFlowerLotMessage(categoryId, giftMessage);
 
   const handleOpenEnvelope = () => {
     setIsClicking(true);
@@ -136,7 +145,7 @@ export default function LetterPage() {
 
         {isOpened ? (
           <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '14px', transition: 'all 0.8s ease-out', marginTop: '18px', marginBottom: '28px' }}>
-            {categoryCopy ? (
+            {categoryCopy && !isSharedFlowerLotLetter ? (
               <p style={{ fontSize: '12px', fontWeight: 400, letterSpacing: '0.16em', color: '#A39B95', margin: '0 0 2px', position: 'relative', zIndex: 3 }}>
                 {categoryCopy.label} · {categoryCopy.title}
               </p>
@@ -147,7 +156,7 @@ export default function LetterPage() {
             <p style={{ fontSize: '14px', fontWeight: 300, letterSpacing: '0.1em', color: '#A39B95', margin: '18px 0 0', position: 'relative', zIndex: 2 }}>
               {fromName ? (locale === 'ja' ? `${fromName} からの祝福` : `來自 ${fromName} 的祝福`) : ''}
             </p>
-            <ExtraMessagePanel locale={locale} />
+            {!isSharedFlowerLotLetter ? <ExtraMessagePanel locale={locale} /> : null}
           </div>
         ) : null}
 
