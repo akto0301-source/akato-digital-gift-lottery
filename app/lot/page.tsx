@@ -15,7 +15,7 @@ export default function LotPage() {
         <p>抽一張小小的花箋，看看今天有什麼話想陪你一下。</p>
       </section>
 
-      <LotteryPanel library={library} initialLot={initialLot} locale="zh" showNotes={false} />
+      <LotteryPanel library={library} initialLot={initialLot} locale="zh" showNotes={false} showShareForm />
 
       <section className={styles.cta}>
         <p>想把這份祝福送給別人？</p>
