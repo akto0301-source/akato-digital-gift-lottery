@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { ContentLibrary, ContentLot } from "@/lib/content";
 import type { GiftLocale } from "@/lib/gift-links";
 import styles from "@/app/page.module.css";
@@ -19,8 +19,44 @@ type LotteryResponse = {
   lot?: ContentLot;
 };
 
+type SavedShareState = {
+  lot: ContentLot | null;
+  fromName: string;
+  toName: string;
+  letterLink: string;
+  hasShareStarted: boolean;
+};
+
+const LOT_SHARE_STORAGE_KEY = "akato-lot-share-state";
+
 function getOrigin() {
   return typeof window === "undefined" ? "" : window.location.origin;
+}
+
+function readSavedShareState() {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  try {
+    const savedState = window.sessionStorage.getItem(LOT_SHARE_STORAGE_KEY);
+
+    return savedState ? (JSON.parse(savedState) as SavedShareState) : null;
+  } catch {
+    return null;
+  }
+}
+
+function writeSavedShareState(state: SavedShareState) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  try {
+    window.sessionStorage.setItem(LOT_SHARE_STORAGE_KEY, JSON.stringify(state));
+  } catch {
+    // Storage can fail in restricted browsing modes; the form should still work.
+  }
 }
 
 function getLotPoem(fortune: string | undefined) {
@@ -53,6 +89,40 @@ export function LotteryPanel({ library, initialLot, locale, showNotes = true, sh
   const [fromName, setFromName] = useState("");
   const [toName, setToName] = useState("");
   const [letterLink, setLetterLink] = useState("");
+  const [hasShareStarted, setHasShareStarted] = useState(false);
+  const [hasLoadedShareState, setHasLoadedShareState] = useState(!showShareForm);
+
+  useEffect(() => {
+    if (!showShareForm) {
+      return;
+    }
+
+    const savedState = readSavedShareState();
+
+    if (savedState) {
+      setLot(savedState.lot);
+      setFromName(savedState.fromName ?? "");
+      setToName(savedState.toName ?? "");
+      setLetterLink(savedState.letterLink ?? "");
+      setHasShareStarted(Boolean(savedState.hasShareStarted));
+    }
+
+    setHasLoadedShareState(true);
+  }, [showShareForm]);
+
+  useEffect(() => {
+    if (!showShareForm || !hasLoadedShareState) {
+      return;
+    }
+
+    writeSavedShareState({
+      lot,
+      fromName,
+      hasShareStarted,
+      toName,
+      letterLink,
+    });
+  }, [fromName, hasLoadedShareState, hasShareStarted, letterLink, lot, showShareForm, toName]);
 
   async function drawLot() {
     setIsLoading(true);
@@ -71,6 +141,7 @@ export function LotteryPanel({ library, initialLot, locale, showNotes = true, sh
 
       setLot(data.lot);
       setLetterLink("");
+      setHasShareStarted(showShareForm);
     } catch (caughtError) {
       const message =
         caughtError instanceof Error ? caughtError.message : library.fallbackMessages.error;
@@ -150,6 +221,7 @@ export function LotteryPanel({ library, initialLot, locale, showNotes = true, sh
   const lineShareHref = letterLink
     ? `https://line.me/R/msg/text/?${encodeURIComponent(`我抽到一張今日小花籤，想送給你。\n打開這封祝福信：${letterLink}`)}`
     : "";
+  const shouldShowShareForm = Boolean(showShareForm && lot && hasShareStarted);
 
   return (
     <>
@@ -171,7 +243,12 @@ export function LotteryPanel({ library, initialLot, locale, showNotes = true, sh
               <h3>{copy.blessing}</h3>
               <p>{lot.blessing}</p>
             </div>
-            {showShareForm ? (
+            <div className={styles.actions}>
+              <button className={styles.drawButton} onClick={drawLot} disabled={isLoading}>
+                {copy.drawButton}
+              </button>
+            </div>
+            {shouldShowShareForm ? (
               <div className={styles.lotShareBox}>
                 <h3>把這張小花籤送給對方</h3>
                 <p>把剛剛抽到的花籤，變成一封可以打開的祝福信。</p>
@@ -205,10 +282,13 @@ export function LotteryPanel({ library, initialLot, locale, showNotes = true, sh
                     <p className={styles.resultLink}>{letterLink}</p>
                     <div className={styles.resultActions}>
                       <button type="button" className={styles.secondaryButton} onClick={copyLetterLink}>
-                        複製連結
+                        複製祝福信連結
                       </button>
                       <a className={styles.lineButton} href={lineShareHref} target="_blank" rel="noreferrer">
-                        LINE 分享
+                        用 LINE 分享
+                      </a>
+                      <a className={styles.secondaryButton} href={letterLink} target="_blank" rel="noreferrer">
+                        預覽祝福信
                       </a>
                     </div>
                   </div>
@@ -217,14 +297,15 @@ export function LotteryPanel({ library, initialLot, locale, showNotes = true, sh
             ) : null}
           </>
         ) : (
-          <p className={styles.empty}>{copy.empty}</p>
+          <>
+            <p className={styles.empty}>{copy.empty}</p>
+            <div className={styles.actions}>
+              <button className={styles.drawButton} onClick={drawLot} disabled={isLoading}>
+                {copy.drawButton}
+              </button>
+            </div>
+          </>
         )}
-
-        <div className={styles.actions}>
-          <button className={styles.drawButton} onClick={drawLot} disabled={isLoading}>
-            {copy.drawButton}
-          </button>
-        </div>
 
         {error ? <p className={styles.errorText}>{error}</p> : null}
       </section>
