@@ -295,6 +295,61 @@
   margin-top: 18px;
 }
 
+.orderGuide {
+  margin-bottom: 32px;
+  padding: 30px;
+  border-radius: 32px;
+  border: 1px solid rgba(215, 197, 171, 0.92);
+  background:
+    radial-gradient(circle at top left, rgba(255, 248, 242, 0.98), transparent 34%),
+    linear-gradient(180deg, rgba(255, 252, 247, 0.96), rgba(250, 238, 235, 0.98));
+  box-shadow: 0 20px 64px rgba(114, 83, 74, 0.1);
+}
+
+.orderGuideGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.orderGuidePanel {
+  border: 1px solid rgba(215, 197, 171, 0.86);
+  border-radius: 24px;
+  background: rgba(255, 252, 248, 0.76);
+  padding: 18px;
+}
+
+.orderGuidePanel h3 {
+  margin: 0 0 12px;
+  color: #7c565b;
+  font-size: 1.02rem;
+}
+
+.orderGuidePanel ul,
+.orderGuidePanel ol {
+  margin: 0;
+  padding-left: 1.25rem;
+  color: rgba(31, 26, 23, 0.74);
+  line-height: 1.85;
+}
+
+.orderGuidePanel li + li {
+  margin-top: 6px;
+}
+
+.priceList {
+  list-style: none;
+  padding-left: 0;
+}
+
+.orderGuideNote {
+  margin: 18px 0 0;
+  padding-top: 18px;
+  border-top: 1px dashed rgba(215, 197, 171, 0.96);
+  color: #9a6870;
+  line-height: 1.8;
+}
+
 .hero {
   text-align: center;
   margin-bottom: 32px;
@@ -431,12 +486,14 @@
   }
 
   .giftModule,
+  .orderGuide,
   .card {
     padding: 22px;
   }
 
   .formGrid,
-  .templateGrid {
+  .templateGrid,
+  .orderGuideGrid {
     grid-template-columns: 1fr;
   }
 
