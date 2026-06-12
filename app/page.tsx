@@ -100,7 +100,7 @@ export function HomePage({ locale = "zh" }: HomePageProps) {
           <p className={styles.moduleLead}>稍後會帶著剛剛好的祝福回來。</p>
         </section>
       ) : (
-        <LotteryPanel library={library} initialLot={initialLot} locale={locale} />
+        <LotteryPanel library={library} initialLot={initialLot} locale={locale} showNotes={false} />
       )}
     </main>
   );
