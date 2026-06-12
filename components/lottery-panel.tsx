@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { ContentLibrary, ContentLot } from "@/lib/content";
 import type { GiftLocale } from "@/lib/gift-links";
 import styles from "@/app/page.module.css";
@@ -19,8 +19,43 @@ type LotteryResponse = {
   lot?: ContentLot;
 };
 
+type SavedShareState = {
+  lot: ContentLot | null;
+  fromName: string;
+  toName: string;
+  letterLink: string;
+};
+
+const LOT_SHARE_STORAGE_KEY = "akato-lot-share-state";
+
 function getOrigin() {
   return typeof window === "undefined" ? "" : window.location.origin;
+}
+
+function readSavedShareState() {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  try {
+    const savedState = window.sessionStorage.getItem(LOT_SHARE_STORAGE_KEY);
+
+    return savedState ? (JSON.parse(savedState) as SavedShareState) : null;
+  } catch {
+    return null;
+  }
+}
+
+function writeSavedShareState(state: SavedShareState) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  try {
+    window.sessionStorage.setItem(LOT_SHARE_STORAGE_KEY, JSON.stringify(state));
+  } catch {
+    // Storage can fail in restricted browsing modes; the form should still work.
+  }
 }
 
 function getLotPoem(fortune: string | undefined) {
@@ -53,6 +88,37 @@ export function LotteryPanel({ library, initialLot, locale, showNotes = true, sh
   const [fromName, setFromName] = useState("");
   const [toName, setToName] = useState("");
   const [letterLink, setLetterLink] = useState("");
+  const [hasLoadedShareState, setHasLoadedShareState] = useState(!showShareForm);
+
+  useEffect(() => {
+    if (!showShareForm) {
+      return;
+    }
+
+    const savedState = readSavedShareState();
+
+    if (savedState) {
+      setLot(savedState.lot);
+      setFromName(savedState.fromName ?? "");
+      setToName(savedState.toName ?? "");
+      setLetterLink(savedState.letterLink ?? "");
+    }
+
+    setHasLoadedShareState(true);
+  }, [showShareForm]);
+
+  useEffect(() => {
+    if (!showShareForm || !hasLoadedShareState) {
+      return;
+    }
+
+    writeSavedShareState({
+      lot,
+      fromName,
+      toName,
+      letterLink,
+    });
+  }, [fromName, hasLoadedShareState, letterLink, lot, showShareForm, toName]);
 
   async function drawLot() {
     setIsLoading(true);
