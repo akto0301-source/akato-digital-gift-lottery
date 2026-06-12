@@ -425,6 +425,30 @@
   color: var(--accent);
 }
 
+.lotShareBox {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px dashed rgba(215, 197, 171, 0.96);
+}
+
+.lotShareBox h3 {
+  margin: 0;
+  color: #7c565b;
+}
+
+.lotShareBox > p {
+  margin: 10px 0 0;
+  color: rgba(31, 26, 23, 0.72);
+  line-height: 1.8;
+}
+
+.lotShareGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 18px;
+}
+
 .actions {
   margin-top: 28px;
 }
@@ -493,6 +517,7 @@
 
   .formGrid,
   .templateGrid,
+  .lotShareGrid,
   .orderGuideGrid {
     grid-template-columns: 1fr;
   }

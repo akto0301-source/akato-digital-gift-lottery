@@ -10,6 +10,7 @@ type LotteryPanelProps = {
   initialLot: ContentLot | null;
   locale: GiftLocale;
   showNotes?: boolean;
+  showShareForm?: boolean;
 };
 
 type LotteryResponse = {
@@ -18,10 +19,40 @@ type LotteryResponse = {
   lot?: ContentLot;
 };
 
-export function LotteryPanel({ library, initialLot, locale, showNotes = true }: LotteryPanelProps) {
+function getOrigin() {
+  return typeof window === "undefined" ? "" : window.location.origin;
+}
+
+function getLotPoem(fortune: string | undefined) {
+  if (!fortune) {
+    return "";
+  }
+
+  return fortune
+    .replace(/^小籤詩：/, "")
+    .split("溫柔解讀：")[0]
+    ?.trim() ?? fortune;
+}
+
+function buildLetterMessage(lot: ContentLot) {
+  return [
+    `${lot.label}｜${lot.title}`,
+    "",
+    "小籤詩：",
+    getLotPoem(lot.fortune),
+    "",
+    "今日花語：",
+    lot.blessing ?? "",
+  ].join("\n");
+}
+
+export function LotteryPanel({ library, initialLot, locale, showNotes = true, showShareForm = false }: LotteryPanelProps) {
   const [lot, setLot] = useState<ContentLot | null>(initialLot);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [fromName, setFromName] = useState("");
+  const [toName, setToName] = useState("");
+  const [letterLink, setLetterLink] = useState("");
 
   async function drawLot() {
     setIsLoading(true);
@@ -39,6 +70,7 @@ export function LotteryPanel({ library, initialLot, locale, showNotes = true }: 
       }
 
       setLot(data.lot);
+      setLetterLink("");
     } catch (caughtError) {
       const message =
         caughtError instanceof Error ? caughtError.message : library.fallbackMessages.error;
@@ -69,14 +101,55 @@ export function LotteryPanel({ library, initialLot, locale, showNotes = true }: 
         empty: library.fallbackMessages.empty,
         category: "分類",
         number: "編號",
-        blessing: "祝賀語",
+        blessing: "今日花語",
         drawButton: isLoading ? "抽籤中..." : library.meta.ctaLabel ?? "抽一支籤",
         notes: [
-          "正式 25 籤與祝賀語內容請填入 `data/content-library.json`。",
+          "正式 25 籤與今日花語內容請填入 `data/content-library.json`。",
           "LINE Webhook endpoint: `/api/line/webhook`",
           "隨機抽籤 API: `GET /api/lots/random`",
         ],
       };
+
+  function updateFromName(value: string) {
+    setFromName(value);
+    setLetterLink("");
+  }
+
+  function updateToName(value: string) {
+    setToName(value);
+    setLetterLink("");
+  }
+
+  async function copyLetterLink() {
+    if (!letterLink) {
+      return;
+    }
+
+    await navigator.clipboard.writeText(letterLink);
+  }
+
+  function generateLetterLink() {
+    if (!lot || !fromName.trim() || !toName.trim()) {
+      return;
+    }
+
+    const message = buildLetterMessage(lot);
+    const origin = getOrigin();
+    const query = [
+      `from=${encodeURIComponent(fromName.trim())}`,
+      `to=${encodeURIComponent(toName.trim())}`,
+      `message=${encodeURIComponent(message)}`,
+      "locale=zh",
+      "cardId=shared-blessing",
+    ].join("&");
+
+    setLetterLink(`${origin}/letter?${query}`);
+  }
+
+  const canGenerateLetter = Boolean(lot && fromName.trim() && toName.trim());
+  const lineShareHref = letterLink
+    ? `https://line.me/R/msg/text/?${encodeURIComponent(`我抽到一張今日小花籤，想送給你。\n打開這封祝福信：${letterLink}`)}`
+    : "";
 
   return (
     <>
@@ -98,6 +171,50 @@ export function LotteryPanel({ library, initialLot, locale, showNotes = true }: 
               <h3>{copy.blessing}</h3>
               <p>{lot.blessing}</p>
             </div>
+            {showShareForm ? (
+              <div className={styles.lotShareBox}>
+                <h3>把這張小花籤送給對方</h3>
+                <p>把剛剛抽到的花籤，變成一封可以打開的祝福信。</p>
+                <div className={styles.lotShareGrid}>
+                  <label className={styles.field}>
+                    <span>送禮人</span>
+                    <input
+                      type="text"
+                      value={fromName}
+                      onChange={(event) => updateFromName(event.target.value)}
+                      placeholder="例如：Akato"
+                    />
+                  </label>
+                  <label className={styles.field}>
+                    <span>收禮人</span>
+                    <input
+                      type="text"
+                      value={toName}
+                      onChange={(event) => updateToName(event.target.value)}
+                      placeholder="例如：重要的人"
+                    />
+                  </label>
+                </div>
+                <div className={styles.primaryActionRow}>
+                  <button type="button" className={styles.secondaryButton} onClick={generateLetterLink} disabled={!canGenerateLetter}>
+                    產生祝福信連結
+                  </button>
+                </div>
+                {letterLink ? (
+                  <div className={styles.resultCard}>
+                    <p className={styles.resultLink}>{letterLink}</p>
+                    <div className={styles.resultActions}>
+                      <button type="button" className={styles.secondaryButton} onClick={copyLetterLink}>
+                        複製連結
+                      </button>
+                      <a className={styles.lineButton} href={lineShareHref} target="_blank" rel="noreferrer">
+                        LINE 分享
+                      </a>
+                    </div>
+                  </div>
+                ) : null}
+              </div>
+            ) : null}
           </>
         ) : (
           <p className={styles.empty}>{copy.empty}</p>
