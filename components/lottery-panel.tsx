@@ -9,6 +9,7 @@ type LotteryPanelProps = {
   library: ContentLibrary;
   initialLot: ContentLot | null;
   locale: GiftLocale;
+  showNotes?: boolean;
 };
 
 type LotteryResponse = {
@@ -17,7 +18,7 @@ type LotteryResponse = {
   lot?: ContentLot;
 };
 
-export function LotteryPanel({ library, initialLot, locale }: LotteryPanelProps) {
+export function LotteryPanel({ library, initialLot, locale, showNotes = true }: LotteryPanelProps) {
   const [lot, setLot] = useState<ContentLot | null>(initialLot);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -111,11 +112,13 @@ export function LotteryPanel({ library, initialLot, locale }: LotteryPanelProps)
         {error ? <p className={styles.errorText}>{error}</p> : null}
       </section>
 
-      <section className={styles.notes}>
-        {copy.notes.map((note) => (
-          <p key={note}>{note}</p>
-        ))}
-      </section>
+      {showNotes ? (
+        <section className={styles.notes}>
+          {copy.notes.map((note) => (
+            <p key={note}>{note}</p>
+          ))}
+        </section>
+      ) : null}
     </>
   );
 }
