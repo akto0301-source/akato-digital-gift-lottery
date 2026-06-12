@@ -18,8 +18,9 @@ export default function LotPage() {
       <LotteryPanel library={library} initialLot={initialLot} locale="zh" showNotes={false} showShareForm />
 
       <section className={styles.cta}>
-        <p>想把這份祝福送給別人？</p>
-        <Link href="/">製作一封數位回禮</Link>
+        <p>想另外寫一封完整祝福？</p>
+        <p>前往 Akato 數位回禮首頁，製作一封專屬祝福信。</p>
+        <Link href="/">前往數位回禮製作</Link>
       </section>
     </main>
   );
