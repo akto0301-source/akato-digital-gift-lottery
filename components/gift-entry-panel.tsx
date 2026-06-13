@@ -59,12 +59,13 @@ export function GiftEntryPanel({ locale }: GiftEntryPanelProps) {
   const [giftLink, setGiftLink] = useState("");
   const [copyLabel, setCopyLabel] = useState(copy.entry.copyButton);
   const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(null);
+  const [hasCustomMessage, setHasCustomMessage] = useState(false);
   const [needsRegeneration, setNeedsRegeneration] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
   const canGenerate = !isGenerating && !!form.from.trim() && !!form.to.trim() && !!form.message.trim();
-  const canShuffleTemplateMessage = !!selectedTemplateId && getCardMessages(locale, selectedTemplateId).length > 1;
+  const canShuffleTemplateMessage = !!selectedTemplateId && !hasCustomMessage && getCardMessages(locale, selectedTemplateId).length > 1;
   const selectedTemplate = selectedTemplateId ? getCardById(selectedTemplateId) : null;
   const selectedTemplateCopy = selectedTemplate ? (locale === "ja" ? selectedTemplate.ja : selectedTemplate.zh) : null;
   const previewMessage = form.message.trim() || (locale === "ja" ? "ここに、あなたの祝福が少しずつ育っていきます。" : "這裡會慢慢長出你的祝福。");
@@ -109,9 +110,18 @@ export function GiftEntryPanel({ locale }: GiftEntryPanelProps) {
     invalidateGiftLink();
   }
 
+  function updateMessage(value: string) {
+    const templateMessages = selectedTemplateId ? getCardMessages(locale, selectedTemplateId) : [];
+    setHasCustomMessage(value.trim() !== "" && !templateMessages.includes(value));
+    updateField("message", value);
+  }
+
   function chooseTemplate(templateId: string) {
     setSelectedTemplateId(templateId);
-    setForm((current) => ({ ...current, message: pickInitialMessage(locale, templateId) }));
+    setForm((current) => ({
+      ...current,
+      message: hasCustomMessage && current.message.trim() ? current.message : pickInitialMessage(locale, templateId),
+    }));
     invalidateGiftLink();
   }
 
@@ -258,7 +268,7 @@ export function GiftEntryPanel({ locale }: GiftEntryPanelProps) {
           <span>{copy.entry.messageLabel}</span>
           <textarea
             value={form.message}
-            onChange={(event) => updateField("message", event.target.value)}
+            onChange={(event) => updateMessage(event.target.value)}
             placeholder={copy.entry.messagePlaceholder}
             rows={5}
           />
