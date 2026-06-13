@@ -65,7 +65,9 @@ export function GiftEntryPanel({ locale }: GiftEntryPanelProps) {
   const [errorMessage, setErrorMessage] = useState("");
 
   const canGenerate = !isGenerating && !!form.from.trim() && !!form.to.trim() && !!form.message.trim();
-  const canShuffleTemplateMessage = !!selectedTemplateId && !hasCustomMessage && getCardMessages(locale, selectedTemplateId).length > 1;
+  const selectedTemplateMessages = selectedTemplateId ? getCardMessages(locale, selectedTemplateId) : [];
+  const isSystemTemplateMessage = !form.message.trim() || selectedTemplateMessages.includes(form.message);
+  const canShuffleTemplateMessage = !!selectedTemplateId && !hasCustomMessage && isSystemTemplateMessage && selectedTemplateMessages.length > 1;
   const selectedTemplate = selectedTemplateId ? getCardById(selectedTemplateId) : null;
   const selectedTemplateCopy = selectedTemplate ? (locale === "ja" ? selectedTemplate.ja : selectedTemplate.zh) : null;
   const previewMessage = form.message.trim() || (locale === "ja" ? "ここに、あなたの祝福が少しずつ育っていきます。" : "這裡會慢慢長出你的祝福。");
@@ -139,6 +141,7 @@ export function GiftEntryPanel({ locale }: GiftEntryPanelProps) {
       ...current,
       message: pickAnotherMessage(messages, current.message),
     }));
+    setHasCustomMessage(false);
     invalidateGiftLink();
   }
 
