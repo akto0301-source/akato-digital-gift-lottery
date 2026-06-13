@@ -776,20 +776,6 @@
   margin-top: 8px;
 }
 
-.lotteryModule {
-  margin-top: 32px;
-  padding: 26px 30px;
-  border-radius: 28px;
-  border: 1px dashed rgba(215, 197, 171, 0.96);
-  background: rgba(255, 250, 241, 0.72);
-}
-
-.lotteryModule h2 {
-  margin: 0;
-  color: #7c565b;
-  font-size: clamp(1.5rem, 4vw, 2.1rem);
-}
-
 @media (max-width: 640px) {
   .page {
     padding-top: 24px;
@@ -803,8 +789,7 @@
   .giftModule,
   .entryChooser,
   .orderGuide,
-  .card,
-  .lotteryModule {
+  .card {
     padding: 22px;
   }
 

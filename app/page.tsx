@@ -112,14 +112,6 @@ export function HomePage({ locale = "zh" }: HomePageProps) {
 
         <p className={styles.orderGuideNote}>若需要由 Akato 協助代製，可透過 LINE 聯繫。</p>
       </section>
-      <section className={styles.lotteryModule}>
-        <p className={styles.moduleEyebrow}>今日小花籤</p>
-        <h2>想完整體驗今日小花籤？</h2>
-        <p className={styles.moduleLead}>前往小花籤頁，抽一張今天剛好想陪你的花語。</p>
-        <Link className={styles.entryChooserButton} href="/lot">
-          前往今日小花籤
-        </Link>
-      </section>
     </main>
   );
 }
