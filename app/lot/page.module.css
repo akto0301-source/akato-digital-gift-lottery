@@ -53,10 +53,10 @@
   justify-content: center;
   min-height: 48px;
   border-radius: 999px;
-  border: 1px solid rgba(215, 197, 171, 0.96);
-  background: rgba(255, 250, 247, 0.94);
+  border: 1px solid rgba(150, 51, 31, 0.18);
+  background: linear-gradient(135deg, #a94a3a, #96331f);
   padding: 12px 18px;
-  color: #7b5b57;
+  color: #fff8f1;
   text-decoration: none;
   transition: transform 160ms ease, box-shadow 160ms ease;
 }
@@ -64,7 +64,8 @@
 .cta a:hover,
 .cta a:focus-visible {
   transform: translateY(-1px);
-  box-shadow: 0 14px 28px rgba(114, 83, 74, 0.1);
+  background: linear-gradient(135deg, #96331f, #7f2a1b);
+  box-shadow: 0 14px 28px rgba(150, 51, 31, 0.22);
 }
 
 @media (max-width: 640px) {
