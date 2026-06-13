@@ -3,6 +3,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { ExtraMessagePanel } from '@/app/confirm/extra-message-panel';
+import { BlessingMotif, getBlessingCardVisual } from '@/components/blessing-card-visuals';
 import { FlowerLotIllustration } from '@/components/flower-lot-illustrations';
 import { getAllLots } from '@/lib/content';
 import { blessingCards, getLocaleCopy } from '@/lib/i18n';
@@ -128,6 +129,7 @@ export default function LetterPage() {
     () => (isSharedFlowerLotLetter ? getSharedFlowerLot(giftMessage) : null),
     [giftMessage, isSharedFlowerLotLetter],
   );
+  const categoryVisual = categoryId && !isSharedFlowerLotLetter ? getBlessingCardVisual(categoryId) : null;
 
   const handleOpenEnvelope = () => {
     setIsClicking(true);
@@ -163,6 +165,43 @@ export default function LetterPage() {
               <p style={{ fontSize: '12px', fontWeight: 400, letterSpacing: '0.16em', color: '#A39B95', margin: '0 0 2px', position: 'relative', zIndex: 3 }}>
                 {categoryCopy.label} · {categoryCopy.title}
               </p>
+            ) : null}
+            {categoryVisual ? (
+              <div
+                style={{
+                  position: 'relative',
+                  width: '128px',
+                  height: '104px',
+                  margin: '-4px auto 0',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  zIndex: 3,
+                }}
+                aria-hidden="true"
+              >
+                <span
+                  style={{
+                    position: 'absolute',
+                    width: '132px',
+                    height: '72px',
+                    borderRadius: '999px',
+                    background: `linear-gradient(135deg, ${categoryVisual.petal}, rgba(255, 248, 241, 0.42))`,
+                    opacity: 0.58,
+                    transform: 'rotate(-7deg)',
+                  }}
+                />
+                <BlessingMotif
+                  visual={categoryVisual}
+                  style={{
+                    position: 'relative',
+                    width: '116px',
+                    height: '116px',
+                    filter: 'drop-shadow(0 14px 22px rgba(120, 90, 60, 0.1))',
+                    opacity: 0.92,
+                  }}
+                />
+              </div>
             ) : null}
             {sharedFlowerLot ? (
               <FlowerLotIllustration
