@@ -235,7 +235,7 @@ export function LotteryPanel({ library, initialLot, locale, showNotes = true, sh
         {lot ? (
           <>
             <div className={styles.lotIllustrationWrap}>
-              <FlowerLotIllustration lot={lot} className={styles.lotIllustration} />
+              <FlowerLotIllustration lot={lot} className={styles.lotIllustration} size={168} />
             </div>
             <h2>{lot.title}</h2>
             <p className={styles.fortune}>{lot.fortune}</p>
