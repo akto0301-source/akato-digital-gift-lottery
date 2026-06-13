@@ -55,10 +55,12 @@ function getFlowerStyle(key?: string | null) {
 function RoseBloom({ flower }: { flower: FlowerStyle }) {
   return (
     <g>
-      <path d="M58 35c11-16 29-11 31 3 2 15-11 27-29 29-15-10-14-22-2-32Z" fill={flower.bloomSoft} opacity="0.72" />
-      <path d="M62 38c9-10 20-8 22 2 2 11-7 19-21 22-10-7-10-16-1-24Z" fill={flower.bloom} opacity="0.9" />
-      <path d="M65 42c5-6 13-5 15 1 1 7-5 12-14 14-6-5-6-10-1-15Z" fill="none" stroke={flower.accent} strokeWidth="1.4" strokeLinecap="round" />
-      <path d="M58 45c9 3 19 2 29-2M62 53c8 2 15 1 22-3" fill="none" stroke={flower.line} strokeWidth="1.1" strokeLinecap="round" opacity="0.42" />
+      <path d="M53 43c3-17 18-28 33-22 15 6 19 24 10 38-8 13-28 17-44 8-8-9-7-18 1-24Z" fill={flower.bloomSoft} opacity="0.58" />
+      <path d="M58 37c10-13 25-11 32-1 8 12 1 26-15 33-14 0-24-8-24-19 0-5 2-9 7-13Z" fill={flower.bloom} opacity="0.82" />
+      <path d="M67 32c7-6 16-3 18 5 3 9-4 19-16 22-9-5-11-15-2-27Z" fill={flower.bloomSoft} opacity="0.82" />
+      <path d="M61 45c5-10 16-15 24-10M58 54c8-4 16-6 29-3M67 61c8-1 15-5 18-12" fill="none" stroke={flower.line} strokeWidth="1.05" strokeLinecap="round" opacity="0.42" />
+      <path d="M69 42c4-5 11-5 14-1 3 5-1 12-9 15-7-2-9-8-5-14Z" fill="none" stroke={flower.accent} strokeWidth="1.35" strokeLinecap="round" opacity="0.78" />
+      <path d="M73 45c3-2 7-2 9 1M71 51c4 1 8 0 11-3" fill="none" stroke={flower.accent} strokeWidth="0.95" strokeLinecap="round" opacity="0.62" />
     </g>
   );
 }
@@ -79,23 +81,29 @@ function DaisyBloom({ flower }: { flower: FlowerStyle }) {
 
 function ClusterBloom({ flower }: { flower: FlowerStyle }) {
   const blooms = [
-    [61, 34, 10],
-    [76, 31, 12],
-    [89, 41, 11],
-    [68, 50, 12],
-    [84, 56, 10],
-    [54, 48, 8],
+    [56, 37, 8],
+    [68, 29, 9],
+    [82, 32, 10],
+    [94, 43, 9],
+    [73, 45, 11],
+    [59, 53, 9],
+    [87, 58, 8],
+    [70, 63, 7],
   ];
 
   return (
     <g>
       {blooms.map(([cx, cy, r]) => (
         <g key={`${cx}-${cy}`}>
-          <circle cx={cx} cy={cy} r={r} fill={flower.bloomSoft} opacity="0.78" />
-          <path d={`M${cx} ${cy - r + 2}c4 6 4 10 0 16M${cx - r + 2} ${cy}c6-4 10-4 16 0`} stroke={flower.accent} strokeWidth="1" strokeLinecap="round" opacity="0.72" />
+          <circle cx={cx} cy={cy} r={r} fill={flower.bloomSoft} opacity="0.62" />
+          {[0, 72, 144, 216, 288].map((angle) => (
+            <ellipse key={angle} cx={cx} cy={cy - r * 0.45} rx={r * 0.32} ry={r * 0.58} fill={flower.bloom} opacity="0.72" transform={`rotate(${angle} ${cx} ${cy})`} />
+          ))}
+          <path d={`M${cx} ${cy - r + 2}c3 5 3 9 0 14M${cx - r + 2} ${cy}c5-3 9-3 14 0`} stroke={flower.accent} strokeWidth="0.8" strokeLinecap="round" opacity="0.54" />
           <circle cx={cx} cy={cy} r="2" fill={flower.accent} opacity="0.62" />
         </g>
       ))}
+      <path d="M56 63c11 8 26 8 39-1" stroke={flower.line} strokeWidth="0.9" strokeLinecap="round" opacity="0.32" />
     </g>
   );
 }
@@ -136,10 +144,48 @@ function TulipBloom({ flower }: { flower: FlowerStyle }) {
 function CallaBloom({ flower }: { flower: FlowerStyle }) {
   return (
     <g>
-      <path d="M61 63c-4-24 3-39 17-43 12 12 11 31-4 48-6 2-10 0-13-5Z" fill={flower.bloom} opacity="0.9" />
-      <path d="M77 23c-8 14-9 27-4 40" fill="none" stroke={flower.accent} strokeWidth="1.4" strokeLinecap="round" />
-      <path d="M75 49c7-6 11-14 10-24" fill="none" stroke={flower.line} strokeWidth="1" strokeLinecap="round" opacity="0.38" />
-      <path d="M70 45c6-2 9-5 11-10" fill="none" stroke={flower.accent} strokeWidth="1.2" strokeLinecap="round" />
+      <path d="M58 64c-5-25 5-42 22-46 13 13 12 34-5 52-8 3-14 1-17-6Z" fill={flower.bloomSoft} opacity="0.72" />
+      <path d="M64 64c-2-22 4-35 16-43 8 14 6 30-7 45-4 2-7 1-9-2Z" fill={flower.bloom} opacity="0.88" />
+      <path d="M80 22c-8 14-10 29-5 43" fill="none" stroke={flower.accent} strokeWidth="1.45" strokeLinecap="round" />
+      <path d="M74 45c5-4 8-8 10-15" fill="none" stroke={flower.line} strokeWidth="0.95" strokeLinecap="round" opacity="0.38" />
+      <path d="M68 47c6-2 10-6 13-12" fill="none" stroke={flower.accent} strokeWidth="1.15" strokeLinecap="round" />
+    </g>
+  );
+}
+
+function LilyBloom({ flower }: { flower: FlowerStyle }) {
+  return (
+    <g transform="translate(74 48)">
+      {[0, 60, 120, 180, 240, 300].map((angle, index) => (
+        <path
+          key={angle}
+          d="M0 2c-8-8-7-24 0-33 8 9 8 25 0 33Z"
+          fill={index % 2 === 0 ? flower.bloom : flower.bloomSoft}
+          opacity="0.78"
+          stroke={flower.accent}
+          strokeWidth="0.75"
+          transform={`rotate(${angle})`}
+        />
+      ))}
+      <path d="M0-1c-7-11-4-22 0-29M0-1c8-10 7-21 2-29M0-1c0-10 0-18 0-28" stroke={flower.line} strokeWidth="0.75" strokeLinecap="round" opacity="0.36" />
+      {[0, 55, 110, 250, 305].map((angle) => (
+        <path key={angle} d="M0 0c1-7 2-13 4-18" stroke={flower.accent} strokeWidth="0.85" strokeLinecap="round" transform={`rotate(${angle})`} />
+      ))}
+      <circle r="3.4" fill={flower.accent} opacity="0.68" />
+    </g>
+  );
+}
+
+function IrisBloom({ flower }: { flower: FlowerStyle }) {
+  return (
+    <g>
+      <path d="M74 62c-12-8-18-20-14-32 10 1 17 10 17 26" fill={flower.bloomSoft} opacity="0.78" />
+      <path d="M76 60c10-11 16-22 11-35-10 4-15 14-13 31" fill={flower.bloom} opacity="0.82" />
+      <path d="M73 55c-7-18-3-31 5-40 8 10 9 25-2 40" fill={flower.bloomSoft} opacity="0.9" />
+      <path d="M63 58c-9-2-17-9-18-20 10-3 19 3 24 15" fill={flower.bloom} opacity="0.62" />
+      <path d="M85 58c9-3 17-10 17-20-10-3-19 4-24 15" fill={flower.bloomSoft} opacity="0.66" />
+      <path d="M77 16c-1 14-2 27-2 40M60 33c5 7 9 14 13 22M91 32c-5 8-10 16-15 24" stroke={flower.accent} strokeWidth="1.05" strokeLinecap="round" opacity="0.62" />
+      <path d="M69 56c3 3 8 3 12 0" stroke={flower.line} strokeWidth="1" strokeLinecap="round" opacity="0.4" />
     </g>
   );
 }
@@ -187,11 +233,16 @@ function RoundBloom({ flower }: { flower: FlowerStyle }) {
 function BellBloom({ flower }: { flower: FlowerStyle }) {
   return (
     <g>
-      {[30, 42, 54, 66].map((cy, index) => {
+      <path d="M75 21c-5 18-4 31 1 52" stroke={flower.line} strokeWidth="1.15" strokeLinecap="round" />
+      {[30, 42, 54, 66, 76].map((cy, index) => {
         const side = index % 2 === 0 ? -1 : 1;
-        const cx = 75 + side * 10;
+        const cx = 76 + side * (8 + index * 1.5);
         return (
-          <path key={cy} d={`M${cx - 8} ${cy}c1-8 15-8 16 0 0 8-4 13-8 13s-8-5-8-13Z`} fill={flower.bloom} stroke={flower.accent} strokeWidth="1" opacity="0.9" />
+          <g key={cy}>
+            <path d={`M${76} ${cy - 9}c${side * 4} 3 ${side * 7} 5 ${side * 11} 7`} stroke={flower.line} strokeWidth="0.85" strokeLinecap="round" opacity="0.5" />
+            <path d={`M${cx - 7} ${cy}c1-8 13-8 14 0 0 8-3 12-7 12s-7-4-7-12Z`} fill={flower.bloom} stroke={flower.accent} strokeWidth="0.85" opacity="0.88" />
+            <path d={`M${cx - 4} ${cy + 9}c3 2 6 2 8 0`} stroke={flower.line} strokeWidth="0.65" strokeLinecap="round" opacity="0.34" />
+          </g>
         );
       })}
     </g>
@@ -200,14 +251,42 @@ function BellBloom({ flower }: { flower: FlowerStyle }) {
 
 function WaterBloom({ flower }: { flower: FlowerStyle }) {
   return (
-    <g transform="translate(73 54)">
-      {[0, 45, 90, 135, 180, 225, 270, 315].map((angle) => (
-        <ellipse key={angle} cx="0" cy="-14" rx="7" ry="18" fill={flower.bloomSoft} opacity="0.84" transform={`rotate(${angle})`} />
+    <g>
+      <ellipse cx="74" cy="74" rx="34" ry="9" fill={flower.leaf} opacity="0.2" />
+      <path d="M42 76c18-4 43-4 64 0M51 82c14-2 31-2 46 0" stroke={flower.line} strokeWidth="0.85" strokeLinecap="round" opacity="0.22" />
+      <g transform="translate(74 56)">
+        {[0, 40, 80, 120, 160, 200, 240, 280, 320].map((angle) => (
+          <ellipse key={angle} cx="0" cy="-15" rx="7" ry="19" fill={flower.bloomSoft} opacity="0.8" stroke={flower.accent} strokeWidth="0.45" transform={`rotate(${angle})`} />
+        ))}
+        {[20, 70, 120, 170, 220, 270, 320].map((angle) => (
+          <ellipse key={angle} cx="0" cy="-10" rx="5" ry="14" fill={flower.bloom} opacity="0.88" transform={`rotate(${angle})`} />
+        ))}
+        <circle r="4.5" fill={flower.accent} opacity="0.64" />
+      </g>
+    </g>
+  );
+}
+
+function CherryBranchBloom({ flower }: { flower: FlowerStyle }) {
+  const blossoms = [
+    [55, 39, 0.85],
+    [75, 30, 1],
+    [93, 45, 0.82],
+    [66, 58, 0.74],
+  ];
+
+  return (
+    <g>
+      <path d="M43 70c15-22 38-35 66-42" stroke={flower.line} strokeWidth="2" strokeLinecap="round" />
+      <path d="M67 52c-4-7-9-11-17-13M79 41c4-7 10-12 20-15" stroke={flower.line} strokeWidth="1.1" strokeLinecap="round" opacity="0.62" />
+      {blossoms.map(([x, y, scale]) => (
+        <g key={`${x}-${y}`} transform={`translate(${x} ${y}) scale(${scale})`}>
+          {[0, 72, 144, 216, 288].map((angle) => (
+            <path key={angle} d="M0 0c-4-5-3-11 1-14 5 3 6 9 1 14Z" fill={flower.bloom} opacity="0.82" stroke={flower.accent} strokeWidth="0.55" transform={`rotate(${angle})`} />
+          ))}
+          <circle r="2.3" fill={flower.accent} opacity="0.72" />
+        </g>
       ))}
-      {[22, 82, 142, 202, 262, 322].map((angle) => (
-        <ellipse key={angle} cx="0" cy="-10" rx="5" ry="13" fill={flower.bloom} opacity="0.9" transform={`rotate(${angle})`} />
-      ))}
-      <circle r="4" fill={flower.accent} opacity="0.64" />
     </g>
   );
 }
@@ -215,18 +294,26 @@ function WaterBloom({ flower }: { flower: FlowerStyle }) {
 function BouquetBloom({ flower }: { flower: FlowerStyle }) {
   return (
     <g>
-      <RoseBloom flower={flower} />
-      <g transform="translate(-19 4) scale(0.62)">
+      <path d="M55 99c6-21 10-39 15-55M73 100c-1-20 0-38 1-57M89 98c-8-19-12-36-14-52" stroke={flower.line} strokeWidth="1" strokeLinecap="round" opacity="0.52" />
+      <path d="M53 92c12 9 26 10 42 1" fill="none" stroke={flower.accent} strokeWidth="3.4" strokeLinecap="round" opacity="0.42" />
+      <g transform="translate(-3 -2) scale(0.82)">
+        <RoseBloom flower={flower} />
+      </g>
+      <g transform="translate(-22 9) scale(0.58)">
         <DaisyBloom flower={{ ...flower, bloom: "#f3d39b", bloomSoft: "#fff1c8", accent: "#c6934a" }} />
       </g>
-      <g transform="translate(23 1) scale(0.56)">
+      <g transform="translate(24 7) scale(0.56)">
         <ClusterBloom flower={{ ...flower, bloom: "#c6b6d8", bloomSoft: "#e7dfee", accent: "#9380ae" }} />
       </g>
+      <path d="M54 86c-7-7-16-10-27-8 9 7 18 10 27 8ZM87 86c8-8 17-12 29-9-9 8-19 11-29 9Z" fill={flower.leaf} opacity="0.48" />
     </g>
   );
 }
 
-function FlowerBloom({ flower }: { flower: FlowerStyle }) {
+function FlowerBloom({ flower, flowerKey }: { flower: FlowerStyle; flowerKey?: string | null }) {
+  if (flowerKey === "iris") return <IrisBloom flower={flower} />;
+  if (flowerKey === "lily") return <LilyBloom flower={flower} />;
+  if (flowerKey === "cherry-blossom") return <CherryBranchBloom flower={flower} />;
   if (flower.shape === "daisy") return <DaisyBloom flower={flower} />;
   if (flower.shape === "cluster") return <ClusterBloom flower={flower} />;
   if (flower.shape === "spike") return <SpikeBloom flower={flower} />;
@@ -280,13 +367,16 @@ export function FlowerLotIllustration({
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <path d="M28 111c17 7 45 8 65-2" stroke="#d8c4a8" strokeWidth="1.2" strokeLinecap="round" opacity="0.58" />
-        <path d="M70 111c-2-21 0-44 7-68" stroke={flower.line} strokeWidth="1.8" strokeLinecap="round" />
-        <path d="M70 78c-14-9-25-9-34 0 12 4 23 4 34 0Z" fill={flower.leaf} opacity="0.64" />
-        <path d="M73 86c13-11 25-13 35-6-11 7-22 9-35 6Z" fill={flower.leaf} opacity="0.56" />
-        <path d="M70 78c-10-1-20-1-30 0M74 86c10-3 20-5 30-6" stroke={flower.line} strokeWidth="1" strokeLinecap="round" opacity="0.42" />
-        <FlowerBloom flower={flower} />
-        <path d="M23 107c24 8 55 8 78 0" stroke="#f3e6d8" strokeWidth="8" strokeLinecap="round" opacity="0.34" />
+        <path d="M27 111c18 7 47 8 67-2" stroke="#d8c4a8" strokeWidth="1.2" strokeLinecap="round" opacity="0.52" />
+        <path d="M66 111c-3-19 0-39 8-60 2-5 3-9 3-13" stroke={flower.line} strokeWidth="1.6" strokeLinecap="round" />
+        <path d="M64 92c-12-11-25-14-39-8 12 9 25 12 39 8Z" fill={flower.leaf} opacity="0.46" />
+        <path d="M72 89c13-13 27-17 42-11-12 11-26 14-42 11Z" fill={flower.leaf} opacity="0.42" />
+        <path d="M65 75c-9-8-19-9-31-3 9 6 20 7 31 3Z" fill={flower.leaf} opacity="0.35" />
+        <path d="M72 75c10-8 20-11 31-7-8 7-18 10-31 7Z" fill={flower.leaf} opacity="0.32" />
+        <path d="M64 92c-11-3-22-6-33-8M72 89c12-5 24-9 36-11M65 75c-9-2-18-3-27-3M72 75c9-3 18-5 27-7" stroke={flower.line} strokeWidth="0.82" strokeLinecap="round" opacity="0.32" />
+        <path d="M43 102c20 7 44 7 66 0" stroke="#f1e1d0" strokeWidth="10" strokeLinecap="round" opacity="0.2" />
+        <FlowerBloom flower={flower} flowerKey={key} />
+        <path d="M23 108c24 9 55 9 78 0" stroke="#f3e6d8" strokeWidth="8" strokeLinecap="round" opacity="0.3" />
       </svg>
       <figcaption style={{ fontSize: 12, letterSpacing: "0.12em", color: "#a08a7a" }}>
         {resolvedFlowerName}
