@@ -3,6 +3,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { ExtraMessagePanel } from '@/app/confirm/extra-message-panel';
+import { FlowerLotIllustration } from '@/components/flower-lot-illustrations';
+import { getAllLots } from '@/lib/content';
 import { blessingCards, getLocaleCopy } from '@/lib/i18n';
 
 const PetalsBackground = () => {
@@ -70,6 +72,14 @@ function isSharedFlowerLotMessage(categoryId: string | null, giftMessage: string
   return giftMessage.includes('第') && giftMessage.includes('小籤詩') && giftMessage.includes('今日花語');
 }
 
+function getSharedFlowerLot(giftMessage: string | null) {
+  if (!giftMessage) {
+    return null;
+  }
+
+  return getAllLots().find((lot) => giftMessage.includes(`${lot.label}｜${lot.title}`) || giftMessage.includes(lot.title)) ?? null;
+}
+
 type LetterQuery = {
   locale: 'zh' | 'ja';
   fromName: string | null;
@@ -114,6 +124,10 @@ export default function LetterPage() {
   );
   const categoryCopy = categoryCard ? (locale === 'ja' ? categoryCard.ja : categoryCard.zh) : null;
   const isSharedFlowerLotLetter = isSharedFlowerLotMessage(categoryId, giftMessage);
+  const sharedFlowerLot = useMemo(
+    () => (isSharedFlowerLotLetter ? getSharedFlowerLot(giftMessage) : null),
+    [giftMessage, isSharedFlowerLotLetter],
+  );
 
   const handleOpenEnvelope = () => {
     setIsClicking(true);
@@ -149,6 +163,19 @@ export default function LetterPage() {
               <p style={{ fontSize: '12px', fontWeight: 400, letterSpacing: '0.16em', color: '#A39B95', margin: '0 0 2px', position: 'relative', zIndex: 3 }}>
                 {categoryCopy.label} · {categoryCopy.title}
               </p>
+            ) : null}
+            {sharedFlowerLot ? (
+              <FlowerLotIllustration
+                lot={sharedFlowerLot}
+                size={112}
+                style={{
+                  margin: '0 auto 4px',
+                  opacity: 0.9,
+                  filter: 'drop-shadow(0 12px 24px rgba(120, 90, 60, 0.08))',
+                  position: 'relative',
+                  zIndex: 3,
+                }}
+              />
             ) : null}
             <p style={{ fontSize: 'clamp(23px, 4.8vw, 30px)', fontWeight: 600, lineHeight: 1.65, maxWidth: '440px', color: '#7A736E', letterSpacing: '0.08em', textAlign: 'center', margin: '0 auto', width: '100%', position: 'relative', zIndex: 3, overflowWrap: 'anywhere' }}>
               {giftMessage || (locale === 'ja' ? 'ゆっくりで大丈夫。この祝福が少しだけ寄り添えますように。' : '慢慢來也沒關係，這份祝福會陪你一下。')}

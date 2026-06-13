@@ -1,5 +1,7 @@
 import { getGiftRecord, type GiftLocale } from "@/lib/gift-links";
 import { getLocaleCopy } from "@/lib/i18n";
+import { FlowerLotIllustration } from "@/components/flower-lot-illustrations";
+import { getAllLots } from "@/lib/content";
 import styles from "./confirm-page.module.css";
 import { ExtraMessagePanel } from "./extra-message-panel";
 
@@ -39,6 +41,14 @@ function resolveLocale(raw: string | undefined, fallback: GiftLocale = "zh"): Gi
   return fallback;
 }
 
+function getSharedFlowerLot(message: string) {
+  if (!message.includes("小籤詩") || !message.includes("今日花語")) {
+    return null;
+  }
+
+  return getAllLots().find((lot) => message.includes(`${lot.label}｜${lot.title}`) || message.includes(lot.title)) ?? null;
+}
+
 export default async function ConfirmPage({ params, searchParams }: ConfirmPageProps) {
   const routeParams = params ? await params : {};
   const gift = routeParams.id ? await getGiftRecord(routeParams.id) : null;
@@ -49,6 +59,7 @@ export default async function ConfirmPage({ params, searchParams }: ConfirmPageP
   const from = gift?.from ?? pickValue(queryParams.from);
   const to = gift?.to ?? pickValue(queryParams.to);
   const message = gift?.message ?? pickValue(queryParams.message);
+  const sharedFlowerLot = getSharedFlowerLot(message);
 
   return (
     <main className={styles.page}>
@@ -73,6 +84,11 @@ export default async function ConfirmPage({ params, searchParams }: ConfirmPageP
         <p className={styles.eyebrow}>{copy.confirm.eyebrow}</p>
         <h1 className={styles.recipient}>{to || copy.confirm.recipientFallback}</h1>
         <p className={styles.meta}>{copy.confirm.meta(from)}</p>
+        {sharedFlowerLot ? (
+          <div className={styles.flowerLotIllustration}>
+            <FlowerLotIllustration lot={sharedFlowerLot} size={112} />
+          </div>
+        ) : null}
         <div className={styles.messageCard}>{message || copy.confirm.messageFallback}</div>
         <ExtraMessagePanel locale={locale} />
         <div className={styles.footerAction}>

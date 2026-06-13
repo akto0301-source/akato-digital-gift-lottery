@@ -17,8 +17,14 @@
       "wish": "願你被溫柔照亮，不必急著證明什麼。",
       "fortune": "小籤詩：白玫瑰在晨光裡醒來，提醒你先好好安放自己。溫柔解讀：今天適合把節奏調低一點，讓心留一處位置給新的光。",
       "category": "晨光",
-      "tags": ["calm", "morning"],
-      "image": ""
+      "tags": [
+        "calm",
+        "morning"
+      ],
+      "image": "",
+      "flowerName": "白玫瑰",
+      "flowerIllustration": "white-rose",
+      "flowerAlt": "第1籤 白玫瑰小插畫"
     },
     {
       "id": "lot-02",
@@ -32,8 +38,14 @@
       "wish": "願你在簡單裡感覺被生活輕輕支持。",
       "fortune": "小籤詩：小雛菊不急著盛大，只把窗邊照得乾淨。溫柔解讀：今天不用追求很多，讓一件小事變好，就已經很好。",
       "category": "日常",
-      "tags": ["daily", "light"],
-      "image": ""
+      "tags": [
+        "daily",
+        "light"
+      ],
+      "image": "",
+      "flowerName": "小雛菊",
+      "flowerIllustration": "daisy",
+      "flowerAlt": "第2籤 小雛菊小插畫"
     },
     {
       "id": "lot-03",
@@ -47,8 +59,14 @@
       "wish": "願你和重要的人之間，有不必用力也在的連結。",
       "fortune": "小籤詩：滿天星把微小的光聚在一起，像一句沒有催促的問候。溫柔解讀：今天適合把心意說得簡單一點，真誠就足夠。",
       "category": "牽掛",
-      "tags": ["care", "thanks"],
-      "image": ""
+      "tags": [
+        "care",
+        "thanks"
+      ],
+      "image": "",
+      "flowerName": "滿天星",
+      "flowerIllustration": "gypsophila",
+      "flowerAlt": "第3籤 滿天星小插畫"
     },
     {
       "id": "lot-04",
@@ -62,8 +80,14 @@
       "wish": "願你知道，你的付出一直都有被看見。",
       "fortune": "小籤詩：康乃馨不說辛苦，只把柔軟慢慢打開。溫柔解讀：今天適合收回一點過度用力，好好補充自己的心。",
       "category": "照顧",
-      "tags": ["care", "rest"],
-      "image": ""
+      "tags": [
+        "care",
+        "rest"
+      ],
+      "image": "",
+      "flowerName": "粉色康乃馨",
+      "flowerIllustration": "carnation",
+      "flowerAlt": "第4籤 粉色康乃馨小插畫"
     },
     {
       "id": "lot-05",
@@ -77,8 +101,14 @@
       "wish": "願你在安靜裡恢復，明天再慢慢來。",
       "fortune": "小籤詩：薰衣草替夜色留一盞小燈，陪你把緊繃放鬆。溫柔解讀：今天不必把所有事想完，先讓身心回到舒服的位置。",
       "category": "安定",
-      "tags": ["rest", "night"],
-      "image": ""
+      "tags": [
+        "rest",
+        "night"
+      ],
+      "image": "",
+      "flowerName": "薰衣草",
+      "flowerIllustration": "lavender",
+      "flowerAlt": "第5籤 薰衣草小插畫"
     },
     {
       "id": "lot-06",
@@ -92,8 +122,14 @@
       "wish": "願你的力氣，慢慢回到讓心安穩的地方。",
       "fortune": "小籤詩：小蒼蘭穿過窗縫，把停住的空氣重新吹動。溫柔解讀：今天適合做一點減法，讓心回到清楚。",
       "category": "清新",
-      "tags": ["clarity", "space"],
-      "image": ""
+      "tags": [
+        "clarity",
+        "space"
+      ],
+      "image": "",
+      "flowerName": "小蒼蘭",
+      "flowerIllustration": "freesia",
+      "flowerAlt": "第6籤 小蒼蘭小插畫"
     },
     {
       "id": "lot-07",
@@ -107,8 +143,14 @@
       "wish": "願你的善良不被透支，你的心也被好好保護。",
       "fortune": "小籤詩：山茶花開在門邊，像一句溫和但清楚的回答。溫柔解讀：今天適合把界線說清楚，願意靠近的關係，會慢慢聽見你的需要。",
       "category": "界線",
-      "tags": ["boundary", "steady"],
-      "image": ""
+      "tags": [
+        "boundary",
+        "steady"
+      ],
+      "image": "",
+      "flowerName": "山茶花",
+      "flowerIllustration": "camellia",
+      "flowerAlt": "第7籤 山茶花小插畫"
     },
     {
       "id": "lot-08",
@@ -122,8 +164,14 @@
       "wish": "願你相信慢慢來也能抵達美好的形狀。",
       "fortune": "小籤詩：鬱金香把陽光收在杯口，等待最合適的時候展開。溫柔解讀：今天適合蓄力，不必急著把成果交出來。",
       "category": "耐心",
-      "tags": ["patience", "growth"],
-      "image": ""
+      "tags": [
+        "patience",
+        "growth"
+      ],
+      "image": "",
+      "flowerName": "鬱金香",
+      "flowerIllustration": "tulip",
+      "flowerAlt": "第8籤 鬱金香小插畫"
     },
     {
       "id": "lot-09",
@@ -137,8 +185,14 @@
       "wish": "願你的話語有溫度，也有被理解的空間。",
       "fortune": "小籤詩：洋桔梗把信紙攤平，等一個真心慢慢落筆。溫柔解讀：今天適合整理想說的話，簡單直接就很動人。",
       "category": "書信",
-      "tags": ["letter", "message"],
-      "image": ""
+      "tags": [
+        "letter",
+        "message"
+      ],
+      "image": "",
+      "flowerName": "洋桔梗",
+      "flowerIllustration": "lisianthus",
+      "flowerAlt": "第9籤 洋桔梗小插畫"
     },
     {
       "id": "lot-10",
@@ -152,8 +206,14 @@
       "wish": "願你在收尾之後，也為自己留下一點輕鬆。",
       "fortune": "小籤詩：小菊花坐在頁尾，替今天蓋上一枚柔軟的章。溫柔解讀：今天適合完成一件小事，讓心空出位置。",
       "category": "收尾",
-      "tags": ["finish", "relief"],
-      "image": ""
+      "tags": [
+        "finish",
+        "relief"
+      ],
+      "image": "",
+      "flowerName": "小菊花",
+      "flowerIllustration": "chrysanthemum",
+      "flowerAlt": "第10籤 小菊花小插畫"
     },
     {
       "id": "lot-11",
@@ -167,8 +227,14 @@
       "wish": "願你帶著被肯定的感覺，繼續往前。",
       "fortune": "小籤詩：海芋把光捧高，讓低頭趕路的人也看見天空。溫柔解讀：今天適合給自己一點掌聲，不必等到所有事都完美。",
       "category": "鼓勵",
-      "tags": ["encourage", "light"],
-      "image": ""
+      "tags": [
+        "encourage",
+        "light"
+      ],
+      "image": "",
+      "flowerName": "海芋",
+      "flowerIllustration": "calla",
+      "flowerAlt": "第11籤 海芋小插畫"
     },
     {
       "id": "lot-12",
@@ -182,8 +248,14 @@
       "wish": "願你在等待時，也能被自己的溫柔陪伴。",
       "fortune": "小籤詩：風信子站在風裡，知道回音有自己的路。溫柔解讀：今天不必急著得到答案，先把心安放好。",
       "category": "等待",
-      "tags": ["wait", "trust"],
-      "image": ""
+      "tags": [
+        "wait",
+        "trust"
+      ],
+      "image": "",
+      "flowerName": "風信子",
+      "flowerIllustration": "hyacinth",
+      "flowerAlt": "第12籤 風信子小插畫"
     },
     {
       "id": "lot-13",
@@ -197,8 +269,14 @@
       "wish": "願重要的關係，有靠近也有呼吸。",
       "fortune": "小籤詩：粉玫瑰沒有把花瓣全部說滿，留下一點空白給風。溫柔解讀：今天適合用柔和的方式靠近，不必急著說服誰。",
       "category": "關係",
-      "tags": ["relationship", "space"],
-      "image": ""
+      "tags": [
+        "relationship",
+        "space"
+      ],
+      "image": "",
+      "flowerName": "粉玫瑰",
+      "flowerIllustration": "pink-rose",
+      "flowerAlt": "第13籤 粉玫瑰小插畫"
     },
     {
       "id": "lot-14",
@@ -212,8 +290,14 @@
       "wish": "願你被想起，也願你的想念有地方抵達。",
       "fortune": "小籤詩：勿忘我把名字藏進花心，輕輕替一份牽掛留下位置。溫柔解讀：今天適合聯繫，或讓一份牽掛有出口。",
       "category": "想念",
-      "tags": ["remember", "care"],
-      "image": ""
+      "tags": [
+        "remember",
+        "care"
+      ],
+      "image": "",
+      "flowerName": "勿忘我",
+      "flowerIllustration": "forget-me-not",
+      "flowerAlt": "第14籤 勿忘我小插畫"
     },
     {
       "id": "lot-15",
@@ -227,8 +311,14 @@
       "wish": "願你以自己的方式，長成喜歡的樣子。",
       "fortune": "小籤詩：牡丹把熱鬧收得很安靜，只在合適的時候開成自己。溫柔解讀：今天適合回到內在，不必被外面的聲音牽著走。",
       "category": "從容",
-      "tags": ["steady", "self"],
-      "image": ""
+      "tags": [
+        "steady",
+        "self"
+      ],
+      "image": "",
+      "flowerName": "牡丹",
+      "flowerIllustration": "peony",
+      "flowerAlt": "第15籤 牡丹小插畫"
     },
     {
       "id": "lot-16",
@@ -242,8 +332,14 @@
       "wish": "願你被一群真心包圍，也願你安心接受。",
       "fortune": "小籤詩：繡球花把一朵朵小花抱在一起，才有了圓滿的樣子。溫柔解讀：今天適合連結，不需要獨自完成所有事。",
       "category": "合送",
-      "tags": ["together", "support"],
-      "image": ""
+      "tags": [
+        "together",
+        "support"
+      ],
+      "image": "",
+      "flowerName": "繡球花",
+      "flowerIllustration": "hydrangea",
+      "flowerAlt": "第16籤 繡球花小插畫"
     },
     {
       "id": "lot-17",
@@ -257,8 +353,14 @@
       "wish": "願你接住小小的暖，讓心慢慢鬆開。",
       "fortune": "小籤詩：金盞花在午後亮著，不催促，只陪光停久一點。溫柔解讀：今天適合尋找一個能讓你回暖的細節。",
       "category": "暖意",
-      "tags": ["warmth", "afternoon"],
-      "image": ""
+      "tags": [
+        "warmth",
+        "afternoon"
+      ],
+      "image": "",
+      "flowerName": "金盞花",
+      "flowerIllustration": "calendula",
+      "flowerAlt": "第17籤 金盞花小插畫"
     },
     {
       "id": "lot-18",
@@ -272,8 +374,14 @@
       "wish": "願你的表達柔軟而清楚。",
       "fortune": "小籤詩：茉莉不急著佔滿房間，只把香氣放在剛好的地方。溫柔解讀：今天適合輕聲但明確地說出你的需要。",
       "category": "表達",
-      "tags": ["voice", "gentle"],
-      "image": ""
+      "tags": [
+        "voice",
+        "gentle"
+      ],
+      "image": "",
+      "flowerName": "茉莉",
+      "flowerIllustration": "jasmine",
+      "flowerAlt": "第18籤 茉莉小插畫"
     },
     {
       "id": "lot-19",
@@ -287,8 +395,14 @@
       "wish": "願你在留白裡，看見下一步。",
       "fortune": "小籤詩：百合替桌面留出一方清亮，等新的句子慢慢落下。溫柔解讀：今天適合整理環境，也整理一點心情。",
       "category": "整理",
-      "tags": ["clear", "begin"],
-      "image": ""
+      "tags": [
+        "clear",
+        "begin"
+      ],
+      "image": "",
+      "flowerName": "百合",
+      "flowerIllustration": "lily",
+      "flowerAlt": "第19籤 百合小插畫"
     },
     {
       "id": "lot-20",
@@ -302,8 +416,14 @@
       "wish": "願你心裡有方向，腳下也有安穩。",
       "fortune": "小籤詩：鳶尾花望向遠方，也記得把根安放在此刻。溫柔解讀：今天適合想一想方向，但不用逼自己立刻抵達。",
       "category": "方向",
-      "tags": ["direction", "future"],
-      "image": ""
+      "tags": [
+        "direction",
+        "future"
+      ],
+      "image": "",
+      "flowerName": "鳶尾花",
+      "flowerIllustration": "iris",
+      "flowerAlt": "第20籤 鳶尾花小插畫"
     },
     {
       "id": "lot-21",
@@ -317,8 +437,14 @@
       "wish": "願你不忽略自己的進步。",
       "fortune": "小籤詩：鈴蘭在風裡點頭，像替你說了一句可以。溫柔解讀：今天適合承認自己的努力，哪怕只是很小的一步。",
       "category": "肯定",
-      "tags": ["affirm", "soft"],
-      "image": ""
+      "tags": [
+        "affirm",
+        "soft"
+      ],
+      "image": "",
+      "flowerName": "鈴蘭",
+      "flowerIllustration": "lily-of-the-valley",
+      "flowerAlt": "第21籤 鈴蘭小插畫"
     },
     {
       "id": "lot-22",
@@ -332,8 +458,14 @@
       "wish": "願你被安穩托住，慢慢回到自己。",
       "fortune": "小籤詩：睡蓮浮著，不追波紋，只等水面慢慢安靜。溫柔解讀：今天適合延後決定，先照顧感受。",
       "category": "平靜",
-      "tags": ["calm", "emotion"],
-      "image": ""
+      "tags": [
+        "calm",
+        "emotion"
+      ],
+      "image": "",
+      "flowerName": "睡蓮",
+      "flowerIllustration": "water-lily",
+      "flowerAlt": "第22籤 睡蓮小插畫"
     },
     {
       "id": "lot-23",
@@ -347,8 +479,14 @@
       "wish": "願你在流動的日子裡，留住一點心動。",
       "fortune": "小籤詩：櫻花落得很輕，提醒人把正在發生的好好看見。溫柔解讀：今天適合珍惜眼前，不必把美好握得太緊。",
       "category": "珍惜",
-      "tags": ["moment", "memory"],
-      "image": ""
+      "tags": [
+        "moment",
+        "memory"
+      ],
+      "image": "",
+      "flowerName": "櫻花",
+      "flowerIllustration": "cherry-blossom",
+      "flowerAlt": "第23籤 櫻花小插畫"
     },
     {
       "id": "lot-24",
@@ -362,8 +500,14 @@
       "wish": "願你把自己帶回光裡。",
       "fortune": "小籤詩：向日葵不是追逐熱鬧，只是記得自己需要光。溫柔解讀：今天適合選擇讓你舒服的方向，遠離過度消耗。",
       "category": "向光",
-      "tags": ["light", "choice"],
-      "image": ""
+      "tags": [
+        "light",
+        "choice"
+      ],
+      "image": "",
+      "flowerName": "向日葵",
+      "flowerIllustration": "sunflower",
+      "flowerAlt": "第24籤 向日葵小插畫"
     },
     {
       "id": "lot-25",
@@ -377,8 +521,14 @@
       "wish": "願你帶著被安放的心情，好好休息。",
       "fortune": "小籤詩：花束在傍晚被繫好，沒有盛大的聲音，卻很完整。溫柔解讀：今天適合收下自己的不完美，讓心平安落地。",
       "category": "安放",
-      "tags": ["evening", "gratitude"],
-      "image": ""
+      "tags": [
+        "evening",
+        "gratitude"
+      ],
+      "image": "",
+      "flowerName": "花束",
+      "flowerIllustration": "bouquet",
+      "flowerAlt": "第25籤 花束小插畫"
     }
   ],
   "fallbackMessages": {
