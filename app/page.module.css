@@ -465,26 +465,48 @@
 }
 
 .lotIllustrationWrap {
+  position: relative;
   display: flex;
-  justify-content: flex-end;
-  margin: -6px 0 6px;
+  justify-content: center;
+  margin: -14px 0 10px;
+  padding-top: 2px;
+}
+
+.lotIllustrationWrap::before {
+  content: "";
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  width: min(260px, 72%);
+  height: 118px;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 42% 35%, rgba(255, 250, 243, 0.86), transparent 52%),
+    linear-gradient(135deg, rgba(240, 219, 199, 0.32), rgba(232, 194, 193, 0.22));
+  transform: translateX(-50%) rotate(-4deg);
+  pointer-events: none;
 }
 
 .lotIllustration {
   flex: 0 0 auto;
-  opacity: 0.92;
-  filter: drop-shadow(0 12px 24px rgba(114, 83, 74, 0.08));
+  position: relative;
+  z-index: 1;
+  max-width: min(48vw, 168px) !important;
+  opacity: 0.94;
+  filter: drop-shadow(0 18px 30px rgba(114, 83, 74, 0.12));
 }
 
 .card h2 {
   font-size: clamp(1.8rem, 4vw, 2.8rem);
-  margin: 0 0 16px;
+  margin: 0 0 14px;
+  text-align: center;
 }
 
 .fortune {
   font-size: 1.1rem;
   line-height: 1.9;
   margin: 0;
+  text-align: center;
 }
 
 .metaRow {
@@ -614,8 +636,16 @@
   }
 
   .lotIllustrationWrap {
-    justify-content: center;
-    margin-top: 0;
+    margin: -8px 0 8px;
+  }
+
+  .lotIllustrationWrap::before {
+    width: min(230px, 78%);
+    height: 104px;
+  }
+
+  .lotIllustration {
+    max-width: min(44vw, 156px) !important;
   }
 
   .formGrid,
