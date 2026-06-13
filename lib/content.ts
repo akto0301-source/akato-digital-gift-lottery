@@ -14,6 +14,9 @@ export type ContentLot = {
   category?: string;
   tags?: string[];
   image?: string;
+  flowerName?: string;
+  flowerIllustration?: string;
+  flowerAlt?: string;
   active?: boolean;
 };
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { FlowerLotIllustration } from "@/components/flower-lot-illustrations";
 import type { ContentLibrary, ContentLot } from "@/lib/content";
 import type { GiftLocale } from "@/lib/gift-links";
 import styles from "@/app/page.module.css";
@@ -233,6 +234,9 @@ export function LotteryPanel({ library, initialLot, locale, showNotes = true, sh
 
         {lot ? (
           <>
+            <div className={styles.lotIllustrationWrap}>
+              <FlowerLotIllustration lot={lot} className={styles.lotIllustration} />
+            </div>
             <h2>{lot.title}</h2>
             <p className={styles.fortune}>{lot.fortune}</p>
             <div className={styles.metaRow}>

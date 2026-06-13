@@ -464,6 +464,18 @@
   margin-bottom: 20px;
 }
 
+.lotIllustrationWrap {
+  display: flex;
+  justify-content: flex-end;
+  margin: -6px 0 6px;
+}
+
+.lotIllustration {
+  flex: 0 0 auto;
+  opacity: 0.92;
+  filter: drop-shadow(0 12px 24px rgba(114, 83, 74, 0.08));
+}
+
 .card h2 {
   font-size: clamp(1.8rem, 4vw, 2.8rem);
   margin: 0 0 16px;
@@ -599,6 +611,11 @@
   .card,
   .lotteryModule {
     padding: 22px;
+  }
+
+  .lotIllustrationWrap {
+    justify-content: center;
+    margin-top: 0;
   }
 
   .formGrid,

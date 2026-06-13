@@ -66,6 +66,14 @@
   color: rgba(31, 26, 23, 0.76);
 }
 
+.flowerLotIllustration {
+  display: flex;
+  justify-content: flex-end;
+  margin: 8px 4px -6px 0;
+  opacity: 0.92;
+  filter: drop-shadow(0 12px 24px rgba(114, 83, 74, 0.08));
+}
+
 .messageCard {
   margin-top: 24px;
   padding: 22px;
@@ -209,6 +217,11 @@
   .extraSection {
     padding-left: 18px;
     padding-right: 18px;
+  }
+
+  .flowerLotIllustration {
+    justify-content: center;
+    margin-right: 0;
   }
 
   .petal {
