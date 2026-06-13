@@ -48,12 +48,31 @@
 }
 
 .giftModule {
+  position: relative;
+  overflow: hidden;
   margin-bottom: 32px;
   padding: 30px;
   border-radius: 32px;
   border: 1px solid rgba(215, 197, 171, 0.92);
-  background: linear-gradient(180deg, rgba(255, 252, 247, 0.96), rgba(255, 243, 241, 0.98));
+  background:
+    radial-gradient(circle at 92% 8%, rgba(241, 216, 217, 0.42), transparent 26%),
+    radial-gradient(circle at 8% 88%, rgba(233, 221, 197, 0.36), transparent 28%),
+    linear-gradient(180deg, rgba(255, 252, 247, 0.98), rgba(255, 243, 241, 0.98));
   box-shadow: 0 22px 72px rgba(114, 83, 74, 0.12);
+}
+
+.giftModule::before {
+  content: "";
+  position: absolute;
+  inset: 18px;
+  border: 1px solid rgba(215, 197, 171, 0.42);
+  border-radius: 24px;
+  pointer-events: none;
+}
+
+.giftModule > * {
+  position: relative;
+  z-index: 1;
 }
 
 .moduleHeader {
@@ -154,10 +173,14 @@
 
 .templateCard {
   appearance: none;
+  position: relative;
+  overflow: hidden;
   width: 100%;
   border: 1px solid rgba(215, 197, 171, 0.92);
   border-radius: 24px;
-  background: rgba(255, 252, 248, 0.88);
+  background:
+    radial-gradient(circle at 86% 12%, color-mix(in srgb, var(--template-petal, #f1d9d9) 58%, transparent), transparent 34%),
+    rgba(255, 252, 248, 0.9);
   padding: 18px;
   text-align: left;
   cursor: pointer;
@@ -171,13 +194,43 @@
 .templateCard:hover,
 .templateCard:focus-visible {
   transform: translateY(-1px);
-  box-shadow: 0 16px 32px rgba(114, 83, 74, 0.1);
+  box-shadow: 0 18px 36px rgba(114, 83, 74, 0.12);
 }
 
 .templateCardSelected {
-  border-color: rgba(201, 140, 145, 0.96);
-  background: linear-gradient(180deg, rgba(255, 246, 247, 0.96), rgba(252, 239, 241, 0.98));
+  border-color: color-mix(in srgb, var(--template-accent, #c98c91) 72%, #d7c5ab);
+  background:
+    radial-gradient(circle at 88% 12%, color-mix(in srgb, var(--template-petal, #f1d9d9) 72%, transparent), transparent 35%),
+    linear-gradient(180deg, rgba(255, 247, 247, 0.98), rgba(252, 241, 238, 0.98));
   box-shadow: 0 18px 34px rgba(185, 143, 152, 0.2);
+}
+
+.templateCard::after {
+  content: "";
+  position: absolute;
+  right: 16px;
+  bottom: 14px;
+  width: 72px;
+  height: 36px;
+  border-bottom: 1px solid color-mix(in srgb, var(--template-accent, #b07d82) 48%, transparent);
+  border-radius: 50%;
+  transform: rotate(-8deg);
+  opacity: 0.28;
+  pointer-events: none;
+}
+
+.templateVisual {
+  display: flex;
+  justify-content: flex-end;
+  min-height: 62px;
+  margin: -6px -4px -4px 0;
+}
+
+.templateMotif {
+  width: 76px;
+  height: 76px;
+  opacity: 0.94;
+  filter: drop-shadow(0 10px 18px rgba(114, 83, 74, 0.08));
 }
 
 .templateCardTop {
@@ -191,7 +244,7 @@
   font-size: 0.78rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #b07d82;
+  color: var(--template-accent, #b07d82);
 }
 
 .templateSelected {
@@ -205,6 +258,17 @@
   color: #7c565b;
 }
 
+.templateMood {
+  align-self: flex-start;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--template-petal, #f1d9d9) 58%, rgba(255, 252, 248, 0.9));
+  border: 1px solid color-mix(in srgb, var(--template-accent, #b07d82) 24%, transparent);
+  padding: 5px 10px;
+  color: #8b5f65;
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+
 .templateDescription {
   line-height: 1.7;
   color: rgba(31, 26, 23, 0.7);
@@ -215,6 +279,68 @@
   white-space: pre-wrap;
   word-break: break-word;
   color: rgba(31, 26, 23, 0.76);
+  padding-top: 10px;
+  border-top: 1px dashed rgba(215, 197, 171, 0.76);
+  font-size: 0.95rem;
+}
+
+.letterPreviewCard {
+  position: relative;
+  margin-top: 22px;
+  border: 1px solid rgba(215, 197, 171, 0.92);
+  border-radius: 26px;
+  background:
+    radial-gradient(circle at 88% 18%, rgba(241, 216, 217, 0.5), transparent 30%),
+    linear-gradient(180deg, rgba(255, 253, 249, 0.96), rgba(255, 248, 241, 0.96));
+  padding: 20px 22px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.68), 0 16px 36px rgba(114, 83, 74, 0.08);
+}
+
+.letterPreviewCard::after {
+  content: "";
+  position: absolute;
+  right: 22px;
+  bottom: 18px;
+  width: 96px;
+  height: 52px;
+  border-right: 1px solid rgba(190, 142, 132, 0.22);
+  border-bottom: 1px solid rgba(190, 142, 132, 0.2);
+  border-radius: 50%;
+  transform: rotate(-12deg);
+  pointer-events: none;
+}
+
+.previewHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: #b07d82;
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.previewBody {
+  width: min(520px, 100%);
+  margin: 18px auto 0;
+  text-align: center;
+}
+
+.previewTo,
+.previewFrom {
+  margin: 0;
+  color: rgba(139, 95, 101, 0.78);
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
+}
+
+.previewMessage {
+  margin: 14px auto;
+  color: #6f5752;
+  font-size: clamp(1.08rem, 3vw, 1.38rem);
+  line-height: 1.85;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 .primaryActionRow {
@@ -268,11 +394,40 @@
 }
 
 .resultCard {
+  position: relative;
+  overflow: hidden;
   margin-top: 24px;
   border-radius: 26px;
   border: 1px solid rgba(215, 197, 171, 0.92);
-  background: rgba(255, 252, 248, 0.88);
+  background:
+    radial-gradient(circle at 92% 0%, rgba(231, 193, 199, 0.42), transparent 34%),
+    linear-gradient(180deg, rgba(255, 253, 249, 0.96), rgba(250, 239, 235, 0.96));
   padding: 22px;
+  box-shadow: 0 18px 48px rgba(114, 83, 74, 0.1);
+}
+
+.resultHeader {
+  margin-bottom: 16px;
+}
+
+.resultHeader span {
+  display: block;
+  color: #b07d82;
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+}
+
+.resultHeader strong {
+  display: block;
+  margin-top: 8px;
+  color: #7c565b;
+  font-size: 1.24rem;
+}
+
+.resultHeader p {
+  margin: 8px 0 0;
+  color: rgba(31, 26, 23, 0.7);
+  line-height: 1.75;
 }
 
 .resultNames {
@@ -677,9 +832,27 @@
     padding: 16px;
   }
 
+  .templateVisual {
+    min-height: 54px;
+  }
+
+  .templateMotif {
+    width: 66px;
+    height: 66px;
+  }
+
   .templateCardTop {
     align-items: flex-start;
     flex-direction: column;
     gap: 6px;
+  }
+
+  .previewHeader {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .letterPreviewCard {
+    padding: 18px;
   }
 }
