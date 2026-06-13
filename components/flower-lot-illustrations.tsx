@@ -155,23 +155,22 @@ function CallaBloom({ flower }: { flower: FlowerStyle }) {
 
 function LilyBloom({ flower }: { flower: FlowerStyle }) {
   return (
-    <g transform="translate(74 48)">
-      {[0, 60, 120, 180, 240, 300].map((angle, index) => (
-        <path
-          key={angle}
-          d="M0 2c-8-8-7-24 0-33 8 9 8 25 0 33Z"
-          fill={index % 2 === 0 ? flower.bloom : flower.bloomSoft}
-          opacity="0.78"
-          stroke={flower.accent}
-          strokeWidth="0.75"
-          transform={`rotate(${angle})`}
-        />
+    <g transform="translate(74 50)">
+      <path d="M0 2c-11-9-16-22-11-35 12 5 18 18 12 35Z" fill={flower.bloomSoft} stroke={flower.accent} strokeWidth="0.75" opacity="0.72" transform="rotate(-44)" />
+      <path d="M0 2c-11-9-16-22-11-35 12 5 18 18 12 35Z" fill={flower.bloom} stroke={flower.accent} strokeWidth="0.75" opacity="0.76" transform="rotate(-12)" />
+      <path d="M0 2c-10-10-12-26-3-39 10 9 13 25 4 39Z" fill={flower.bloomSoft} stroke={flower.accent} strokeWidth="0.8" opacity="0.82" transform="rotate(18)" />
+      <path d="M0 2c-11-9-16-22-11-35 12 5 18 18 12 35Z" fill={flower.bloom} stroke={flower.accent} strokeWidth="0.75" opacity="0.74" transform="rotate(50)" />
+      <path d="M0 2c-9 8-22 10-34 3 8-10 23-13 35-4Z" fill={flower.bloomSoft} stroke={flower.accent} strokeWidth="0.75" opacity="0.68" transform="rotate(-12)" />
+      <path d="M0 2c9 8 22 10 34 3-8-10-23-13-35-4Z" fill={flower.bloom} stroke={flower.accent} strokeWidth="0.75" opacity="0.7" transform="rotate(10)" />
+      <path d="M-1 0c-7-13-7-24-1-36M0 0c1-15 2-27 4-38M1 0c9-11 17-19 27-25M-2 0c-11-8-21-12-31-13" stroke={flower.line} strokeWidth="0.72" strokeLinecap="round" opacity="0.34" />
+      {[-44, -20, 0, 22, 44].map((angle, index) => (
+        <g key={angle} transform={`rotate(${angle})`}>
+          <path d="M0 1c1-8 2-15 5-23" stroke={flower.accent} strokeWidth="0.9" strokeLinecap="round" opacity="0.78" />
+          <circle cx="5" cy="-24" r={index === 2 ? 1.9 : 1.55} fill={flower.accent} opacity="0.72" />
+        </g>
       ))}
-      <path d="M0-1c-7-11-4-22 0-29M0-1c8-10 7-21 2-29M0-1c0-10 0-18 0-28" stroke={flower.line} strokeWidth="0.75" strokeLinecap="round" opacity="0.36" />
-      {[0, 55, 110, 250, 305].map((angle) => (
-        <path key={angle} d="M0 0c1-7 2-13 4-18" stroke={flower.accent} strokeWidth="0.85" strokeLinecap="round" transform={`rotate(${angle})`} />
-      ))}
-      <circle r="3.4" fill={flower.accent} opacity="0.68" />
+      <path d="M-5 3c3 3 8 4 12 0" stroke={flower.line} strokeWidth="0.9" strokeLinecap="round" opacity="0.34" />
+      <circle r="3.1" fill={flower.accent} opacity="0.58" />
     </g>
   );
 }
