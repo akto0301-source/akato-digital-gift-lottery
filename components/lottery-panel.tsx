@@ -277,7 +277,7 @@ export function LotteryPanel({ library, initialLot, locale, showNotes = true, sh
                   </label>
                 </div>
                 <div className={styles.primaryActionRow}>
-                  <button type="button" className={styles.secondaryButton} onClick={generateLetterLink} disabled={!canGenerateLetter}>
+                  <button type="button" className={styles.primaryGiftButton} onClick={generateLetterLink} disabled={!canGenerateLetter}>
                     產生祝福信連結
                   </button>
                 </div>
