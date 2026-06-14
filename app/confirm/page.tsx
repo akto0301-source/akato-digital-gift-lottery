@@ -1,6 +1,7 @@
 import { getGiftRecord, type GiftLocale } from "@/lib/gift-links";
 import { getLocaleCopy } from "@/lib/i18n";
-import { FlowerLotIllustration } from "@/components/flower-lot-illustrations";
+import { FlowerCardImage } from "@/components/flower-card-image";
+import { OrchidIllustration } from "@/components/orchid-illustration";
 import { getAllLots } from "@/lib/content";
 import styles from "./confirm-page.module.css";
 import { ExtraMessagePanel } from "./extra-message-panel";
@@ -85,10 +86,15 @@ export default async function ConfirmPage({ params, searchParams }: ConfirmPageP
         <h1 className={styles.recipient}>{to || copy.confirm.recipientFallback}</h1>
         <p className={styles.meta}>{copy.confirm.meta(from)}</p>
         {sharedFlowerLot ? (
-          <div className={styles.flowerLotIllustration}>
-            <FlowerLotIllustration lot={sharedFlowerLot} size={112} />
-          </div>
-        ) : null}
+          <FlowerCardImage lot={sharedFlowerLot} className={styles.flowerLotIllustration} imageClassName={styles.flowerLotImage} size={132} />
+        ) : (
+          <OrchidIllustration
+            orchidKey="default"
+            className={styles.flowerIllustrationWrap}
+            imageClassName={styles.flowerIllustration}
+            glowClassName={styles.flowerGlow}
+          />
+        )}
         <div className={styles.messageCard}>{message || copy.confirm.messageFallback}</div>
         <ExtraMessagePanel locale={locale} />
         <div className={styles.footerAction}>
