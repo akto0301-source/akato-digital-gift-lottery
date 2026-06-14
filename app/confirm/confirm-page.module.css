@@ -69,9 +69,62 @@
 .flowerLotIllustration {
   display: flex;
   justify-content: flex-end;
+  align-items: center;
   margin: 8px 4px -6px 0;
   opacity: 0.92;
   filter: drop-shadow(0 12px 24px rgba(114, 83, 74, 0.08));
+  pointer-events: none;
+  user-select: none;
+  animation: flowerCardFadeIn 0.72s ease both;
+}
+
+.flowerLotImage {
+  display: block;
+  width: min(180px, 38vw);
+  height: auto;
+  max-width: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+}
+
+.flowerIllustrationWrap {
+  position: relative;
+  width: min(360px, 58vw);
+  min-height: 210px;
+  margin: 8px 0 -4px auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  user-select: none;
+  animation: orchidFadeIn 0.9s ease both;
+}
+
+.flowerGlow {
+  position: absolute;
+  inset: 18% 6% 14%;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 48% 44%, rgba(255, 248, 241, 0.72), transparent 48%),
+    radial-gradient(circle at 58% 50%, rgba(235, 181, 175, 0.22), transparent 62%);
+  filter: blur(10px);
+  opacity: 0.9;
+}
+
+.flowerIllustration {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: min(100%, 360px);
+  height: auto;
+  max-width: 100%;
+  object-fit: contain;
+  opacity: 0.92;
+  pointer-events: none;
+  user-select: none;
+  filter: drop-shadow(0 18px 28px rgba(114, 83, 74, 0.12));
+  animation: orchidFloat 7s ease-in-out infinite;
 }
 
 .messageCard {
@@ -203,6 +256,41 @@
   }
 }
 
+@keyframes orchidFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes orchidFloat {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-1deg);
+  }
+
+  50% {
+    transform: translateY(-5px) rotate(1deg);
+  }
+}
+
+@keyframes flowerCardFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @media (max-width: 640px) {
   .page {
     padding: 28px 14px 44px;
@@ -222,6 +310,20 @@
   .flowerLotIllustration {
     justify-content: center;
     margin-right: 0;
+  }
+
+  .flowerLotImage {
+    width: min(230px, 70vw);
+  }
+
+  .flowerIllustrationWrap {
+    width: min(260px, 82vw);
+    min-height: 176px;
+    margin: 12px auto -2px;
+  }
+
+  .flowerIllustration {
+    width: min(100%, 260px);
   }
 
   .petal {
