@@ -673,9 +673,9 @@
   height: 148px;
   border-radius: 999px;
   background:
-    radial-gradient(circle at 50% 48%, rgba(255, 248, 238, 0.42), transparent 62%),
-    radial-gradient(circle at 36% 44%, rgba(229, 196, 177, 0.22), transparent 58%),
-    radial-gradient(circle at 66% 58%, rgba(224, 191, 190, 0.18), transparent 60%);
+    radial-gradient(circle at 50% 48%, rgba(238, 216, 195, 0.18), transparent 62%),
+    radial-gradient(circle at 36% 44%, rgba(219, 186, 169, 0.16), transparent 58%),
+    radial-gradient(circle at 66% 58%, rgba(220, 186, 185, 0.13), transparent 60%);
   transform: translate(-50%, -50%) rotate(-4deg);
   pointer-events: none;
   z-index: 0;
@@ -688,8 +688,8 @@
   width: min(42vw, 300px);
   max-width: min(42vw, 300px) !important;
   margin: 0;
-  opacity: 0.92;
-  filter: drop-shadow(0 12px 28px rgba(90, 70, 50, 0.08));
+  opacity: 0.9;
+  filter: drop-shadow(0 10px 22px rgba(90, 70, 50, 0.055));
   pointer-events: none;
   user-select: none;
   animation: flowerCardFadeIn 0.72s ease both;
@@ -701,11 +701,11 @@
   height: auto;
   max-width: 100%;
   object-fit: contain;
-  border-radius: 24px;
+  border-radius: 18px;
   background: transparent;
   mix-blend-mode: multiply;
-  opacity: 0.92;
-  filter: saturate(0.94) contrast(0.98);
+  opacity: 0.89;
+  filter: saturate(0.9) contrast(0.96);
   pointer-events: none;
   user-select: none;
 }
