@@ -682,9 +682,24 @@
   flex: 0 0 auto;
   position: relative;
   z-index: 1;
+  width: min(48vw, 230px);
   max-width: min(48vw, 168px) !important;
+  margin: 0;
   opacity: 0.94;
   filter: drop-shadow(0 18px 30px rgba(114, 83, 74, 0.12));
+  pointer-events: none;
+  user-select: none;
+  animation: flowerCardFadeIn 0.72s ease both;
+}
+
+.lotIllustrationImage {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
 }
 
 .card h2 {
@@ -797,6 +812,18 @@
   margin-top: 8px;
 }
 
+@keyframes flowerCardFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @media (max-width: 640px) {
   .page {
     padding-top: 24px;
@@ -824,7 +851,8 @@
   }
 
   .lotIllustration {
-    max-width: min(44vw, 156px) !important;
+    width: min(70vw, 230px);
+    max-width: min(70vw, 230px) !important;
   }
 
   .formGrid,

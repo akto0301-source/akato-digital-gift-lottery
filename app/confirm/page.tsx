@@ -89,7 +89,7 @@ export default async function ConfirmPage({ params, searchParams }: ConfirmPageP
           <FlowerCardImage lot={sharedFlowerLot} className={styles.flowerLotIllustration} imageClassName={styles.flowerLotImage} size={132} />
         ) : (
           <OrchidIllustration
-            orchidKey="default"
+            orchidKey="romantic"
             className={styles.flowerIllustrationWrap}
             imageClassName={styles.flowerIllustration}
             glowClassName={styles.flowerGlow}
