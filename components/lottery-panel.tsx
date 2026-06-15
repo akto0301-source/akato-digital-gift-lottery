@@ -71,6 +71,14 @@ function getLotPoem(fortune: string | undefined) {
     ?.trim() ?? fortune;
 }
 
+function getLotInterpretation(fortune: string | undefined) {
+  if (!fortune || !fortune.includes("溫柔解讀：")) {
+    return "";
+  }
+
+  return fortune.split("溫柔解讀：")[1]?.trim() ?? "";
+}
+
 function buildLetterMessage(lot: ContentLot) {
   return [
     `${lot.label}｜${lot.title}`,
@@ -159,6 +167,8 @@ export function LotteryPanel({ library, initialLot, locale, showNotes = true, sh
         empty: "まだおみくじデータが入っていません。",
         category: "分類",
         number: "番号",
+        poem: "小さな詩",
+        interpretation: "やさしい読み解き",
         blessing: "祝福のことば",
         drawButton: isLoading ? "ひいています..." : library.meta.ctaLabel ?? "今日のおみくじを引く",
         notes: [
@@ -173,6 +183,8 @@ export function LotteryPanel({ library, initialLot, locale, showNotes = true, sh
         empty: library.fallbackMessages.empty,
         category: "分類",
         number: "編號",
+        poem: "小籤詩",
+        interpretation: "溫柔解讀",
         blessing: "今日花語",
         drawButton: isLoading ? "抽籤中..." : library.meta.ctaLabel ?? "抽一支籤",
         notes: [
@@ -223,6 +235,8 @@ export function LotteryPanel({ library, initialLot, locale, showNotes = true, sh
     ? `https://line.me/R/msg/text/?${encodeURIComponent(`我抽到一張今日小花籤，想送給你。\n打開這封祝福信：${letterLink}`)}`
     : "";
   const shouldShowShareForm = Boolean(showShareForm && lot && hasShareStarted);
+  const lotPoem = getLotPoem(lot?.fortune);
+  const lotInterpretation = getLotInterpretation(lot?.fortune);
 
   return (
     <>
@@ -238,14 +252,25 @@ export function LotteryPanel({ library, initialLot, locale, showNotes = true, sh
               <FlowerCardImage lot={lot} className={styles.lotIllustration} imageClassName={styles.lotIllustrationImage} size={168} />
             </div>
             <h2>{lot.title}</h2>
-            <p className={styles.fortune}>{lot.fortune}</p>
-            <div className={styles.metaRow}>
-              <span>{copy.category}：{lot.category ?? (locale === "ja" ? "未分類" : "未分類")}</span>
-              <span>{copy.number}：{lot.order}</span>
+            <div className={styles.lotReading}>
+              <section className={styles.lotReadingBlock}>
+                <h3>{copy.poem}</h3>
+                <p>{lotPoem || lot.fortune}</p>
+              </section>
+              {lotInterpretation ? (
+                <section className={styles.lotReadingBlock}>
+                  <h3>{copy.interpretation}</h3>
+                  <p>{lotInterpretation}</p>
+                </section>
+              ) : null}
             </div>
             <div className={styles.blessingBlock}>
               <h3>{copy.blessing}</h3>
               <p>{lot.blessing}</p>
+            </div>
+            <div className={styles.metaRow}>
+              <span>{copy.category}：{lot.category ?? (locale === "ja" ? "未分類" : "未分類")}</span>
+              <span>{copy.number}：{lot.order}</span>
             </div>
             <div className={styles.actions}>
               <button className={styles.drawButton} onClick={drawLot} disabled={isLoading}>
