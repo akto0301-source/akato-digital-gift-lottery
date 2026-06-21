@@ -250,6 +250,13 @@ export function LotteryPanel({ library, initialLot, locale, showNotes = true, sh
           <>
             <div className={styles.lotIllustrationWrap}>
               <FlowerCardImage lot={lot} className={styles.lotIllustration} imageClassName={styles.lotIllustrationImage} size={168} />
+              <span className={styles.lotButterfly} aria-hidden="true">
+                <span className={styles.lotButterflyInner}>
+                  <span className={`${styles.lotButterflyWing} ${styles.lotButterflyLeftWing}`} />
+                  <span className={`${styles.lotButterflyWing} ${styles.lotButterflyRightWing}`} />
+                  <span className={styles.lotButterflyBody} />
+                </span>
+              </span>
             </div>
             <h2>{lot.title}</h2>
             <div className={styles.lotReading}>
