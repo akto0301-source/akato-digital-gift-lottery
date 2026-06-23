@@ -179,9 +179,9 @@
   border: 1px solid rgba(215, 197, 171, 0.92);
   border-radius: 24px;
   background:
-    radial-gradient(circle at 86% 12%, color-mix(in srgb, var(--template-petal, #f1d9d9) 58%, transparent), transparent 34%),
-    rgba(255, 252, 248, 0.9);
-  padding: 20px;
+    linear-gradient(180deg, rgba(255, 253, 249, 0.74), rgba(255, 250, 244, 0.84)),
+    color-mix(in srgb, var(--template-petal, #f1d9d9) 18%, rgba(255, 252, 248, 0.94));
+  padding: 24px 20px 20px;
   text-align: left;
   cursor: pointer;
   display: flex;
@@ -200,55 +200,37 @@
 .templateCardSelected {
   border-color: color-mix(in srgb, var(--template-accent, #c98c91) 72%, #d7c5ab);
   background:
-    radial-gradient(circle at 88% 12%, color-mix(in srgb, var(--template-petal, #f1d9d9) 72%, transparent), transparent 35%),
+    linear-gradient(180deg, rgba(255, 253, 249, 0.68), rgba(255, 250, 244, 0.78)),
     linear-gradient(180deg, rgba(255, 247, 247, 0.98), rgba(252, 241, 238, 0.98));
   box-shadow: 0 18px 34px rgba(185, 143, 152, 0.2);
+}
+
+.templateCard::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(90deg, rgba(255, 253, 249, 0.72), rgba(255, 253, 249, 0.38)),
+    var(--template-bg);
+  background-size: cover;
+  background-position: center;
+  opacity: 0.64;
+  pointer-events: none;
 }
 
 .templateCard::after {
   content: "";
   position: absolute;
-  right: 18px;
-  bottom: 16px;
-  width: 112px;
-  height: 56px;
-  border-bottom: 1px solid color-mix(in srgb, var(--template-accent, #b07d82) 48%, transparent);
-  border-radius: 50%;
-  transform: rotate(-8deg);
-  opacity: 0.28;
-  pointer-events: none;
-}
-
-.templateVisual {
-  position: relative;
-  display: flex;
-  justify-content: flex-end;
-  min-height: 102px;
-  margin: -8px -6px -10px 0;
-}
-
-.templateVisual::before {
-  content: "";
-  position: absolute;
-  right: 2px;
-  top: 12px;
-  width: 132px;
-  height: 72px;
-  border-radius: 999px;
+  inset: 0;
   background:
-    radial-gradient(circle at 45% 34%, rgba(255, 252, 248, 0.86), transparent 54%),
-    linear-gradient(135deg, color-mix(in srgb, var(--template-petal, #f1d9d9) 72%, transparent), rgba(255, 248, 241, 0.38));
-  transform: rotate(-7deg);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.54), rgba(255, 252, 248, 0.72)),
+    radial-gradient(circle at 50% 42%, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.28) 54%, transparent 78%);
   pointer-events: none;
 }
 
-.templateMotif {
+.templateCard > * {
   position: relative;
   z-index: 1;
-  width: 118px;
-  height: 118px;
-  opacity: 0.94;
-  filter: drop-shadow(0 16px 24px rgba(114, 83, 74, 0.1));
 }
 
 .templateCardTop {

@@ -4,6 +4,7 @@ import type { GiftLocale } from "@/lib/gift-links";
 export type BlessingCardVisual = {
   accent: string;
   petal: string;
+  backgroundImage: string;
   note: Record<GiftLocale, string>;
   motif: "rose" | "leaf" | "daisy" | "forget" | "bloom" | "bundle";
 };
@@ -12,6 +13,7 @@ const blessingCardVisuals: Record<string, BlessingCardVisual> = {
   "gentle-care": {
     accent: "#c99196",
     petal: "#f2d8d9",
+    backgroundImage: "/blessing-backgrounds/soft-floral-rose-corners.png",
     motif: "rose",
     note: {
       zh: "溫柔、日常、陪伴",
@@ -21,6 +23,7 @@ const blessingCardVisuals: Record<string, BlessingCardVisual> = {
   "calm-days": {
     accent: "#9aa77d",
     petal: "#e5ead6",
+    backgroundImage: "/blessing-backgrounds/soft-floral-blue-sprigs.png",
     motif: "leaf",
     note: {
       zh: "穩重、敬意、祝福",
@@ -30,6 +33,7 @@ const blessingCardVisuals: Record<string, BlessingCardVisual> = {
   "thank-you-light": {
     accent: "#c6a15b",
     petal: "#f4e6bd",
+    backgroundImage: "/blessing-backgrounds/soft-floral-peach-frame.png",
     motif: "daisy",
     note: {
       zh: "謝意、照亮、被記得",
@@ -39,6 +43,7 @@ const blessingCardVisuals: Record<string, BlessingCardVisual> = {
   "tender-arrival": {
     accent: "#8aa0b8",
     petal: "#dbe7ef",
+    backgroundImage: "/blessing-backgrounds/soft-floral-lavender-blue.png",
     motif: "forget",
     note: {
       zh: "補上心意、不讓祝福缺席",
@@ -48,6 +53,7 @@ const blessingCardVisuals: Record<string, BlessingCardVisual> = {
   "birthday-bloom": {
     accent: "#c98a73",
     petal: "#f4d5c6",
+    backgroundImage: "/blessing-backgrounds/soft-floral-cream-lilies.png",
     motif: "bloom",
     note: {
       zh: "今天被好好珍惜",
@@ -57,6 +63,7 @@ const blessingCardVisuals: Record<string, BlessingCardVisual> = {
   "shared-blessing": {
     accent: "#9a8fbd",
     petal: "#e0dced",
+    backgroundImage: "/blessing-backgrounds/soft-floral-pink-leaves.png",
     motif: "bundle",
     note: {
       zh: "把大家的心意收在一起",
