@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import styles from "@/app/page.module.css";
-import { BlessingMotif, getBlessingCardVisual } from "@/components/blessing-card-visuals";
+import { getBlessingCardVisual } from "@/components/blessing-card-visuals";
 import { blessingCards, getLocaleCopy } from "@/lib/i18n";
 import type { GiftLocale } from "@/lib/gift-links";
 
@@ -247,11 +247,9 @@ export function GiftEntryPanel({ locale }: GiftEntryPanelProps) {
                 style={{
                   ["--template-accent" as string]: visual.accent,
                   ["--template-petal" as string]: visual.petal,
+                  ["--template-bg" as string]: `url(${visual.backgroundImage})`,
                 }}
               >
-                <div className={styles.templateVisual}>
-                  <BlessingMotif visual={visual} className={styles.templateMotif} />
-                </div>
                 <div className={styles.templateCardTop}>
                   <span className={styles.templateCategory}>{localized.label}</span>
                   {isSelected ? <span className={styles.templateSelected}>{localized.selectedText}</span> : null}
