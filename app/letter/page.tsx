@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { ExtraMessagePanel } from '@/app/confirm/extra-message-panel';
 import { BlessingMotif, getBlessingCardVisual } from '@/components/blessing-card-visuals';
-import { FlowerLotIllustration } from '@/components/flower-lot-illustrations';
+import { FlowerCardImage } from '@/components/flower-card-image';
 import { getAllLots } from '@/lib/content';
 import { blessingCards, getLocaleCopy } from '@/lib/i18n';
 
@@ -204,15 +204,25 @@ export default function LetterPage() {
               </div>
             ) : null}
             {sharedFlowerLot ? (
-              <FlowerLotIllustration
+              <FlowerCardImage
                 lot={sharedFlowerLot}
                 size={112}
                 style={{
                   margin: '0 auto 4px',
+                  width: 'min(112px, 34vw)',
                   opacity: 0.9,
                   filter: 'drop-shadow(0 12px 24px rgba(120, 90, 60, 0.08))',
                   position: 'relative',
                   zIndex: 3,
+                }}
+                imageStyle={{
+                  display: 'block',
+                  width: '100%',
+                  height: 'auto',
+                  maxWidth: '100%',
+                  objectFit: 'contain',
+                  pointerEvents: 'none',
+                  userSelect: 'none',
                 }}
               />
             ) : null}
