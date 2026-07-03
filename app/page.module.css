@@ -731,8 +731,8 @@
 
 .lotButterfly {
   position: absolute;
-  top: 19%;
-  right: clamp(22px, 13%, 78px);
+  top: 16%;
+  right: clamp(26px, 15%, 86px);
   z-index: 3;
   display: block;
   width: clamp(38px, 7vw, 52px);
@@ -747,123 +747,44 @@
   animation: butterflyDrift 5.8s ease-in-out infinite;
 }
 
-.lotButterflyInner {
+.lotButterflyPng {
+  top: 15%;
+  right: clamp(30px, 16%, 92px);
+  width: clamp(46px, 8vw, 64px);
+  opacity: 0.88;
+  filter: drop-shadow(0 3px 6px rgba(120, 90, 40, 0.13));
+}
+
+.lotButterflyPngFrame {
   position: absolute;
   inset: 0;
   display: block;
-  transform: rotate(-16deg);
-  transform-style: preserve-3d;
+  background: center / contain no-repeat;
+  opacity: 0;
+  transform: rotate(-12deg);
+  transform-origin: 50% 58%;
+  animation: butterflyPngFrameOpacity 0.32s steps(1, end) infinite;
 }
 
-.lotButterflyInner::before,
-.lotButterflyInner::after {
-  content: "";
-  position: absolute;
-  top: 5px;
-  left: 50%;
-  width: 1px;
-  height: 18px;
-  border-radius: 999px;
-  background: linear-gradient(rgba(174, 126, 68, 0.16), rgba(151, 104, 54, 0.58));
-  transform-origin: bottom center;
+.lotButterflyPngFrame:nth-child(1) {
+  background-image: url("/lot-butterfly/butterfly-yellow-1.png");
+  animation-delay: 0s;
 }
 
-.lotButterflyInner::before {
-  transform: translateX(-1px) rotate(-33deg);
+.lotButterflyPngFrame:nth-child(2) {
+  background-image: url("/lot-butterfly/butterfly-yellow-2.png");
+  animation-delay: 0.08s;
 }
 
-.lotButterflyInner::after {
-  transform: translateX(1px) rotate(33deg);
+.lotButterflyPngFrame:nth-child(3) {
+  background-image: url("/lot-butterfly/butterfly-yellow-3.png");
+  animation-delay: 0.16s;
 }
 
-.lotButterflyWing {
-  position: absolute;
-  top: 7px;
-  width: 23px;
-  height: 31px;
-  background:
-    radial-gradient(circle at 39% 34%, rgba(255, 255, 246, 0.98) 0 20%, rgba(255, 246, 192, 0.9) 48%, rgba(239, 202, 107, 0.68) 78%, rgba(199, 143, 64, 0.34) 100%),
-    linear-gradient(145deg, rgba(255, 252, 230, 0.92), rgba(250, 221, 126, 0.46));
-  box-shadow:
-    inset 0 0 5px rgba(179, 127, 47, 0.13),
-    inset 0 -7px 9px rgba(255, 255, 244, 0.28);
-  opacity: 0.92;
-  pointer-events: none;
-  user-select: none;
-  transform-style: preserve-3d;
-  will-change: transform;
+.lotButterflyPngFrame:nth-child(4) {
+  background-image: url("/lot-butterfly/butterfly-yellow-4.png");
+  animation-delay: 0.24s;
 }
-
-.lotButterflyWing::before,
-.lotButterflyWing::after {
-  content: "";
-  position: absolute;
-  border-radius: 50%;
-  background: rgba(204, 147, 48, 0.32);
-  filter: blur(0.1px);
-}
-
-.lotButterflyWing::before {
-  top: 8px;
-  width: 3px;
-  height: 3px;
-}
-
-.lotButterflyWing::after {
-  top: 16px;
-  width: 2.4px;
-  height: 2.4px;
-}
-
-.lotButterflyLeftWing {
-  z-index: 1;
-  left: 2px;
-  border-radius: 72% 28% 56% 44% / 60% 32% 68% 48%;
-  transform-origin: right 54%;
-  animation: butterflyLeftWing 0.17s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite alternate;
-}
-
-.lotButterflyLeftWing::before {
-  right: 7px;
-}
-
-.lotButterflyLeftWing::after {
-  right: 10px;
-}
-
-.lotButterflyRightWing {
-  z-index: 1;
-  right: 2px;
-  border-radius: 28% 72% 44% 56% / 32% 60% 48% 68%;
-  transform-origin: left 54%;
-  animation: butterflyRightWing 0.17s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite alternate;
-}
-
-.lotButterflyRightWing::before {
-  left: 7px;
-}
-
-.lotButterflyRightWing::after {
-  left: 10px;
-}
-
-.lotButterflyBody {
-  position: absolute;
-  top: 15px;
-  left: 50%;
-  z-index: 2;
-  width: 5px;
-  height: 21px;
-  border-radius: 999px;
-  background:
-    radial-gradient(circle at 50% 18%, rgba(151, 101, 53, 0.82) 0 21%, transparent 22%),
-    linear-gradient(180deg, rgba(196, 145, 76, 0.92), rgba(132, 92, 51, 0.76));
-  box-shadow:
-    inset 0 0 3px rgba(255, 246, 213, 0.35),
-    0 1px 2px rgba(111, 76, 42, 0.12);
-  transform: translateX(-50%);
-}
-
 .card h2 {
   font-size: clamp(1.8rem, 4vw, 2.8rem);
   margin: 0 0 14px;
@@ -1055,35 +976,31 @@
   }
 }
 
-@keyframes butterflyLeftWing {
-  0%,
+@keyframes butterflyPngFrameOpacity {
+  0% {
+    opacity: 1;
+  }
+
+  24.99% {
+    opacity: 1;
+  }
+
+  25%,
   100% {
-    transform: perspective(180px) rotateY(12deg) rotateZ(-2deg);
-  }
-
-  52% {
-    transform: perspective(180px) rotateY(61deg) rotateZ(-4deg);
-  }
-}
-
-@keyframes butterflyRightWing {
-  0%,
-  100% {
-    transform: perspective(180px) rotateY(-12deg) rotateZ(2deg);
-  }
-
-  52% {
-    transform: perspective(180px) rotateY(-61deg) rotateZ(4deg);
+    opacity: 0;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .lotButterfly,
-  .lotButterflyWing {
+  .lotButterflyPngFrame {
     animation: none;
   }
-}
 
+  .lotButterflyPngFrame:first-child {
+    opacity: 1;
+  }
+}
 @media (max-width: 640px) {
   .page {
     padding-top: 24px;
@@ -1116,9 +1033,15 @@
   }
 
   .lotButterfly {
-    top: 20%;
-    right: clamp(16px, 9%, 42px);
-    width: 42px;
+    top: 17%;
+    right: clamp(22px, 11%, 48px);
+    width: 40px;
+  }
+
+  .lotButterflyPng {
+    top: 16%;
+    right: clamp(24px, 12%, 52px);
+    width: 48px;
   }
 
   .formGrid,
