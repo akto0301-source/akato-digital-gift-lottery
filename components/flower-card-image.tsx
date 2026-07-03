@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import type { CSSProperties } from "react";
 
 import { FlowerLotIllustration } from "@/components/flower-lot-illustrations";
 import type { ContentLot } from "@/lib/content";
@@ -66,28 +67,31 @@ type FlowerCardImageProps = {
   lot: Pick<ContentLot, "flowerIllustration" | "flowerName" | "flowerAlt" | "title">;
   className?: string;
   imageClassName?: string;
+  imageStyle?: CSSProperties;
   size?: number;
+  style?: CSSProperties;
 };
 
 function resolveFlowerCardImage(lot: FlowerCardImageProps["lot"]) {
   return FLOWER_CARD_IMAGES_BY_KEY[lot.flowerIllustration ?? ""] ?? FLOWER_CARD_IMAGES[lot.flowerName as keyof typeof FLOWER_CARD_IMAGES] ?? null;
 }
 
-export function FlowerCardImage({ lot, className, imageClassName, size = 144 }: FlowerCardImageProps) {
+export function FlowerCardImage({ lot, className, imageClassName, imageStyle, size = 144, style }: FlowerCardImageProps) {
   const imageSrc = resolveFlowerCardImage(lot);
   const [hasImageError, setHasImageError] = useState(false);
 
   if (!imageSrc || hasImageError) {
-    return <FlowerLotIllustration lot={lot} className={className} size={size} />;
+    return <FlowerLotIllustration lot={lot} className={className} size={size} style={style} />;
   }
 
   const flowerName = lot.flowerName ?? lot.title;
   const alt = lot.flowerAlt ?? `${flowerName}小插畫`;
 
   return (
-    <figure className={className} aria-label={alt}>
+    <figure className={className} style={style} aria-label={alt}>
       <img
         className={imageClassName}
+        style={imageStyle}
         src={imageSrc}
         alt={alt}
         width={1024}
