@@ -16,6 +16,7 @@ import {
   type PhotoStatus,
   type ProductionStatus,
 } from "@/lib/admin-orders";
+import { notFound } from "next/navigation";
 import styles from "./admin-orders.module.css";
 
 type AdminOrdersPageProps = {
@@ -81,14 +82,7 @@ export default async function AdminOrdersPage({ searchParams }: AdminOrdersPageP
   const requestKey = pickValue(params.key);
 
   if (!configuredKey || !requestKey || requestKey !== configuredKey) {
-    return (
-      <main className={styles.noAccessPage}>
-        <section className={styles.noAccessCard}>
-          <p>Akato Admin</p>
-          <h1>No access</h1>
-        </section>
-      </main>
-    );
+    notFound();
   }
 
   const filters = buildFilters(params);
@@ -103,6 +97,7 @@ export default async function AdminOrdersPage({ searchParams }: AdminOrdersPageP
           <p className={styles.eyebrow}>Akato Internal Mock</p>
           <h1>訂單整理頁</h1>
           <p className={styles.lede}>Mock / 內部測試資料。此頁不接資料庫、不寫入資料、不代表真實付款狀態。</p>
+          <p className={styles.safetyNotice}>Mock data only. Do not store real customer/order data here.</p>
         </div>
         <div className={styles.mockPill}>Protected mock</div>
       </header>
