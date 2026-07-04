@@ -5,10 +5,18 @@ import {
   formatCurrency,
   formatDateTime,
   getAdminOrderSummary,
+  getAdminOrderFocusLabels,
+  getItemTypeSummary,
+  getNotTakenPhotoOrders,
+  getTodayActionOrders,
+  getUnconfirmedCardOrders,
   itemTypeLabels,
+  MOCK_TODAY,
   paymentStatusLabels,
   photoStatusLabels,
   productionStatusLabels,
+  sortAdminOrdersByDeliveryDate,
+  type AdminOrder,
   type AdminOrderFilters,
   type CardStatus,
   type OrderItemType,
@@ -50,6 +58,48 @@ function StatusBadge({ tone, children }: { tone: string; children: React.ReactNo
   );
 }
 
+function CompactOrderList({
+  emptyText,
+  orders,
+  showFocus = false,
+}: {
+  emptyText: string;
+  orders: AdminOrder[];
+  showFocus?: boolean;
+}) {
+  if (orders.length === 0) {
+    return <p className={styles.compactEmpty}>{emptyText}</p>;
+  }
+
+  return (
+    <ul className={styles.compactList}>
+      {orders.map((order) => {
+        const focusLabels = showFocus ? getAdminOrderFocusLabels(order) : [];
+
+        return (
+          <li className={styles.compactItem} key={order.id}>
+            <div>
+              <strong>{order.orderNumber}</strong>
+              <span>{order.deliveryDate}</span>
+            </div>
+            <p>
+              {order.recipientName}
+              <small>{order.itemType}</small>
+            </p>
+            {focusLabels.length > 0 ? (
+              <div className={styles.focusList}>
+                {focusLabels.map((label) => (
+                  <span className={styles.focusChip} key={label}>{label}</span>
+                ))}
+              </div>
+            ) : null}
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
 function FilterSelect({
   label,
   name,
@@ -86,8 +136,12 @@ export default async function AdminOrdersPage({ searchParams }: AdminOrdersPageP
   }
 
   const filters = buildFilters(params);
-  const filteredOrders = filterAdminOrders(adminMockOrders, filters);
+  const filteredOrders = sortAdminOrdersByDeliveryDate(filterAdminOrders(adminMockOrders, filters));
   const summary = getAdminOrderSummary(filteredOrders);
+  const todayActionOrders = getTodayActionOrders(adminMockOrders);
+  const unconfirmedCardOrders = getUnconfirmedCardOrders(adminMockOrders);
+  const notTakenPhotoOrders = getNotTakenPhotoOrders(adminMockOrders);
+  const itemTypeSummary = getItemTypeSummary(adminMockOrders);
   const accessKeyField = <input type="hidden" name="key" value={requestKey} />;
 
   return (
@@ -109,6 +163,66 @@ export default async function AdminOrdersPage({ searchParams }: AdminOrdersPageP
         <article><span>未確認賀卡</span><strong>{summary.unconfirmedCards}</strong></article>
         <article><span>未拍照</span><strong>{summary.notTakenPhotos}</strong></article>
         <article><span>總金額</span><strong>{formatCurrency(summary.totalAmount)}</strong></article>
+      </section>
+
+      <section className={styles.workflowGrid} aria-label="訂單工作流程摘要">
+        <article className={styles.workflowPanel}>
+          <div className={styles.panelHeader}>
+            <div>
+              <span>Mock today: {MOCK_TODAY}</span>
+              <h2>今日要處理</h2>
+            </div>
+            <strong>{todayActionOrders.length}</strong>
+          </div>
+          <CompactOrderList
+            emptyText="目前沒有需要處理的 mock 訂單。"
+            orders={todayActionOrders}
+            showFocus
+          />
+        </article>
+
+        <article className={styles.workflowPanel}>
+          <div className={styles.panelHeader}>
+            <div>
+              <span>Card workflow</span>
+              <h2>未確認賀卡</h2>
+            </div>
+            <strong>{unconfirmedCardOrders.length}</strong>
+          </div>
+          <CompactOrderList
+            emptyText="目前沒有未確認賀卡。"
+            orders={unconfirmedCardOrders}
+          />
+        </article>
+
+        <article className={styles.workflowPanel}>
+          <div className={styles.panelHeader}>
+            <div>
+              <span>Photo workflow</span>
+              <h2>未拍照</h2>
+            </div>
+            <strong>{notTakenPhotoOrders.length}</strong>
+          </div>
+          <CompactOrderList
+            emptyText="目前沒有未拍照訂單。"
+            orders={notTakenPhotoOrders}
+          />
+        </article>
+      </section>
+
+      <section className={styles.itemStats} aria-label="品項統計">
+        <div className={styles.itemStatsHeader}>
+          <span>品項統計</span>
+          <strong>{adminMockOrders.length}</strong>
+        </div>
+        <div className={styles.itemStatsGrid}>
+          {itemTypeSummary.map((item) => (
+            <article key={item.itemType}>
+              <span>{itemTypeLabels[item.itemType]}</span>
+              <strong>{item.count}</strong>
+            </article>
+          ))}
+        </div>
       </section>
 
       <form className={styles.filters} action="/admin/orders">

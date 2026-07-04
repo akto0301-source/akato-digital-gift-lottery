@@ -59,6 +59,8 @@ export const itemTypeLabels: Record<OrderItemType, OrderItemType> = {
   其他: "其他",
 };
 
+export const MOCK_TODAY = "2026-07-04";
+
 export const adminMockOrders: AdminOrder[] = [
   {
     id: "order-001",
@@ -237,15 +239,73 @@ export function filterAdminOrders(orders: AdminOrder[], filters: AdminOrderFilte
   });
 }
 
+export function sortAdminOrdersByDeliveryDate(orders: AdminOrder[]) {
+  return [...orders].sort((a, b) => {
+    const deliveryCompare = a.deliveryDate.localeCompare(b.deliveryDate);
+
+    if (deliveryCompare !== 0) {
+      return deliveryCompare;
+    }
+
+    return a.orderedAt.localeCompare(b.orderedAt);
+  });
+}
+
+export function getAdminOrderFocusLabels(order: AdminOrder) {
+  const labels: string[] = [];
+
+  if (order.deliveryDate === MOCK_TODAY) {
+    labels.push("今日交付");
+  }
+
+  if (order.productionStatus === "pending" || order.productionStatus === "making") {
+    labels.push(productionStatusLabels[order.productionStatus]);
+  }
+
+  if (order.cardStatus === "unorganized") {
+    labels.push("賀卡未整理");
+  }
+
+  if (order.photoStatus === "not_taken") {
+    labels.push("未拍照");
+  }
+
+  return labels;
+}
+
+export function getTodayActionOrders(orders: AdminOrder[]) {
+  return sortAdminOrdersByDeliveryDate(
+    orders.filter((order) => getAdminOrderFocusLabels(order).length > 0),
+  );
+}
+
+export function getUnconfirmedCardOrders(orders: AdminOrder[]) {
+  return sortAdminOrdersByDeliveryDate(
+    orders.filter((order) => order.cardStatus === "unorganized"),
+  );
+}
+
+export function getNotTakenPhotoOrders(orders: AdminOrder[]) {
+  return sortAdminOrdersByDeliveryDate(
+    orders.filter((order) => order.photoStatus === "not_taken"),
+  );
+}
+
+export function getItemTypeSummary(orders: AdminOrder[]) {
+  return Object.keys(itemTypeLabels).map((itemType) => ({
+    itemType: itemType as OrderItemType,
+    count: orders.filter((order) => order.itemType === itemType).length,
+  }));
+}
+
 export function getAdminOrderSummary(orders: AdminOrder[]) {
   const totalAmount = orders.reduce((sum, order) => sum + order.amount, 0);
-  const today = "2026-07-04";
   const weekEnd = "2026-07-10";
 
   return {
     totalOrders: orders.length,
     pendingOrders: orders.filter((order) => order.productionStatus === "pending").length,
-    deliveryThisWeek: orders.filter((order) => order.deliveryDate >= today && order.deliveryDate <= weekEnd).length,
+    deliveryThisWeek: orders.filter((order) => order.deliveryDate >= MOCK_TODAY && order.deliveryDate <= weekEnd).length,
     unconfirmedCards: orders.filter((order) => order.cardStatus === "unorganized").length,
     notTakenPhotos: orders.filter((order) => order.photoStatus === "not_taken").length,
     totalAmount,
