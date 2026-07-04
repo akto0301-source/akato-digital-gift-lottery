@@ -24,6 +24,7 @@ import {
   type PhotoStatus,
   type ProductionStatus,
 } from "@/lib/admin-orders";
+import { AdminOrdersCardTextPreview } from "@/components/admin-orders-card-text-preview";
 import { AdminOrdersPastePreview } from "@/components/admin-orders-paste-preview";
 import { notFound } from "next/navigation";
 import styles from "./admin-orders.module.css";
@@ -227,6 +228,8 @@ export default async function AdminOrdersPage({ searchParams }: AdminOrdersPageP
       </section>
 
       <AdminOrdersPastePreview />
+
+      <AdminOrdersCardTextPreview />
 
       <form className={styles.filters} action="/admin/orders">
         {accessKeyField}
