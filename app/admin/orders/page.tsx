@@ -24,6 +24,7 @@ import {
   type PhotoStatus,
   type ProductionStatus,
 } from "@/lib/admin-orders";
+import { AdminOrdersPastePreview } from "@/components/admin-orders-paste-preview";
 import { notFound } from "next/navigation";
 import styles from "./admin-orders.module.css";
 
@@ -224,6 +225,8 @@ export default async function AdminOrdersPage({ searchParams }: AdminOrdersPageP
           ))}
         </div>
       </section>
+
+      <AdminOrdersPastePreview />
 
       <form className={styles.filters} action="/admin/orders">
         {accessKeyField}
