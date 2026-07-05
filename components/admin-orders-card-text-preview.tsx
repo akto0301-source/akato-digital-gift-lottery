@@ -15,6 +15,11 @@ Mock Trade 測試有限公司
 
 5000落地蘭`;
 
+type BatchContext = {
+  name: string;
+  deliveryDate: string;
+};
+
 type CardTextPreview = {
   amount: number | null;
   blessing: string;
@@ -167,7 +172,7 @@ function formatAmount(amount: number | null) {
   }).format(amount);
 }
 
-export function AdminOrdersCardTextPreview() {
+export function AdminOrdersCardTextPreview({ batchContext }: { batchContext?: BatchContext }) {
   const [draft, setDraft] = useState("");
   const [parseRequested, setParseRequested] = useState(false);
   const parseResult = useMemo(() => (parseRequested ? parseCardText(draft) : { errors: [], preview: null }), [draft, parseRequested]);
@@ -193,6 +198,14 @@ export function AdminOrdersCardTextPreview() {
           value={draft}
         />
       </label>
+
+      {batchContext ? (
+        <div className={styles.previewBatchNote}>
+          <strong>目前批次</strong>
+          <span>{batchContext.name} / {batchContext.deliveryDate}</span>
+          <small>賀卡文字 preview 先不做單筆日期覆蓋，顯示沿用批次日期。</small>
+        </div>
+      ) : null}
 
       <div className={styles.cardTextActions}>
         <button type="button" onClick={() => setParseRequested(true)}>解析預覽</button>
@@ -229,6 +242,13 @@ export function AdminOrdersCardTextPreview() {
           </div>
 
           <dl>
+            {batchContext ? (
+              <>
+                <div><dt>批次名稱</dt><dd>{batchContext.name}</dd></div>
+                <div><dt>批次出貨日期</dt><dd>{batchContext.deliveryDate}</dd></div>
+                <div><dt>日期來源</dt><dd>沿用批次日期</dd></div>
+              </>
+            ) : null}
             <div><dt>職稱</dt><dd>{parseResult.preview.title || "請人工確認"}</dd></div>
             <div><dt>賀詞</dt><dd>{parseResult.preview.blessing || "請人工確認"}</dd></div>
             <div><dt>送禮人</dt><dd>{parseResult.preview.sender || "請人工確認"}</dd></div>
