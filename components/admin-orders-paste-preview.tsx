@@ -3,21 +3,28 @@
 import { useMemo, useState } from "react";
 import styles from "@/app/admin/orders/admin-orders.module.css";
 
-const requiredHeaders = ["交付日期", "收禮人", "送禮人", "品項", "金額", "賀卡狀態", "照片狀態", "備註"] as const;
+const supportedHeaders = ["交付日期", "收禮人", "送禮人", "品項", "金額", "賀卡狀態", "照片狀態", "備註"] as const;
+const requiredHeaders = ["收禮人", "送禮人", "品項", "金額", "賀卡狀態", "照片狀態", "備註"] as const;
 const supportedItemTypes = ["蘭花", "植物", "永生花", "落地花籃", "其他"];
 const supportedCardStatuses = ["未整理", "已確認", "已印製"];
 const supportedPhotoStatuses = ["未拍照", "已拍照", "已整理"];
 
 const samplePasteText = [
-  requiredHeaders.join("\t"),
+  supportedHeaders.join("\t"),
   "2026-07-04\t測試收禮人 H\t範例送禮人 H\t蘭花\t6800\t未整理\t未拍照\t純 mock 預覽資料，不可配送",
   "2026-07-05\t測試收禮人 I\tMock Team I\t永生花\t3200\t已確認\t已拍照\tpreview-only sample",
 ].join("\n");
+
+type BatchContext = {
+  name: string;
+  deliveryDate: string;
+};
 
 type PreviewOrder = {
   amount: number;
   cardStatus: string;
   deliveryDate: string;
+  deliveryDateSource: "batch" | "order";
   itemType: string;
   note: string;
   orderNumber: string;
@@ -42,7 +49,7 @@ function parseAmount(value: string) {
   return Number.isFinite(amount) && amount >= 0 ? amount : null;
 }
 
-function parseTabSeparatedOrders(input: string): ParseResult {
+function parseTabSeparatedOrders(input: string, batchContext?: BatchContext): ParseResult {
   const trimmedInput = input.trim();
 
   if (!trimmedInput) {
@@ -58,6 +65,7 @@ function parseTabSeparatedOrders(input: string): ParseResult {
   const orders: PreviewOrder[] = [];
 
   const missingHeaders = requiredHeaders.filter((header) => !headerRow.includes(header));
+  const hasDeliveryDateHeader = headerRow.includes("交付日期");
 
   if (missingHeaders.length > 0) {
     errors.push(`缺欄位：${missingHeaders.join("、")}`);
@@ -74,10 +82,13 @@ function parseTabSeparatedOrders(input: string): ParseResult {
   const headerIndexes = Object.fromEntries(
     requiredHeaders.map((header) => [header, headerRow.indexOf(header)]),
   ) as Record<(typeof requiredHeaders)[number], number>;
+  const deliveryDateIndex = hasDeliveryDateHeader ? headerRow.indexOf("交付日期") : -1;
 
   rows.slice(1).forEach((row, index) => {
     const rowNumber = index + 2;
-    const deliveryDate = row[headerIndexes["交付日期"]] ?? "";
+    const rowDeliveryDate = deliveryDateIndex >= 0 ? row[deliveryDateIndex] ?? "" : "";
+    const deliveryDate = rowDeliveryDate || batchContext?.deliveryDate || "";
+    const deliveryDateSource = rowDeliveryDate ? "order" : "batch";
     const recipientName = row[headerIndexes["收禮人"]] ?? "";
     const senderName = row[headerIndexes["送禮人"]] ?? "";
     const itemType = row[headerIndexes["品項"]] ?? "";
@@ -112,6 +123,7 @@ function parseTabSeparatedOrders(input: string): ParseResult {
         amount,
         cardStatus,
         deliveryDate,
+        deliveryDateSource,
         itemType,
         note,
         orderNumber: `PREVIEW-${String(index + 1).padStart(3, "0")}`,
@@ -133,10 +145,10 @@ function formatPreviewAmount(amount: number) {
   }).format(amount);
 }
 
-export function AdminOrdersPastePreview() {
+export function AdminOrdersPastePreview({ batchContext }: { batchContext?: BatchContext }) {
   const [draft, setDraft] = useState("");
   const [parseRequested, setParseRequested] = useState(false);
-  const parseResult = useMemo(() => (parseRequested ? parseTabSeparatedOrders(draft) : { errors: [], orders: [] }), [draft, parseRequested]);
+  const parseResult = useMemo(() => (parseRequested ? parseTabSeparatedOrders(draft, batchContext) : { errors: [], orders: [] }), [batchContext, draft, parseRequested]);
 
   return (
     <section className={styles.pastePreview} aria-label="貼上表格預覽">
@@ -149,10 +161,18 @@ export function AdminOrdersPastePreview() {
       </div>
 
       <div className={styles.pastePreviewColumns} aria-label="支援欄位格式">
-        {requiredHeaders.map((header) => (
+        {supportedHeaders.map((header) => (
           <span key={header}>{header}</span>
         ))}
       </div>
+
+      {batchContext ? (
+        <div className={styles.previewBatchNote}>
+          <strong>目前批次</strong>
+          <span>{batchContext.name} / {batchContext.deliveryDate}</span>
+          <small>若表格沒有交付日期或該列空白，preview 會顯示沿用批次日期。</small>
+        </div>
+      ) : null}
 
       <label className={styles.pastePreviewInput}>
         <span>Tab-separated sample text</span>
@@ -200,6 +220,7 @@ export function AdminOrdersPastePreview() {
               </div>
               <p>{order.recipientName}</p>
               <dl>
+                <div><dt>日期來源</dt><dd>{order.deliveryDateSource === "batch" ? "沿用批次日期" : "單筆日期"}</dd></div>
                 <div><dt>送禮人</dt><dd>{order.senderName}</dd></div>
                 <div><dt>品項</dt><dd>{order.itemType}</dd></div>
                 <div><dt>金額</dt><dd>{formatPreviewAmount(order.amount)}</dd></div>

@@ -64,6 +64,7 @@
 }
 
 .summaryGrid article,
+.batchContext,
 .cardTextPreview,
 .filters,
 .itemStats,
@@ -213,6 +214,176 @@
 .itemStats {
   padding: 16px;
   margin-bottom: 18px;
+}
+
+.batchContext {
+  border-radius: 20px;
+  margin-bottom: 18px;
+  padding: 16px;
+}
+
+.batchHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.batchHeader > div {
+  min-width: 0;
+}
+
+.batchHeader span,
+.batchHeader label span {
+  display: block;
+  margin-bottom: 6px;
+  color: rgba(31, 26, 23, 0.54);
+  font-size: 0.76rem;
+}
+
+.batchHeader h2 {
+  margin: 0;
+  color: #2c211d;
+  font-size: 1.08rem;
+}
+
+.batchHeader p {
+  max-width: 680px;
+  margin: 9px 0 0;
+  color: rgba(31, 26, 23, 0.66);
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.batchHeader label {
+  display: grid;
+  flex: 0 1 360px;
+  gap: 6px;
+  min-width: min(100%, 280px);
+}
+
+.batchHeader select {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid rgba(190, 166, 137, 0.88);
+  border-radius: 12px;
+  background: rgba(255, 253, 248, 0.92);
+  color: #2e2420;
+  font: inherit;
+  padding: 10px 11px;
+}
+
+.batchOverview {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.batchOverview article {
+  min-width: 0;
+  border-radius: 14px;
+  padding: 12px;
+  background: rgba(255, 253, 248, 0.72);
+}
+
+.batchOverview span,
+.batchProgress span,
+.batchDetails dt,
+.previewBatchNote small {
+  color: rgba(31, 26, 23, 0.54);
+  font-size: 0.76rem;
+}
+
+.batchOverview span {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.batchOverview strong {
+  color: #2f241f;
+  font-size: 1.08rem;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.batchProgress {
+  border-radius: 16px;
+  margin-bottom: 14px;
+  padding: 12px;
+  background: rgba(255, 253, 248, 0.72);
+}
+
+.batchProgress > div:first-child {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 9px;
+}
+
+.batchProgress strong {
+  color: #96331f;
+}
+
+.batchProgressTrack {
+  overflow: hidden;
+  height: 9px;
+  border-radius: 999px;
+  background: rgba(150, 51, 31, 0.12);
+}
+
+.batchProgressTrack span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #96331f;
+}
+
+.batchDetails {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+}
+
+.batchDetails div {
+  min-width: 0;
+  border-radius: 14px;
+  padding: 12px;
+  background: rgba(255, 253, 248, 0.72);
+}
+
+.batchDetails dt {
+  margin-bottom: 5px;
+}
+
+.batchDetails dd {
+  margin: 0;
+  color: rgba(31, 26, 23, 0.8);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.previewBatchNote {
+  display: grid;
+  gap: 4px;
+  margin: 12px 0 0;
+  border: 1px solid rgba(72, 123, 151, 0.2);
+  border-radius: 14px;
+  padding: 11px 12px;
+  background: rgba(239, 249, 251, 0.62);
+}
+
+.previewBatchNote strong {
+  color: #3e718a;
+}
+
+.previewBatchNote span {
+  color: rgba(31, 26, 23, 0.8);
+  line-height: 1.45;
+  overflow-wrap: anywhere;
 }
 
 .pastePreview {
@@ -855,6 +1026,14 @@
     grid-template-columns: 1fr;
   }
 
+  .batchOverview {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .batchDetails {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .itemStatsGrid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
@@ -892,6 +1071,8 @@
   }
 
   .summaryGrid,
+  .batchOverview,
+  .batchDetails,
   .itemStatsGrid,
   .filters,
   .orderRow summary,
@@ -900,6 +1081,8 @@
   }
 
   .compactItem div:first-child,
+  .batchHeader,
+  .batchProgress > div:first-child,
   .cardTextHeader,
   .cardTextResultHeader,
   .cardTextResult dl,
