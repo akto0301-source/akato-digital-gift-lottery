@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import styles from "@/app/admin/orders/admin-orders.module.css";
 import { AdminOrdersCardTextPreview } from "@/components/admin-orders-card-text-preview";
+import { AdminOrdersLineMessagePreview } from "@/components/admin-orders-line-message-preview";
 import { AdminOrdersPastePreview } from "@/components/admin-orders-paste-preview";
 
 type MockShipmentBatch = {
@@ -147,6 +148,8 @@ export function AdminOrdersBatchPreviewWorkspace() {
           <div><dt>保存狀態</dt><dd>重新整理後不會保存 preview 資料</dd></div>
         </dl>
       </section>
+
+      <AdminOrdersLineMessagePreview batchContext={batchContext} />
 
       <AdminOrdersPastePreview batchContext={batchContext} />
 

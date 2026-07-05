@@ -68,6 +68,7 @@
 .cardTextPreview,
 .filters,
 .itemStats,
+.lineMessagePreview,
 .orderList,
 .pastePreview,
 .workflowPanel {
@@ -392,12 +393,19 @@
   padding: 16px;
 }
 
+.lineMessagePreview {
+  border-radius: 20px;
+  margin-bottom: 18px;
+  padding: 16px;
+}
+
 .cardTextPreview {
   border-radius: 20px;
   margin-bottom: 18px;
   padding: 16px;
 }
 
+.lineMessageHeader,
 .cardTextHeader {
   display: flex;
   align-items: flex-start;
@@ -406,6 +414,8 @@
   margin-bottom: 14px;
 }
 
+.lineMessageHeader span,
+.lineMessageInput span,
 .cardTextHeader span,
 .cardTextInput span {
   display: block;
@@ -414,12 +424,14 @@
   font-size: 0.76rem;
 }
 
+.lineMessageHeader h2,
 .cardTextHeader h2 {
   margin: 0;
   color: #2c211d;
   font-size: 1.08rem;
 }
 
+.lineMessageHeader p,
 .cardTextHeader p {
   width: fit-content;
   max-width: 100%;
@@ -433,11 +445,21 @@
   line-height: 1.45;
 }
 
+.lineMessageHeader small {
+  display: block;
+  margin-top: 8px;
+  color: rgba(31, 26, 23, 0.58);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.lineMessageInput,
 .cardTextInput {
   display: grid;
   gap: 6px;
 }
 
+.lineMessageInput textarea,
 .cardTextInput textarea {
   width: 100%;
   min-width: 0;
@@ -452,6 +474,7 @@
   padding: 12px;
 }
 
+.lineMessageActions,
 .cardTextActions {
   display: flex;
   flex-wrap: wrap;
@@ -459,6 +482,7 @@
   margin-top: 12px;
 }
 
+.lineMessageActions button,
 .cardTextActions button {
   border: 1px solid rgba(150, 51, 31, 0.18);
   border-radius: 999px;
@@ -470,11 +494,13 @@
   white-space: nowrap;
 }
 
+.lineMessageActions button + button,
 .cardTextActions button + button {
   background: rgba(255, 253, 248, 0.86);
   color: #7a4d44;
 }
 
+.lineMessageErrors,
 .cardTextErrors {
   margin-top: 14px;
   border: 1px solid rgba(165, 51, 51, 0.2);
@@ -484,11 +510,13 @@
   color: #8f312f;
 }
 
+.lineMessageErrors strong,
 .cardTextErrors strong {
   display: block;
   margin-bottom: 8px;
 }
 
+.lineMessageErrors ul,
 .cardTextErrors ul {
   display: grid;
   gap: 6px;
@@ -496,6 +524,7 @@
   padding-left: 18px;
 }
 
+.lineMessageResult,
 .cardTextResult {
   min-width: 0;
   margin-top: 14px;
@@ -504,6 +533,7 @@
   background: rgba(255, 253, 248, 0.76);
 }
 
+.lineMessageResultHeader,
 .cardTextResultHeader {
   display: flex;
   align-items: flex-start;
@@ -512,11 +542,13 @@
   margin-bottom: 12px;
 }
 
+.lineMessageResultHeader span,
 .cardTextResultHeader span {
   color: rgba(31, 26, 23, 0.58);
   font-size: 0.8rem;
 }
 
+.lineMessageResultHeader strong,
 .cardTextResultHeader strong {
   display: block;
   margin-top: 4px;
@@ -525,6 +557,7 @@
   overflow-wrap: anywhere;
 }
 
+.lineMessageResult dl,
 .cardTextResult dl {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -532,16 +565,19 @@
   margin: 0;
 }
 
+.lineMessageResult div,
 .cardTextResult div {
   min-width: 0;
 }
 
+.lineMessageResult dt,
 .cardTextResult dt {
   margin-bottom: 4px;
   color: rgba(31, 26, 23, 0.52);
   font-size: 0.76rem;
 }
 
+.lineMessageResult dd,
 .cardTextResult dd {
   margin: 0;
   color: rgba(31, 26, 23, 0.8);
@@ -549,6 +585,7 @@
   overflow-wrap: anywhere;
 }
 
+.lineMessageWarnings,
 .cardTextWarnings {
   margin-top: 14px;
   border: 1px solid rgba(196, 119, 47, 0.22);
@@ -558,12 +595,15 @@
   color: #92561d;
 }
 
+.lineMessageWarnings strong,
+.lineMessageOriginal strong,
 .cardTextWarnings strong,
 .cardTextOriginal strong {
   display: block;
   margin-bottom: 8px;
 }
 
+.lineMessageWarnings ul,
 .cardTextWarnings ul {
   display: grid;
   gap: 6px;
@@ -571,10 +611,12 @@
   padding-left: 18px;
 }
 
+.lineMessageOriginal,
 .cardTextOriginal {
   margin-top: 14px;
 }
 
+.lineMessageOriginal pre,
 .cardTextOriginal pre {
   margin: 0;
   border-radius: 14px;
@@ -1086,6 +1128,9 @@
   .cardTextHeader,
   .cardTextResultHeader,
   .cardTextResult dl,
+  .lineMessageHeader,
+  .lineMessageResultHeader,
+  .lineMessageResult dl,
   .panelHeader,
   .pastePreviewHeader,
   .pastePreviewResults article > div:first-child,
@@ -1094,6 +1139,7 @@
     display: grid;
   }
 
+  .lineMessageActions button,
   .cardTextActions button,
   .pastePreviewActions button {
     flex: 1 1 130px;
