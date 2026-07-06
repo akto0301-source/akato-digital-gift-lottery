@@ -67,6 +67,7 @@
 .batchContext,
 .cardTextPreview,
 .filters,
+.googleFormPreview,
 .itemStats,
 .lineMessagePreview,
 .orderList,
@@ -393,6 +394,12 @@
   padding: 16px;
 }
 
+.googleFormPreview {
+  border-radius: 20px;
+  margin-bottom: 18px;
+  padding: 16px;
+}
+
 .lineMessagePreview {
   border-radius: 20px;
   margin-bottom: 18px;
@@ -406,6 +413,7 @@
 }
 
 .lineMessageHeader,
+.googleFormHeader,
 .cardTextHeader {
   display: flex;
   align-items: flex-start;
@@ -416,6 +424,8 @@
 
 .lineMessageHeader span,
 .lineMessageInput span,
+.googleFormHeader span,
+.googleFormInput span,
 .cardTextHeader span,
 .cardTextInput span {
   display: block;
@@ -425,6 +435,7 @@
 }
 
 .lineMessageHeader h2,
+.googleFormHeader h2,
 .cardTextHeader h2 {
   margin: 0;
   color: #2c211d;
@@ -432,6 +443,7 @@
 }
 
 .lineMessageHeader p,
+.googleFormHeader p,
 .cardTextHeader p {
   width: fit-content;
   max-width: 100%;
@@ -453,13 +465,23 @@
   overflow-wrap: anywhere;
 }
 
+.googleFormHeader small {
+  display: block;
+  margin-top: 8px;
+  color: rgba(31, 26, 23, 0.58);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
 .lineMessageInput,
+.googleFormInput,
 .cardTextInput {
   display: grid;
   gap: 6px;
 }
 
 .lineMessageInput textarea,
+.googleFormInput textarea,
 .cardTextInput textarea {
   width: 100%;
   min-width: 0;
@@ -474,7 +496,13 @@
   padding: 12px;
 }
 
+.googleFormInput textarea {
+  min-height: 160px;
+  tab-size: 2;
+}
+
 .lineMessageActions,
+.googleFormActions,
 .cardTextActions {
   display: flex;
   flex-wrap: wrap;
@@ -483,6 +511,7 @@
 }
 
 .lineMessageActions button,
+.googleFormActions button,
 .cardTextActions button {
   border: 1px solid rgba(150, 51, 31, 0.18);
   border-radius: 999px;
@@ -495,12 +524,14 @@
 }
 
 .lineMessageActions button + button,
+.googleFormActions button + button,
 .cardTextActions button + button {
   background: rgba(255, 253, 248, 0.86);
   color: #7a4d44;
 }
 
 .lineMessageErrors,
+.googleFormErrors,
 .cardTextErrors {
   margin-top: 14px;
   border: 1px solid rgba(165, 51, 51, 0.2);
@@ -511,12 +542,14 @@
 }
 
 .lineMessageErrors strong,
+.googleFormErrors strong,
 .cardTextErrors strong {
   display: block;
   margin-bottom: 8px;
 }
 
 .lineMessageErrors ul,
+.googleFormErrors ul,
 .cardTextErrors ul {
   display: grid;
   gap: 6px;
@@ -533,7 +566,21 @@
   background: rgba(255, 253, 248, 0.76);
 }
 
+.googleFormResults {
+  display: grid;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.googleFormResults article {
+  min-width: 0;
+  border-radius: 16px;
+  padding: 14px;
+  background: rgba(255, 253, 248, 0.76);
+}
+
 .lineMessageResultHeader,
+.googleFormResultHeader,
 .cardTextResultHeader {
   display: flex;
   align-items: flex-start;
@@ -543,12 +590,14 @@
 }
 
 .lineMessageResultHeader span,
+.googleFormResultHeader span,
 .cardTextResultHeader span {
   color: rgba(31, 26, 23, 0.58);
   font-size: 0.8rem;
 }
 
 .lineMessageResultHeader strong,
+.googleFormResultHeader strong,
 .cardTextResultHeader strong {
   display: block;
   margin-top: 4px;
@@ -558,6 +607,7 @@
 }
 
 .lineMessageResult dl,
+.googleFormResults dl,
 .cardTextResult dl {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -566,11 +616,13 @@
 }
 
 .lineMessageResult div,
+.googleFormResults div,
 .cardTextResult div {
   min-width: 0;
 }
 
 .lineMessageResult dt,
+.googleFormResults dt,
 .cardTextResult dt {
   margin-bottom: 4px;
   color: rgba(31, 26, 23, 0.52);
@@ -578,6 +630,7 @@
 }
 
 .lineMessageResult dd,
+.googleFormResults dd,
 .cardTextResult dd {
   margin: 0;
   color: rgba(31, 26, 23, 0.8);
@@ -586,6 +639,7 @@
 }
 
 .lineMessageWarnings,
+.googleFormWarnings,
 .cardTextWarnings {
   margin-top: 14px;
   border: 1px solid rgba(196, 119, 47, 0.22);
@@ -597,6 +651,8 @@
 
 .lineMessageWarnings strong,
 .lineMessageOriginal strong,
+.googleFormWarnings strong,
+.googleFormOriginal strong,
 .cardTextWarnings strong,
 .cardTextOriginal strong {
   display: block;
@@ -604,6 +660,7 @@
 }
 
 .lineMessageWarnings ul,
+.googleFormWarnings ul,
 .cardTextWarnings ul {
   display: grid;
   gap: 6px;
@@ -612,11 +669,13 @@
 }
 
 .lineMessageOriginal,
+.googleFormOriginal,
 .cardTextOriginal {
   margin-top: 14px;
 }
 
 .lineMessageOriginal pre,
+.googleFormOriginal pre,
 .cardTextOriginal pre {
   margin: 0;
   border-radius: 14px;
@@ -1128,6 +1187,9 @@
   .cardTextHeader,
   .cardTextResultHeader,
   .cardTextResult dl,
+  .googleFormHeader,
+  .googleFormResultHeader,
+  .googleFormResults dl,
   .lineMessageHeader,
   .lineMessageResultHeader,
   .lineMessageResult dl,
@@ -1140,6 +1202,7 @@
   }
 
   .lineMessageActions button,
+  .googleFormActions button,
   .cardTextActions button,
   .pastePreviewActions button {
     flex: 1 1 130px;
