@@ -259,11 +259,11 @@ export function AdminOrdersGoogleFormPreview({ batchContext }: { batchContext?: 
     <section className={styles.googleFormPreview} aria-label="Google Form 回覆預覽">
       <div className={styles.googleFormHeader}>
         <div>
-          <span>Browser-memory preview</span>
+          <span>Step 3 / Browser-memory preview</span>
           <h2>Google Form 回覆預覽</h2>
           <p>Preview only. Do not paste real customer/order data here.</p>
           <small>This is not a Google Form or Google Sheet integration. Paste mock/sample response rows only.</small>
-          <small>這不是 Google Form 串接，只是貼上回覆表預覽。重新整理後 preview 會消失。</small>
+          <small>這不是 Google Form 串接，只是貼上回覆表預覽；適合檢查零星內部訂單欄位是否完整。</small>
         </div>
       </div>
 
@@ -340,7 +340,7 @@ export function AdminOrdersGoogleFormPreview({ batchContext }: { batchContext?: 
 
               {row.warnings.length > 0 ? (
                 <div className={styles.googleFormWarnings}>
-                  <strong>需要人工確認</strong>
+                  <strong>需要人工確認的欄位</strong>
                   <ul>
                     {row.warnings.map((warning) => (
                       <li key={warning}>{warning}</li>

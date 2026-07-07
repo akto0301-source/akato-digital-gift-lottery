@@ -181,9 +181,10 @@ export function AdminOrdersCardTextPreview({ batchContext }: { batchContext?: Ba
     <section className={styles.cardTextPreview} aria-label="賀卡文字預覽">
       <div className={styles.cardTextHeader}>
         <div>
-          <span>Preview-only mock tool</span>
+          <span>Step 5 / Browser-memory preview</span>
           <h2>賀卡文字預覽</h2>
           <p>Preview only. Do not paste real customer/order data here.</p>
+          <small>適合檢查只有賀卡文字與最下面金額品項註記的 mock/sample 訂單。</small>
         </div>
       </div>
 
@@ -258,7 +259,7 @@ export function AdminOrdersCardTextPreview({ batchContext }: { batchContext?: Ba
 
           {parseResult.preview.warnings.length > 0 ? (
             <div className={styles.cardTextWarnings}>
-              <strong>需人工確認</strong>
+              <strong>需要人工確認的欄位</strong>
               <ul>
                 {parseResult.preview.warnings.map((warning) => (
                   <li key={warning}>{warning}</li>

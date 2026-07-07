@@ -91,7 +91,7 @@ export function AdminOrdersBatchPreviewWorkspace() {
           <div>
             <span>Mock shipment grouping</span>
             <h2>出貨批次 context</h2>
-            <p>Mock only. This batch context helps preview order grouping and workload pressure. It is not saved.</p>
+            <p>Mock only. 先選目前核單批次，再用下方預覽工具檢查 LINE、Google Form、表格與賀卡文字。</p>
           </div>
           <label>
             <span>目前批次</span>
@@ -146,8 +146,22 @@ export function AdminOrdersBatchPreviewWorkspace() {
           <div><dt>壓力狀態</dt><dd>{selectedBatch.pressureStatus}整理中</dd></div>
           <div><dt>批次情境</dt><dd>{selectedBatch.context}</dd></div>
           <div><dt>備註</dt><dd>{selectedBatch.notes ?? "Mock preview only."}</dd></div>
-          <div><dt>保存狀態</dt><dd>重新整理後不會保存 preview 資料</dd></div>
+          <div><dt>資料狀態</dt><dd>只存在瀏覽器記憶體，重新整理後 preview 會消失</dd></div>
         </dl>
+      </section>
+
+      <section className={styles.previewWorkflowGuide} aria-label="預覽工作流程說明">
+        <div>
+          <span>Preview workflow</span>
+          <h2>核單預覽動線</h2>
+          <p>依序從最常見的 LINE 訊息開始，再檢查 Google Form 回覆、表格資料與賀卡文字；所有區塊都只是 mock preview。</p>
+        </div>
+        <ol>
+          <li><strong>1</strong><span>選批次</span></li>
+          <li><strong>2</strong><span>貼來源</span></li>
+          <li><strong>3</strong><span>看 warning</span></li>
+          <li><strong>4</strong><span>人工確認</span></li>
+        </ol>
       </section>
 
       <AdminOrdersLineMessagePreview batchContext={batchContext} />

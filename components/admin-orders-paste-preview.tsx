@@ -154,9 +154,10 @@ export function AdminOrdersPastePreview({ batchContext }: { batchContext?: Batch
     <section className={styles.pastePreview} aria-label="貼上表格預覽">
       <div className={styles.pastePreviewHeader}>
         <div>
-          <span>Preview-only mock tool</span>
+          <span>Step 4 / Browser-memory preview</span>
           <h2>貼上表格預覽</h2>
           <p>Preview only. Do not paste real customer/order data here.</p>
+          <small>適合從整理好的表格複製多筆 mock/sample 訂單；若日期空白，會先沿用目前批次日期。</small>
         </div>
       </div>
 
