@@ -635,6 +635,42 @@
   overflow-wrap: anywhere;
 }
 
+.checkCardTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 12px;
+}
+
+.checkCardTags span {
+  max-width: 100%;
+  border-radius: 999px;
+  padding: 4px 8px;
+  font-size: 0.74rem;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.checkCardTagGood {
+  background: rgba(70, 128, 92, 0.14);
+  color: #3f7651;
+}
+
+.checkCardTagCaution {
+  background: rgba(196, 119, 47, 0.15);
+  color: #92561d;
+}
+
+.checkCardTagMissing {
+  background: rgba(165, 51, 51, 0.12);
+  color: #8f312f;
+}
+
+.checkCardTagNeutral {
+  background: rgba(72, 123, 151, 0.13);
+  color: #3e718a;
+}
+
 .checkCard dl {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
