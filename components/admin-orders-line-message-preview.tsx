@@ -270,10 +270,11 @@ export function AdminOrdersLineMessagePreview({ batchContext }: { batchContext?:
     <section className={styles.lineMessagePreview} aria-label="LINE 訊息預覽">
       <div className={styles.lineMessageHeader}>
         <div>
-          <span>Browser-memory preview</span>
+          <span>Step 2 / Browser-memory preview</span>
           <h2>LINE 訊息預覽</h2>
           <p>Preview only. Do not paste real customer/order data here.</p>
-          <small>重新整理後 preview 會消失。這不是正式 LINE 串接，也不是自動接單。</small>
+          <small>用來快速檢查自然語句是否能拆成日期、收禮人、品項、金額與賀卡內容；結果只存在瀏覽器記憶體。</small>
+          <small>這不是正式 LINE 串接，也不是自動接單。請以 warning 作為人工核單清單。</small>
         </div>
       </div>
 
@@ -345,7 +346,7 @@ export function AdminOrdersLineMessagePreview({ batchContext }: { batchContext?:
 
           {parseResult.preview.warnings.length > 0 ? (
             <div className={styles.lineMessageWarnings}>
-              <strong>需要人工確認</strong>
+              <strong>需要人工確認的欄位</strong>
               <ul>
                 {parseResult.preview.warnings.map((warning) => (
                   <li key={warning}>{warning}</li>
