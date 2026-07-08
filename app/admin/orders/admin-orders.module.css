@@ -66,6 +66,7 @@
 .summaryGrid article,
 .batchContext,
 .cardTextPreview,
+.checkCardPreview,
 .filters,
 .googleFormPreview,
 .itemStats,
@@ -479,8 +480,15 @@
   padding: 16px;
 }
 
+.checkCardPreview {
+  border-radius: 20px;
+  margin-bottom: 18px;
+  padding: 16px;
+}
+
 .lineMessageHeader,
 .googleFormHeader,
+.checkCardHeader,
 .cardTextHeader {
   display: flex;
   align-items: flex-start;
@@ -493,6 +501,7 @@
 .lineMessageInput span,
 .googleFormHeader span,
 .googleFormInput span,
+.checkCardHeader span,
 .cardTextHeader span,
 .cardTextInput span {
   display: block;
@@ -503,6 +512,7 @@
 
 .lineMessageHeader h2,
 .googleFormHeader h2,
+.checkCardHeader h2,
 .cardTextHeader h2 {
   margin: 0;
   color: #2c211d;
@@ -511,6 +521,7 @@
 
 .lineMessageHeader p,
 .googleFormHeader p,
+.checkCardHeader p,
 .cardTextHeader p {
   width: fit-content;
   max-width: 100%;
@@ -534,12 +545,165 @@
 
 .pastePreviewHeader small,
 .cardTextHeader small,
+.checkCardHeader small,
 .googleFormHeader small {
   display: block;
   margin-top: 8px;
   color: rgba(31, 26, 23, 0.58);
   line-height: 1.5;
   overflow-wrap: anywhere;
+}
+
+.checkCardBatchNote {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 14px;
+  border: 1px solid rgba(72, 123, 151, 0.2);
+  border-radius: 14px;
+  padding: 11px 12px;
+  background: rgba(239, 249, 251, 0.62);
+}
+
+.checkCardBatchNote strong {
+  color: #3e718a;
+}
+
+.checkCardBatchNote span,
+.checkCardBatchNote small {
+  color: rgba(31, 26, 23, 0.72);
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.checkCardGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.checkCard {
+  min-width: 0;
+  border: 1px solid rgba(215, 197, 171, 0.72);
+  border-radius: 16px;
+  padding: 14px;
+  background: rgba(255, 253, 248, 0.78);
+}
+
+.checkCardTopline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.checkCardTopline span,
+.checkCardTopline strong {
+  border-radius: 999px;
+  padding: 4px 8px;
+  font-size: 0.74rem;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.checkCardTopline span {
+  background: rgba(150, 51, 31, 0.12);
+  color: #96331f;
+}
+
+.checkCardTopline strong {
+  background: rgba(72, 123, 151, 0.13);
+  color: #3e718a;
+}
+
+.checkCardMain {
+  min-width: 0;
+  margin-bottom: 12px;
+}
+
+.checkCardMain h3 {
+  margin: 0;
+  color: #2d231f;
+  font-size: 1.08rem;
+  overflow-wrap: anywhere;
+}
+
+.checkCardMain p {
+  margin: 6px 0 0;
+  color: rgba(31, 26, 23, 0.66);
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.checkCard dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+  margin: 0;
+}
+
+.checkCard div {
+  min-width: 0;
+}
+
+.checkCard dt {
+  margin-bottom: 4px;
+  color: rgba(31, 26, 23, 0.52);
+  font-size: 0.76rem;
+}
+
+.checkCard dd {
+  margin: 0;
+  color: rgba(31, 26, 23, 0.8);
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.checkCardStatusDone,
+.checkCardStatusPending,
+.checkCardStatusMissing {
+  display: inline-flex;
+  border-radius: 999px;
+  padding: 3px 8px;
+  font-size: 0.78rem;
+  line-height: 1.25;
+}
+
+.checkCardStatusDone {
+  background: rgba(70, 128, 92, 0.14);
+  color: #3f7651;
+}
+
+.checkCardStatusPending {
+  background: rgba(196, 119, 47, 0.15);
+  color: #92561d;
+}
+
+.checkCardStatusMissing {
+  background: rgba(165, 51, 51, 0.12);
+  color: #8f312f;
+}
+
+.checkCardWarnings {
+  margin-top: 12px;
+  border: 1px solid rgba(196, 119, 47, 0.26);
+  border-left: 4px solid rgba(196, 119, 47, 0.66);
+  border-radius: 14px;
+  padding: 11px;
+  background: rgba(255, 246, 234, 0.76);
+  color: #92561d;
+}
+
+.checkCardWarnings strong {
+  display: block;
+  margin-bottom: 7px;
+}
+
+.checkCardWarnings ul {
+  display: grid;
+  gap: 5px;
+  margin: 0;
+  padding-left: 18px;
 }
 
 .lineMessageInput,
@@ -1206,6 +1370,10 @@
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
+  .checkCardGrid {
+    grid-template-columns: 1fr;
+  }
+
   .batchDetails {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1263,6 +1431,9 @@
   .cardTextHeader,
   .cardTextResultHeader,
   .cardTextResult dl,
+  .checkCardHeader,
+  .checkCardTopline,
+  .checkCard dl,
   .googleFormHeader,
   .googleFormResultHeader,
   .googleFormResults dl,

@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import styles from "@/app/admin/orders/admin-orders.module.css";
 import { AdminOrdersCardTextPreview } from "@/components/admin-orders-card-text-preview";
+import { AdminOrdersCheckCardPreview } from "@/components/admin-orders-check-card-preview";
 import { AdminOrdersGoogleFormPreview } from "@/components/admin-orders-google-form-preview";
 import { AdminOrdersLineMessagePreview } from "@/components/admin-orders-line-message-preview";
 import { AdminOrdersPastePreview } from "@/components/admin-orders-paste-preview";
@@ -167,6 +168,8 @@ export function AdminOrdersBatchPreviewWorkspace() {
       <AdminOrdersLineMessagePreview batchContext={batchContext} />
 
       <AdminOrdersGoogleFormPreview batchContext={batchContext} />
+
+      <AdminOrdersCheckCardPreview batchContext={batchContext} />
 
       <AdminOrdersPastePreview batchContext={batchContext} />
 
