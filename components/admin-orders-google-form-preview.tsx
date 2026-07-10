@@ -140,11 +140,23 @@ function getDateSourceLabel(source: DateSource) {
   return "請人工確認";
 }
 
+function getRecognizedHeaderCount(headerRow: string[]) {
+  const knownHeaders = new Set<string>(Object.values(fieldAliases).flat());
+  return headerRow.filter((header) => knownHeaders.has(header)).length;
+}
+
 function parseGoogleFormResponses(input: string, batchContext?: BatchContext): ParseResult {
   const trimmedInput = input.trim();
 
   if (!trimmedInput) {
     return { errors: ["請貼上 mock/sample Google Form 回覆表資料。"], rows: [] };
+  }
+
+  if (!trimmedInput.includes("\t")) {
+    return {
+      errors: ["這看起來像賀卡文字，不是 Google Form 回覆表。請改用「賀卡文字預覽」或 LINE 訊息預覽。"],
+      rows: [],
+    };
   }
 
   const rawRows = trimmedInput
@@ -158,6 +170,10 @@ function parseGoogleFormResponses(input: string, batchContext?: BatchContext): P
 
   if (headerRow.length === 0) {
     errors.push("缺少 header row。");
+  }
+
+  if (headerRow.length > 0 && getRecognizedHeaderCount(headerRow) === 0) {
+    errors.push("沒有偵測到 Google Form 回覆表欄位，請確認第一列是欄位名稱。");
   }
 
   if (dataRows.length === 0) {
