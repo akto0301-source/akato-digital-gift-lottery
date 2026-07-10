@@ -73,17 +73,46 @@ function formatPercent(value: number) {
   return `${Math.round(value * 100)}%`;
 }
 
+function isValidDateValue(value: string) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+
+  const date = new Date(`${value}T00:00:00`);
+  return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
+}
+
 export function AdminOrdersBatchPreviewWorkspace() {
   const [selectedBatchId, setSelectedBatchId] = useState(mockShipmentBatches[2].id);
+  const [customBatchDate, setCustomBatchDate] = useState("");
+  const [appliedCustomBatchDate, setAppliedCustomBatchDate] = useState("");
+  const [customBatchWarning, setCustomBatchWarning] = useState("");
   const selectedBatch = mockShipmentBatches.find((batch) => batch.id === selectedBatchId) ?? mockShipmentBatches[0];
+  const activeBatchDate = appliedCustomBatchDate || selectedBatch.deliveryDate;
+  const activeBatchName = appliedCustomBatchDate ? `自訂 ${appliedCustomBatchDate} 出貨批次` : selectedBatch.name;
   const progress = selectedBatch.expectedCount > 0 ? selectedBatch.organizedCount / selectedBatch.expectedCount : 0;
   const batchContext = useMemo<BatchContext>(
     () => ({
-      deliveryDate: selectedBatch.deliveryDate,
-      name: selectedBatch.name,
+      deliveryDate: activeBatchDate,
+      name: activeBatchName,
     }),
-    [selectedBatch.deliveryDate, selectedBatch.name],
+    [activeBatchDate, activeBatchName],
   );
+
+  function handleBatchChange(batchId: string) {
+    setSelectedBatchId(batchId);
+    setCustomBatchDate("");
+    setAppliedCustomBatchDate("");
+    setCustomBatchWarning("");
+  }
+
+  function applyCustomBatchDate() {
+    if (!isValidDateValue(customBatchDate)) {
+      setCustomBatchWarning("請輸入完整有效日期，例如 2026-07-15。");
+      return;
+    }
+
+    setAppliedCustomBatchDate(customBatchDate);
+    setCustomBatchWarning("");
+  }
 
   return (
     <>
@@ -96,7 +125,7 @@ export function AdminOrdersBatchPreviewWorkspace() {
           </div>
           <label>
             <span>目前批次</span>
-            <select value={selectedBatch.id} onChange={(event) => setSelectedBatchId(event.target.value)}>
+            <select value={selectedBatch.id} onChange={(event) => handleBatchChange(event.target.value)}>
               {mockShipmentBatches.map((batch) => (
                 <option key={batch.id} value={batch.id}>
                   {batch.name}
@@ -106,10 +135,33 @@ export function AdminOrdersBatchPreviewWorkspace() {
           </label>
         </div>
 
+        <div className={styles.customBatchControl}>
+          <div>
+            <span>自訂出貨批次日期</span>
+            <p>Mock only / Browser-memory only. 可以臨時套用不同出貨日給下方 preview；重新整理後會消失。</p>
+          </div>
+          <label>
+            <span>出貨日期</span>
+            <input
+              type="date"
+              value={customBatchDate}
+              onChange={(event) => {
+                setCustomBatchDate(event.target.value);
+                setCustomBatchWarning("");
+              }}
+            />
+          </label>
+          <button type="button" onClick={applyCustomBatchDate}>套用這個日期</button>
+          {customBatchWarning ? <p className={styles.customBatchWarning}>{customBatchWarning}</p> : null}
+          {appliedCustomBatchDate ? (
+            <p className={styles.customBatchApplied}>目前 preview 已沿用自訂日期：{appliedCustomBatchDate}</p>
+          ) : null}
+        </div>
+
         <div className={styles.batchOverview}>
           <article>
             <span>出貨日</span>
-            <strong>{selectedBatch.deliveryDate}</strong>
+            <strong>{activeBatchDate}</strong>
           </article>
           <article>
             <span>預估盆數</span>
