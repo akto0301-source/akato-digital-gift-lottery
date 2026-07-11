@@ -397,12 +397,18 @@
   white-space: nowrap;
 }
 
+.customBatchCurrent,
 .customBatchWarning,
 .customBatchApplied {
   grid-column: 1 / -1;
   border-radius: 12px;
   padding: 9px 10px;
   font-size: 0.86rem;
+}
+
+.customBatchCurrent {
+  background: rgba(255, 253, 248, 0.78);
+  color: rgba(31, 26, 23, 0.78);
 }
 
 .customBatchWarning {
