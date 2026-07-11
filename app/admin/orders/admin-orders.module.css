@@ -66,6 +66,7 @@
 .summaryGrid article,
 .batchContext,
 .cardProductionPreview,
+.cardRoutingPreview,
 .cardTextPreview,
 .checkCardPreview,
 .filters,
@@ -564,6 +565,12 @@
   padding: 16px;
 }
 
+.cardRoutingPreview {
+  border-radius: 20px;
+  margin-bottom: 18px;
+  padding: 16px;
+}
+
 .checkCardPreview {
   border-radius: 20px;
   margin-bottom: 18px;
@@ -573,6 +580,7 @@
 .lineMessageHeader,
 .googleFormHeader,
 .cardProductionHeader,
+.cardRoutingHeader,
 .checkCardHeader,
 .cardTextHeader {
   display: flex;
@@ -588,6 +596,7 @@
 .googleFormInput span,
 .cardProductionHeader span,
 .cardProductionInput span,
+.cardRoutingHeader span,
 .checkCardHeader span,
 .cardTextHeader span,
 .cardTextInput span {
@@ -600,6 +609,7 @@
 .lineMessageHeader h2,
 .googleFormHeader h2,
 .cardProductionHeader h2,
+.cardRoutingHeader h2,
 .checkCardHeader h2,
 .cardTextHeader h2 {
   margin: 0;
@@ -610,6 +620,7 @@
 .lineMessageHeader p,
 .googleFormHeader p,
 .cardProductionHeader p,
+.cardRoutingHeader p,
 .checkCardHeader p,
 .cardTextHeader p {
   width: fit-content;
@@ -634,6 +645,7 @@
 
 .pastePreviewHeader small,
 .cardProductionHeader small,
+.cardRoutingHeader small,
 .cardTextHeader small,
 .checkCardHeader small,
 .googleFormHeader small {
@@ -848,6 +860,185 @@
   gap: 5px;
   margin: 0;
   padding-left: 18px;
+}
+
+.cardRoutingSummary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.cardRoutingSummary article {
+  min-width: 0;
+  border-radius: 14px;
+  padding: 12px;
+  background: rgba(255, 253, 248, 0.72);
+}
+
+.cardRoutingSummary span {
+  display: block;
+  margin-bottom: 6px;
+  color: rgba(31, 26, 23, 0.58);
+  font-size: 0.8rem;
+}
+
+.cardRoutingSummary strong {
+  color: #2f241f;
+  font-size: 1.35rem;
+}
+
+.cardRouteGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.cardRouteBucket {
+  min-width: 0;
+  border: 1px solid rgba(215, 197, 171, 0.72);
+  border-radius: 16px;
+  padding: 14px;
+  background: rgba(255, 253, 248, 0.78);
+}
+
+.cardRouteInside {
+  border-color: rgba(150, 51, 31, 0.2);
+}
+
+.cardRouteOrchid {
+  border-color: rgba(154, 118, 64, 0.26);
+}
+
+.cardRoutePlant {
+  border-color: rgba(70, 128, 92, 0.24);
+}
+
+.cardRouteManual {
+  border-color: rgba(196, 119, 47, 0.3);
+}
+
+.cardRouteTopline {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.cardRouteTopline span {
+  display: block;
+  margin-bottom: 4px;
+  color: rgba(31, 26, 23, 0.56);
+  font-size: 0.76rem;
+}
+
+.cardRouteTopline h3 {
+  margin: 0;
+  color: #2d231f;
+  font-size: 1.1rem;
+  overflow-wrap: anywhere;
+}
+
+.cardRouteTopline strong {
+  flex: 0 0 auto;
+  border-radius: 999px;
+  padding: 5px 9px;
+  background: rgba(150, 51, 31, 0.12);
+  color: #96331f;
+  font-size: 0.8rem;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+.cardRouteMeta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+  margin: 0 0 12px;
+}
+
+.cardRouteMeta div {
+  min-width: 0;
+}
+
+.cardRouteMeta dt {
+  margin-bottom: 4px;
+  color: rgba(31, 26, 23, 0.52);
+  font-size: 0.76rem;
+}
+
+.cardRouteMeta dd {
+  margin: 0;
+  color: rgba(31, 26, 23, 0.8);
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.cardRouteList,
+.cardRouteWarnings,
+.cardRouteLinePreview {
+  margin-top: 12px;
+}
+
+.cardRouteList strong,
+.cardRouteWarnings strong,
+.cardRouteLinePreview strong {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.cardRouteList ul,
+.cardRouteWarnings ul {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding-left: 18px;
+}
+
+.cardRouteList li,
+.cardRouteWarnings li {
+  color: rgba(31, 26, 23, 0.78);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.cardRouteWarnings {
+  border: 1px solid rgba(196, 119, 47, 0.24);
+  border-left: 4px solid rgba(196, 119, 47, 0.58);
+  border-radius: 14px;
+  padding: 11px;
+  background: rgba(255, 246, 234, 0.68);
+  color: #92561d;
+}
+
+.cardRouteWarnings li {
+  color: #92561d;
+}
+
+.cardRouteLinePreview {
+  border-radius: 14px;
+  padding: 12px;
+  background: rgba(255, 250, 241, 0.9);
+}
+
+.cardRouteLinePreview span {
+  display: block;
+  margin-bottom: 8px;
+  color: rgba(31, 26, 23, 0.58);
+  font-size: 0.78rem;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.cardRouteLinePreview pre {
+  margin: 0;
+  color: rgba(31, 26, 23, 0.82);
+  font: inherit;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
 }
 
 .checkCardBatchNote {
@@ -1707,6 +1898,10 @@
     grid-template-columns: 1fr;
   }
 
+  .cardRouteGrid {
+    grid-template-columns: 1fr;
+  }
+
   .cardProductionSummary {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1756,6 +1951,7 @@
   .batchDetails,
   .itemStatsGrid,
   .cardProductionSummary,
+  .cardRoutingSummary,
   .previewWorkflowGuide ol,
   .filters,
   .orderRow summary,
@@ -1767,6 +1963,9 @@
   .batchHeader,
   .batchProgress > div:first-child,
   .cardProductionHeader,
+  .cardRoutingHeader,
+  .cardRouteTopline,
+  .cardRouteMeta,
   .productionCardHeader,
   .productionCard dl,
   .cardTextHeader,

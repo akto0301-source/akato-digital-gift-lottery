@@ -4,6 +4,7 @@ import { useMemo, useRef, useState } from "react";
 import styles from "@/app/admin/orders/admin-orders.module.css";
 import { AdminOrdersCardTextPreview } from "@/components/admin-orders-card-text-preview";
 import { AdminOrdersCardProductionPreview } from "@/components/admin-orders-card-production-preview";
+import { AdminOrdersCardRoutingPreview } from "@/components/admin-orders-card-routing-preview";
 import { AdminOrdersCheckCardPreview } from "@/components/admin-orders-check-card-preview";
 import { AdminOrdersGoogleFormPreview } from "@/components/admin-orders-google-form-preview";
 import { AdminOrdersLineMessagePreview } from "@/components/admin-orders-line-message-preview";
@@ -286,6 +287,8 @@ export function AdminOrdersBatchPreviewWorkspace() {
       </section>
 
       <AdminOrdersCardProductionPreview batchContext={batchContext} />
+
+      <AdminOrdersCardRoutingPreview batchContext={batchContext} />
 
       <AdminOrdersLineMessagePreview batchContext={batchContext} />
 
