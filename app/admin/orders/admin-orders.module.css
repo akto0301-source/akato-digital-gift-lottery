@@ -65,6 +65,7 @@
 
 .summaryGrid article,
 .batchContext,
+.cardProductionPreview,
 .cardTextPreview,
 .checkCardPreview,
 .filters,
@@ -557,6 +558,12 @@
   padding: 16px;
 }
 
+.cardProductionPreview {
+  border-radius: 20px;
+  margin-bottom: 18px;
+  padding: 16px;
+}
+
 .checkCardPreview {
   border-radius: 20px;
   margin-bottom: 18px;
@@ -565,6 +572,7 @@
 
 .lineMessageHeader,
 .googleFormHeader,
+.cardProductionHeader,
 .checkCardHeader,
 .cardTextHeader {
   display: flex;
@@ -578,6 +586,8 @@
 .lineMessageInput span,
 .googleFormHeader span,
 .googleFormInput span,
+.cardProductionHeader span,
+.cardProductionInput span,
 .checkCardHeader span,
 .cardTextHeader span,
 .cardTextInput span {
@@ -589,6 +599,7 @@
 
 .lineMessageHeader h2,
 .googleFormHeader h2,
+.cardProductionHeader h2,
 .checkCardHeader h2,
 .cardTextHeader h2 {
   margin: 0;
@@ -598,6 +609,7 @@
 
 .lineMessageHeader p,
 .googleFormHeader p,
+.cardProductionHeader p,
 .checkCardHeader p,
 .cardTextHeader p {
   width: fit-content;
@@ -621,6 +633,7 @@
 }
 
 .pastePreviewHeader small,
+.cardProductionHeader small,
 .cardTextHeader small,
 .checkCardHeader small,
 .googleFormHeader small {
@@ -629,6 +642,212 @@
   color: rgba(31, 26, 23, 0.58);
   line-height: 1.5;
   overflow-wrap: anywhere;
+}
+
+.cardProductionInput {
+  display: grid;
+  gap: 6px;
+  margin-top: 14px;
+}
+
+.cardProductionInput textarea {
+  width: 100%;
+  min-width: 0;
+  min-height: 210px;
+  resize: vertical;
+  border: 1px solid rgba(190, 166, 137, 0.88);
+  border-radius: 14px;
+  background: rgba(255, 253, 248, 0.92);
+  color: #2e2420;
+  font: inherit;
+  line-height: 1.65;
+  padding: 12px;
+}
+
+.cardProductionActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.cardProductionActions button {
+  border: 1px solid rgba(150, 51, 31, 0.18);
+  border-radius: 999px;
+  padding: 10px 13px;
+  background: #96331f;
+  color: #fff8f1;
+  cursor: pointer;
+  font: inherit;
+  white-space: nowrap;
+}
+
+.cardProductionActions button + button {
+  background: rgba(255, 253, 248, 0.86);
+  color: #7a4d44;
+}
+
+.cardProductionErrors {
+  margin-top: 14px;
+  border: 1px solid rgba(196, 119, 47, 0.24);
+  border-radius: 14px;
+  padding: 12px;
+  background: rgba(255, 246, 234, 0.76);
+  color: #92561d;
+}
+
+.cardProductionErrors strong {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.cardProductionErrors ul {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding-left: 18px;
+}
+
+.cardProductionSummary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.cardProductionSummary article {
+  min-width: 0;
+  border-radius: 14px;
+  padding: 12px;
+  background: rgba(255, 253, 248, 0.72);
+}
+
+.cardProductionSummary span {
+  display: block;
+  margin-bottom: 6px;
+  color: rgba(31, 26, 23, 0.58);
+  font-size: 0.8rem;
+}
+
+.cardProductionSummary strong {
+  color: #2f241f;
+  font-size: 1.35rem;
+}
+
+.cardProductionGrid {
+  display: grid;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.productionCard {
+  min-width: 0;
+  border-radius: 16px;
+  padding: 14px;
+  background: rgba(255, 253, 248, 0.78);
+}
+
+.productionCardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.productionCardHeader span {
+  display: block;
+  margin-bottom: 4px;
+  color: rgba(31, 26, 23, 0.58);
+  font-size: 0.8rem;
+}
+
+.productionCardHeader strong {
+  color: #2d231f;
+  font-size: 1.12rem;
+  overflow-wrap: anywhere;
+}
+
+.productionCardHeader em {
+  flex: 0 0 auto;
+  border-radius: 999px;
+  padding: 4px 9px;
+  font-size: 0.78rem;
+  font-style: normal;
+  white-space: nowrap;
+}
+
+.productionCardReady {
+  background: rgba(70, 128, 92, 0.14);
+  color: #3f7651;
+}
+
+.productionCardNeedsCheck {
+  background: rgba(196, 119, 47, 0.15);
+  color: #92561d;
+}
+
+.productionCard dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+  margin: 0;
+}
+
+.productionCard div {
+  min-width: 0;
+}
+
+.productionCard dt {
+  margin-bottom: 4px;
+  color: rgba(31, 26, 23, 0.52);
+  font-size: 0.76rem;
+}
+
+.productionCard dd {
+  margin: 0;
+  color: rgba(31, 26, 23, 0.8);
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.productionCardText {
+  margin-top: 12px;
+}
+
+.productionCardText strong,
+.productionCardWarnings strong {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.productionCardText pre {
+  margin: 0;
+  border-radius: 14px;
+  padding: 12px;
+  background: rgba(255, 250, 241, 0.9);
+  color: rgba(31, 26, 23, 0.82);
+  font: inherit;
+  line-height: 1.75;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.productionCardWarnings {
+  margin-top: 12px;
+  border: 1px solid rgba(196, 119, 47, 0.26);
+  border-left: 4px solid rgba(196, 119, 47, 0.66);
+  border-radius: 14px;
+  padding: 11px;
+  background: rgba(255, 246, 234, 0.76);
+  color: #92561d;
+}
+
+.productionCardWarnings ul {
+  display: grid;
+  gap: 5px;
+  margin: 0;
+  padding-left: 18px;
 }
 
 .checkCardBatchNote {
@@ -1488,6 +1707,10 @@
     grid-template-columns: 1fr;
   }
 
+  .cardProductionSummary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .batchDetails {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1532,6 +1755,7 @@
   .batchOverview,
   .batchDetails,
   .itemStatsGrid,
+  .cardProductionSummary,
   .previewWorkflowGuide ol,
   .filters,
   .orderRow summary,
@@ -1542,6 +1766,9 @@
   .compactItem div:first-child,
   .batchHeader,
   .batchProgress > div:first-child,
+  .cardProductionHeader,
+  .productionCardHeader,
+  .productionCard dl,
   .cardTextHeader,
   .cardTextResultHeader,
   .cardTextResult dl,
@@ -1563,6 +1790,7 @@
   }
 
   .lineMessageActions button,
+  .cardProductionActions button,
   .googleFormActions button,
   .cardTextActions button,
   .pastePreviewActions button,
