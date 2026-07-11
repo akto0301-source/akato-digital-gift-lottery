@@ -3,6 +3,7 @@
 import { useMemo, useRef, useState } from "react";
 import styles from "@/app/admin/orders/admin-orders.module.css";
 import { AdminOrdersCardTextPreview } from "@/components/admin-orders-card-text-preview";
+import { AdminOrdersCardProductionPreview } from "@/components/admin-orders-card-production-preview";
 import { AdminOrdersCheckCardPreview } from "@/components/admin-orders-check-card-preview";
 import { AdminOrdersGoogleFormPreview } from "@/components/admin-orders-google-form-preview";
 import { AdminOrdersLineMessagePreview } from "@/components/admin-orders-line-message-preview";
@@ -101,8 +102,8 @@ function toChineseDateNumber(value: string) {
 
 function normalizeCustomDateValue(value: string) {
   const trimmed = value.trim();
-  const numericDate = trimmed.match(/^(\d{4})[-/.年,\s]+(\d{1,2})[-/.月,\s]+(\d{1,2})(?:日|號)?$/);
-  const chineseDate = trimmed.match(/^(\d{4})[-/.年,\s]+([一二三四五六七八九十]{1,3})月([一二三四五六七八九十]{1,3})(?:日|號)?$/);
+  const numericDate = trimmed.match(/^(\d{4})[-/.年,，\s]+(\d{1,2})[-/.月,，\s]+(\d{1,2})(?:日|號)?$/);
+  const chineseDate = trimmed.match(/^(\d{4})[-/.年,，\s]+([一二三四五六七八九十]{1,3})月([一二三四五六七八九十]{1,3})(?:日|號)?$/);
   const match = numericDate ?? chineseDate;
 
   if (!match) return "";
@@ -111,9 +112,16 @@ function normalizeCustomDateValue(value: string) {
   const month = numericDate ? Number(match[2]) : toChineseDateNumber(match[2]);
   const day = numericDate ? Number(match[3]) : toChineseDateNumber(match[3]);
   const normalized = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-  const date = new Date(`${normalized}T00:00:00`);
+  const date = new Date(year, month - 1, day);
 
-  if (Number.isNaN(date.getTime()) || date.toISOString().slice(0, 10) !== normalized) return "";
+  if (
+    Number.isNaN(date.getTime()) ||
+    date.getFullYear() !== year ||
+    date.getMonth() !== month - 1 ||
+    date.getDate() !== day
+  ) {
+    return "";
+  }
 
   return normalized;
 }
@@ -276,6 +284,8 @@ export function AdminOrdersBatchPreviewWorkspace() {
           <li><strong>4</strong><span>人工確認</span></li>
         </ol>
       </section>
+
+      <AdminOrdersCardProductionPreview batchContext={batchContext} />
 
       <AdminOrdersLineMessagePreview batchContext={batchContext} />
 
