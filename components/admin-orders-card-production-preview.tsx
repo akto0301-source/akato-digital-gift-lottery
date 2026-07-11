@@ -1,10 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import styles from "@/app/admin/orders/admin-orders.module.css";
 import type { BatchContext } from "@/components/admin-orders-batch-preview-workspace";
 
-type ProductionCard = {
+export type ProductionCard = {
   amountNote: string;
   blessingPhrase: string;
   cardText: string;
@@ -149,7 +149,13 @@ function parseProductionCards(input: string, batchContext?: BatchContext): Parse
   return { cards: cardsWithDuplicateWarnings, errors: [] };
 }
 
-export function AdminOrdersCardProductionPreview({ batchContext }: { batchContext?: BatchContext }) {
+export function AdminOrdersCardProductionPreview({
+  batchContext,
+  onPreviewCardsChange,
+}: {
+  batchContext?: BatchContext;
+  onPreviewCardsChange?: (cards: ProductionCard[]) => void;
+}) {
   const [draft, setDraft] = useState("");
   const [parseRequested, setParseRequested] = useState(false);
   const parseResult = useMemo(
@@ -159,6 +165,10 @@ export function AdminOrdersCardProductionPreview({ batchContext }: { batchContex
   const readyCount = parseResult.cards.filter((card) => card.status === "可打卡").length;
   const warningCount = parseResult.cards.length - readyCount;
   const uniqueRecipientCount = new Set(parseResult.cards.map((card) => card.recipientName).filter(Boolean)).size;
+
+  useEffect(() => {
+    onPreviewCardsChange?.(parseResult.cards);
+  }, [onPreviewCardsChange, parseResult.cards]);
 
   return (
     <section className={styles.cardProductionPreview} aria-label="賀卡製作預覽">
@@ -185,6 +195,7 @@ export function AdminOrdersCardProductionPreview({ batchContext }: { batchContex
           onChange={(event) => {
             setDraft(event.target.value);
             setParseRequested(false);
+            onPreviewCardsChange?.([]);
           }}
           placeholder={sampleCardText}
           value={draft}
@@ -198,6 +209,7 @@ export function AdminOrdersCardProductionPreview({ batchContext }: { batchContex
           onClick={() => {
             setDraft("");
             setParseRequested(false);
+            onPreviewCardsChange?.([]);
           }}
         >
           清除

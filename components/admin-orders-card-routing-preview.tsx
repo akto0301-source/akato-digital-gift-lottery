@@ -2,6 +2,7 @@
 
 import styles from "@/app/admin/orders/admin-orders.module.css";
 import type { BatchContext } from "@/components/admin-orders-batch-preview-workspace";
+import type { ProductionCard } from "@/components/admin-orders-card-production-preview";
 
 type RoutingBucket = {
   id: string;
@@ -95,6 +96,94 @@ const mockRoutingBuckets: RoutingBucket[] = [
   },
 ];
 
+function formatCardSummary(card: ProductionCard, index: number) {
+  const recipient = card.recipientName || "請人工確認收禮人";
+  const phrase = card.blessingPhrase || "賀詞需確認";
+  const amountNote = card.amountNote || "金額品項需確認";
+
+  return `第 ${index + 1} 張｜${recipient}｜${phrase}｜${amountNote}`;
+}
+
+function buildLinePreview(owner: string, cards: ProductionCard[], indexes: number[]) {
+  const previewLines = indexes.slice(0, 4).map((cardIndex) => `${cardIndex + 1}. ${formatCardSummary(cards[cardIndex], cardIndex)}`);
+
+  return [
+    `${owner} mock 文字包預覽，尚未傳送 LINE：`,
+    ...previewLines,
+    "請人工確認賀卡內容、品項、金額與路線後再使用。",
+  ].join("\n");
+}
+
+function createEmptyBucket(
+  id: string,
+  routeName: string,
+  owner: string,
+  itemType: string,
+  tone: RoutingBucket["tone"],
+  fallbackNote: string,
+): RoutingBucket & { indexes: number[] } {
+  return {
+    id,
+    routeName,
+    owner,
+    count: 0,
+    itemType,
+    summaries: [],
+    notes: [fallbackNote],
+    linePreview: `${owner} mock 文字包預覽：目前沒有來自賀卡製作預覽的卡片。`,
+    tone,
+    indexes: [],
+  };
+}
+
+function hasManualWarning(card: ProductionCard) {
+  return (
+    card.status === "需人工確認" ||
+    !card.amountNote ||
+    card.itemType === "其他" ||
+    card.itemType === "請人工確認" ||
+    card.warnings.some((warning) => warning.includes("同一收禮人") || warning.includes("品項") || warning.includes("缺"))
+  );
+}
+
+function routeProductionCard(card: ProductionCard) {
+  if (hasManualWarning(card)) return "manual-check";
+  if (card.itemType.includes("植物") || card.amountNote.includes("盆栽")) return "market-plant";
+  if (card.itemType.includes("蘭花") || card.amountNote.includes("落地蘭") || card.amountNote.includes("蘭")) return "market-orchid";
+  return "inside-card-typing";
+}
+
+function createBucketsFromProductionCards(cards: ProductionCard[]): RoutingBucket[] {
+  const buckets = [
+    createEmptyBucket("inside-card-typing", "店內自出", "給珊珊打卡片", "店內自出 / 其他可打卡", "inside", "沒有店內自出卡片。"),
+    createEmptyBucket("market-orchid", "落地蘭花", "給花市蘭花攤商", "落地蘭 / 蘭花", "orchid", "沒有蘭花攤商卡片。"),
+    createEmptyBucket("market-plant", "落地植物", "給花市植物攤商", "植物 / 盆栽 / 落地植物", "plant", "沒有植物攤商卡片。"),
+    createEmptyBucket("manual-check", "需人工判斷", "先留在核單人員手上", "品項不明 / 金額不明 / 路線不明", "manual", "目前沒有需要人工判斷的卡片。"),
+  ];
+  const bucketMap = new Map(buckets.map((bucket) => [bucket.id, bucket]));
+
+  cards.forEach((card, index) => {
+    const bucket = bucketMap.get(routeProductionCard(card)) ?? bucketMap.get("manual-check");
+    if (!bucket) return;
+
+    bucket.indexes.push(index);
+    bucket.summaries.push(formatCardSummary(card, index));
+  });
+
+  return buckets.map((bucket) => ({
+    ...bucket,
+    count: bucket.indexes.length,
+    notes:
+      bucket.indexes.length > 0
+        ? [
+            "這個分流來自目前賀卡製作預覽，只存在瀏覽器記憶體。",
+            bucket.id === "manual-check" ? "人工判斷卡片不放入對外文字包。" : "正式使用前仍需人工確認完整賀卡內容。",
+          ]
+        : bucket.notes,
+    linePreview: bucket.indexes.length > 0 ? buildLinePreview(bucket.owner, cards, bucket.indexes) : bucket.linePreview,
+  }));
+}
+
 function getToneClass(tone: RoutingBucket["tone"]) {
   if (tone === "inside") return styles.cardRouteInside;
   if (tone === "orchid") return styles.cardRouteOrchid;
@@ -102,9 +191,17 @@ function getToneClass(tone: RoutingBucket["tone"]) {
   return styles.cardRouteManual;
 }
 
-export function AdminOrdersCardRoutingPreview({ batchContext }: { batchContext?: BatchContext }) {
-  const totalCards = mockRoutingBuckets.reduce((sum, bucket) => sum + bucket.count, 0);
-  const manualCards = mockRoutingBuckets.find((bucket) => bucket.id === "manual-check")?.count ?? 0;
+export function AdminOrdersCardRoutingPreview({
+  batchContext,
+  productionCards = [],
+}: {
+  batchContext?: BatchContext;
+  productionCards?: ProductionCard[];
+}) {
+  const hasProductionCards = productionCards.length > 0;
+  const routingBuckets = hasProductionCards ? createBucketsFromProductionCards(productionCards) : mockRoutingBuckets;
+  const totalCards = routingBuckets.reduce((sum, bucket) => sum + bucket.count, 0);
+  const manualCards = routingBuckets.find((bucket) => bucket.id === "manual-check")?.count ?? 0;
 
   return (
     <section className={styles.cardRoutingPreview} aria-label="賀卡分流預覽">
@@ -113,7 +210,11 @@ export function AdminOrdersCardRoutingPreview({ batchContext }: { batchContext?:
           <span>Mock routing / Browser-memory preview</span>
           <h2>賀卡分流預覽</h2>
           <p>Mock only. 這裡只示範賀卡整理後可能交給誰處理，尚未傳送 LINE，也不會產生正式分派。</p>
-          <small>需要人工確認後才可以使用；重新整理後 preview 會消失。</small>
+          <small>
+            {hasProductionCards
+              ? "目前使用賀卡製作預覽的 browser-memory 結果分流；重新整理後會消失。"
+              : "尚未解析賀卡時先顯示 mock example；需要人工確認後才可以使用。"}
+          </small>
         </div>
       </div>
 
@@ -127,12 +228,12 @@ export function AdminOrdersCardRoutingPreview({ batchContext }: { batchContext?:
 
       <div className={styles.cardRoutingSummary}>
         <article><span>預覽張數</span><strong>{totalCards}</strong></article>
-        <article><span>分流路線</span><strong>{mockRoutingBuckets.length}</strong></article>
+        <article><span>分流路線</span><strong>{routingBuckets.length}</strong></article>
         <article><span>人工判斷</span><strong>{manualCards}</strong></article>
       </div>
 
       <div className={styles.cardRouteGrid}>
-        {mockRoutingBuckets.map((bucket) => (
+        {routingBuckets.map((bucket) => (
           <article key={bucket.id} className={`${styles.cardRouteBucket} ${getToneClass(bucket.tone)}`}>
             <div className={styles.cardRouteTopline}>
               <div>

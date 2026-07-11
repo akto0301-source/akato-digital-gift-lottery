@@ -1,9 +1,9 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import styles from "@/app/admin/orders/admin-orders.module.css";
 import { AdminOrdersCardTextPreview } from "@/components/admin-orders-card-text-preview";
-import { AdminOrdersCardProductionPreview } from "@/components/admin-orders-card-production-preview";
+import { AdminOrdersCardProductionPreview, type ProductionCard } from "@/components/admin-orders-card-production-preview";
 import { AdminOrdersCardRoutingPreview } from "@/components/admin-orders-card-routing-preview";
 import { AdminOrdersCheckCardPreview } from "@/components/admin-orders-check-card-preview";
 import { AdminOrdersGoogleFormPreview } from "@/components/admin-orders-google-form-preview";
@@ -132,6 +132,7 @@ export function AdminOrdersBatchPreviewWorkspace() {
   const [selectedBatchId, setSelectedBatchId] = useState(mockShipmentBatches[2].id);
   const [appliedCustomBatchDate, setAppliedCustomBatchDate] = useState("");
   const [customBatchWarning, setCustomBatchWarning] = useState("");
+  const [productionPreviewCards, setProductionPreviewCards] = useState<ProductionCard[]>([]);
   const selectedBatch = mockShipmentBatches.find((batch) => batch.id === selectedBatchId) ?? mockShipmentBatches[0];
   const activeBatchDate = appliedCustomBatchDate || selectedBatch.deliveryDate;
   const activeBatchName = appliedCustomBatchDate ? `自訂 ${appliedCustomBatchDate} 出貨批次` : selectedBatch.name;
@@ -143,6 +144,9 @@ export function AdminOrdersBatchPreviewWorkspace() {
     }),
     [activeBatchDate, activeBatchName],
   );
+  const handleProductionPreviewCardsChange = useCallback((cards: ProductionCard[]) => {
+    setProductionPreviewCards(cards);
+  }, []);
 
   function handleBatchChange(batchId: string) {
     setSelectedBatchId(batchId);
@@ -286,9 +290,12 @@ export function AdminOrdersBatchPreviewWorkspace() {
         </ol>
       </section>
 
-      <AdminOrdersCardProductionPreview batchContext={batchContext} />
+      <AdminOrdersCardProductionPreview
+        batchContext={batchContext}
+        onPreviewCardsChange={handleProductionPreviewCardsChange}
+      />
 
-      <AdminOrdersCardRoutingPreview batchContext={batchContext} />
+      <AdminOrdersCardRoutingPreview batchContext={batchContext} productionCards={productionPreviewCards} />
 
       <AdminOrdersLineMessagePreview batchContext={batchContext} />
 
