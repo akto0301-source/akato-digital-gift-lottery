@@ -3,6 +3,7 @@ import { getLocaleCopy } from "@/lib/i18n";
 import { FlowerCardImage } from "@/components/flower-card-image";
 import { OrchidIllustration } from "@/components/orchid-illustration";
 import { getAllLots } from "@/lib/content";
+import { defaultSceneId, resolveSceneId, sceneMap } from "@/lib/scene-map";
 import styles from "./confirm-page.module.css";
 import { ExtraMessagePanel } from "./extra-message-panel";
 
@@ -60,10 +61,18 @@ export default async function ConfirmPage({ params, searchParams }: ConfirmPageP
   const from = gift?.from ?? pickValue(queryParams.from);
   const to = gift?.to ?? pickValue(queryParams.to);
   const message = gift?.message ?? pickValue(queryParams.message);
-  const sharedFlowerLot = getSharedFlowerLot(message);
+  const sceneIdParam = pickValue(queryParams.sceneId);
+  const sceneIdCandidate = sceneIdParam ? resolveSceneId(sceneIdParam) : null;
+  const hasScene = Boolean(sceneIdCandidate && sceneMap[sceneIdCandidate]);
+  const sceneId = sceneIdCandidate ?? defaultSceneId;
+  const scene = sceneMap[sceneId];
+  const sharedFlowerLot = !hasScene ? getSharedFlowerLot(message) : null;
 
   return (
-    <main className={styles.page}>
+    <main
+      className={`${styles.page} ${hasScene ? styles.scenePage : ""}`}
+      style={hasScene ? { ["--scene-image" as string]: `url(${scene.image})` } : undefined}
+    >
       <div className={styles.petalsLayer} aria-hidden="true">
         {petals.map((petal, index) => (
           <span
@@ -85,16 +94,16 @@ export default async function ConfirmPage({ params, searchParams }: ConfirmPageP
         <p className={styles.eyebrow}>{copy.confirm.eyebrow}</p>
         <h1 className={styles.recipient}>{to || copy.confirm.recipientFallback}</h1>
         <p className={styles.meta}>{copy.confirm.meta(from)}</p>
-        {sharedFlowerLot ? (
+        {!hasScene && sharedFlowerLot ? (
           <FlowerCardImage lot={sharedFlowerLot} className={styles.flowerLotIllustration} imageClassName={styles.flowerLotImage} size={132} />
-        ) : (
+        ) : !hasScene ? (
           <OrchidIllustration
             orchidKey="romantic"
             className={styles.flowerIllustrationWrap}
             imageClassName={styles.flowerIllustration}
             glowClassName={styles.flowerGlow}
           />
-        )}
+        ) : null}
         <div className={styles.messageCard}>{message || copy.confirm.messageFallback}</div>
         <ExtraMessagePanel locale={locale} />
         <div className={styles.footerAction}>
