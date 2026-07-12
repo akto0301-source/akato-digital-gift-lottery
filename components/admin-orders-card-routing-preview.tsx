@@ -61,16 +61,16 @@ const mockRoutingBuckets: RoutingBucket[] = [
     routeName: "落地植物",
     owner: "給花市植物攤商",
     count: 5,
-    itemType: "植物 / 盆栽 / 落地植物",
+    itemType: "落地植 / 落地植物",
     summaries: [
-      "第 23 張｜測試協理 佑庭｜開幕誌慶｜3500 植物",
-      "第 24 張｜測試店長 宜芳｜平安順心｜3000 盆栽",
+      "第 23 張｜測試協理 佑庭｜開幕誌慶｜3500 落地植物",
+      "第 24 張｜測試店長 宜芳｜平安順心｜3000 落地植",
     ],
-    notes: ["品項含植物或盆栽，先放入植物攤商文字包。", "尺寸、盆器、配送地點需人工確認。"],
+    notes: ["品項明確寫落地植或落地植物，才放入植物攤商文字包。", "一般植物或盆栽先留在店內自出，避免誤分派。"],
     linePreview: [
       "植物攤商 mock 預覽，尚未傳送 LINE：",
-      "1. 測試協理 佑庭｜開幕誌慶｜3500 植物",
-      "2. 測試店長 宜芳｜平安順心｜3000 盆栽",
+      "1. 測試協理 佑庭｜開幕誌慶｜3500 落地植物",
+      "2. 測試店長 宜芳｜平安順心｜3000 落地植",
       "請人工確認尺寸與備註後再使用。",
     ].join("\n"),
     tone: "plant",
@@ -148,8 +148,8 @@ function hasManualWarning(card: ProductionCard) {
 
 function routeProductionCard(card: ProductionCard) {
   if (hasManualWarning(card)) return "manual-check";
-  if (card.itemType.includes("植物") || card.amountNote.includes("盆栽")) return "market-plant";
-  if (card.itemType.includes("蘭花") || card.amountNote.includes("落地蘭") || card.amountNote.includes("蘭")) return "market-orchid";
+  if (card.amountNote.includes("落地植")) return "market-plant";
+  if (card.amountNote.includes("落地蘭")) return "market-orchid";
   return "inside-card-typing";
 }
 
@@ -157,7 +157,7 @@ function createBucketsFromProductionCards(cards: ProductionCard[]): RoutingBucke
   const buckets = [
     createEmptyBucket("inside-card-typing", "店內自出", "給珊珊打卡片", "店內自出 / 其他可打卡", "inside", "沒有店內自出卡片。"),
     createEmptyBucket("market-orchid", "落地蘭花", "給花市蘭花攤商", "落地蘭 / 蘭花", "orchid", "沒有蘭花攤商卡片。"),
-    createEmptyBucket("market-plant", "落地植物", "給花市植物攤商", "植物 / 盆栽 / 落地植物", "plant", "沒有植物攤商卡片。"),
+    createEmptyBucket("market-plant", "落地植物", "給花市植物攤商", "落地植 / 落地植物", "plant", "沒有植物攤商卡片。"),
     createEmptyBucket("manual-check", "需人工判斷", "先留在核單人員手上", "品項不明 / 金額不明 / 路線不明", "manual", "目前沒有需要人工判斷的卡片。"),
   ];
   const bucketMap = new Map(buckets.map((bucket) => [bucket.id, bucket]));
@@ -234,14 +234,14 @@ export function AdminOrdersCardRoutingPreview({
 
       <div className={styles.cardRouteGrid}>
         {routingBuckets.map((bucket) => (
-          <article key={bucket.id} className={`${styles.cardRouteBucket} ${getToneClass(bucket.tone)}`}>
-            <div className={styles.cardRouteTopline}>
+          <details key={bucket.id} className={`${styles.cardRouteBucket} ${getToneClass(bucket.tone)}`}>
+            <summary className={styles.cardRouteTopline}>
               <div>
                 <span>路線</span>
                 <h3>{bucket.routeName}</h3>
               </div>
               <strong>{bucket.count} 張</strong>
-            </div>
+            </summary>
 
             <dl className={styles.cardRouteMeta}>
               <div><dt>負責對象</dt><dd>{bucket.owner}</dd></div>
@@ -266,12 +266,12 @@ export function AdminOrdersCardRoutingPreview({
               </ul>
             </div>
 
-            <div className={styles.cardRouteLinePreview}>
-              <strong>LINE 訊息包預覽</strong>
+            <details className={styles.cardRouteLinePreview}>
+              <summary>LINE 訊息包預覽</summary>
               <span>尚未傳送 LINE / 需要人工確認後才可以使用</span>
               <pre>{bucket.linePreview}</pre>
-            </div>
-          </article>
+            </details>
+          </details>
         ))}
       </div>
     </section>
