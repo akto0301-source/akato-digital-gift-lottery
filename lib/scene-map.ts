@@ -1,5 +1,5 @@
 export type SceneId =
-  | "campus-plumeria"
+  | "flower-wall-lamp"
   | "wire-bird-nest"
   | "tile-moss"
   | "circle-moss"
@@ -13,13 +13,13 @@ export type SceneItem = {
   image: string;
 };
 
-export const defaultSceneId: SceneId = "campus-plumeria";
+export const defaultSceneId: SceneId = "flower-wall-lamp";
 
 export const sceneItems: SceneItem[] = [
   {
-    id: "campus-plumeria",
-    title: "校園雞蛋花",
-    image: "/gift-scenes/campus-plumeria-readable.png",
+    id: "flower-wall-lamp",
+    title: "花牆路燈",
+    image: "/gift-scenes/flower-wall-lamp.png",
   },
   {
     id: "wire-bird-nest",
@@ -43,12 +43,12 @@ export const sceneItems: SceneItem[] = [
   },
   {
     id: "plumeria-bop-cat",
-    title: "雞蛋花天堂鳥步道乳牛貓",
+    title: "花樹小路貓",
     image: "/gift-scenes/plumeria-bop-cat-readable.png",
   },
   {
     id: "totoro-lighthouse",
-    title: "龍貓燈塔",
+    title: "森林小屋",
     image: "/gift-scenes/totoro-lighthouse-readable.png",
   },
 ];
