@@ -7,6 +7,7 @@ import { BlessingMotif, getBlessingCardVisual } from '@/components/blessing-card
 import { FlowerCardImage } from '@/components/flower-card-image';
 import { getAllLots } from '@/lib/content';
 import { blessingCards, getLocaleCopy } from '@/lib/i18n';
+import { defaultSceneId, resolveSceneId, sceneMap, type SceneId } from '@/lib/scene-map';
 
 const PetalsBackground = () => {
   const petalConfigs = [
@@ -87,6 +88,7 @@ type LetterQuery = {
   toName: string | null;
   giftMessage: string | null;
   categoryId: string | null;
+  sceneId: string | null;
 };
 
 export default function LetterPage() {
@@ -96,9 +98,13 @@ export default function LetterPage() {
     toName: null,
     giftMessage: null,
     categoryId: null,
+    sceneId: null,
   });
-  const { locale, fromName, toName, giftMessage, categoryId } = letterQuery;
+  const { locale, fromName, toName, giftMessage, categoryId, sceneId } = letterQuery;
   const copy = getLocaleCopy(locale);
+  const hasScene = Boolean(sceneId && sceneMap[sceneId as SceneId]);
+  const resolvedSceneId = hasScene ? (sceneId as SceneId) : defaultSceneId;
+  const scene = sceneMap[resolvedSceneId];
   const [isOpened, setIsOpened] = useState(false);
   const [isClicking, setIsClicking] = useState(false);
 
@@ -106,6 +112,7 @@ export default function LetterPage() {
     const timer = window.setTimeout(() => {
       const searchParams = new URLSearchParams(window.location.search);
       const localeParam = getQueryValue(searchParams, 'locale');
+      const sceneIdParam = getQueryValue(searchParams, 'sceneId');
 
       setLetterQuery({
         locale: localeParam === 'ja' ? 'ja' : 'zh',
@@ -113,6 +120,7 @@ export default function LetterPage() {
         toName: getQueryValue(searchParams, 'to'),
         giftMessage: getQueryValue(searchParams, 'message'),
         categoryId: getQueryValue(searchParams, 'cardId') ?? getQueryValue(searchParams, 'category'),
+        sceneId: sceneIdParam ? resolveSceneId(sceneIdParam) : null,
       });
     }, 0);
 
@@ -120,16 +128,17 @@ export default function LetterPage() {
   }, []);
 
   const categoryCard = useMemo(
-    () => blessingCards.find((card) => card.id === categoryId) ?? null,
-    [categoryId],
+    () => (!hasScene ? blessingCards.find((card) => card.id === categoryId) ?? null : null),
+    [categoryId, hasScene],
   );
-  const categoryCopy = categoryCard ? (locale === 'ja' ? categoryCard.ja : categoryCard.zh) : null;
+  const categoryCopy = !hasScene && categoryCard ? (locale === 'ja' ? categoryCard.ja : categoryCard.zh) : null;
   const isSharedFlowerLotLetter = isSharedFlowerLotMessage(categoryId, giftMessage);
+  const canRenderDecorativeVisuals = !hasScene;
   const sharedFlowerLot = useMemo(
-    () => (isSharedFlowerLotLetter ? getSharedFlowerLot(giftMessage) : null),
-    [giftMessage, isSharedFlowerLotLetter],
+    () => (isSharedFlowerLotLetter && canRenderDecorativeVisuals ? getSharedFlowerLot(giftMessage) : null),
+    [canRenderDecorativeVisuals, giftMessage, isSharedFlowerLotLetter],
   );
-  const categoryVisual = categoryId && !isSharedFlowerLotLetter ? getBlessingCardVisual(categoryId) : null;
+  const categoryVisual = canRenderDecorativeVisuals && categoryCard && !isSharedFlowerLotLetter ? getBlessingCardVisual(categoryCard.id) : null;
 
   const handleOpenEnvelope = () => {
     setIsClicking(true);
@@ -137,36 +146,53 @@ export default function LetterPage() {
   };
 
   return (
-    <main style={{ minHeight: '100dvh', position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(to bottom, #F7E9E7, #F6F0E8)', color: '#8B8580', fontFamily: 'sans-serif', overflow: 'hidden' }}>
+    <main
+      style={{
+        minHeight: '100svh',
+        position: 'relative',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: hasScene ? 'flex-start' : 'center',
+        padding: hasScene ? '32px 0 max(128px, calc(env(safe-area-inset-bottom) + 96px))' : '0',
+        background: hasScene
+          ? `linear-gradient(rgba(255, 246, 232, 0.04), rgba(255, 246, 232, 0.06)), url(${scene.image}) center / cover no-repeat`
+          : 'linear-gradient(to bottom, #F7E9E7, #F6F0E8)',
+        color: '#8B8580',
+        fontFamily: 'sans-serif',
+        overflowX: 'hidden',
+        overflowY: hasScene ? 'auto' : 'hidden',
+      }}
+    >
       <PetalsBackground />
-      <div style={{ position: 'relative', zIndex: 10, width: '100%', maxWidth: '560px', padding: '32px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
-        <p style={{ fontSize: '12px', letterSpacing: '0.25em', fontWeight: 300, marginBottom: '16px', transition: 'opacity 0.7s ease', opacity: isOpened ? 0.3 : 0.5 }}>
+      <div style={{ position: 'relative', zIndex: 10, width: 'min(560px, calc(100% - 32px))', padding: hasScene ? '32px 24px 108px' : '32px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', borderRadius: '0', background: 'transparent', border: '0', boxShadow: 'none', backdropFilter: 'none' }}>
+        <p style={{ fontSize: '12px', letterSpacing: '0.25em', fontWeight: 300, marginBottom: '16px', transition: 'opacity 0.7s ease', opacity: isOpened ? 0.46 : 0.62, color: hasScene ? 'rgba(72, 62, 58, 0.78)' : undefined, textShadow: hasScene ? '0 1px 2px rgba(255, 250, 240, 0.92), 0 8px 28px rgba(255, 250, 240, 0.48)' : undefined }}>
           AKATO GIFT LETTER
         </p>
 
         <div style={{ height: '32px', width: '100%', display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
-          <p style={{ fontSize: '14px', fontWeight: 300, letterSpacing: '0.1em', color: '#8B8580', transition: 'all 0.6s ease-out', opacity: isOpened ? 0 : 1, transform: isOpened ? 'translateY(-8px)' : 'translateY(0)', pointerEvents: isOpened ? 'none' : 'auto' }}>
+          <p style={{ fontSize: '14px', fontWeight: 300, letterSpacing: '0.1em', color: hasScene ? 'rgba(72, 62, 58, 0.86)' : '#8B8580', transition: 'all 0.6s ease-out', opacity: isOpened ? 0 : 1, transform: isOpened ? 'translateY(-8px)' : 'translateY(0)', pointerEvents: isOpened ? 'none' : 'auto', textShadow: hasScene ? '0 1px 2px rgba(255, 250, 240, 0.92), 0 8px 28px rgba(255, 250, 240, 0.48)' : undefined }}>
             {toName ? (locale === 'ja' ? `宛先 ${toName}` : `給 ${toName}`) : ''}
           </p>
         </div>
 
-        <h1 style={{ fontSize: 'clamp(28px, 5vw, 42px)', position: 'relative', width: '100%', maxWidth: '380px', margin: '8px auto 16px auto', display: 'flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1.4, fontWeight: 500, color: '#7A736E', minHeight: '5.5rem' }}>
+        <h1 style={{ fontSize: 'clamp(28px, 5vw, 42px)', position: 'relative', width: '100%', maxWidth: '380px', margin: '8px auto 16px auto', display: 'flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1.4, fontWeight: 500, color: hasScene ? 'rgba(72, 62, 58, 0.94)' : '#7A736E', minHeight: '5.5rem', textShadow: hasScene ? '0 1px 2px rgba(255, 250, 240, 0.92), 0 8px 28px rgba(255, 250, 240, 0.48)' : undefined }}>
           <span style={{ position: 'absolute', width: '100%', whiteSpace: 'normal', wordBreak: 'keep-all', transition: 'all 0.6s ease-out', opacity: isOpened ? 0 : 1, transform: isOpened ? 'translateY(-8px)' : 'translateY(0)', pointerEvents: isOpened ? 'none' : 'auto' }}>
             {locale === 'ja' ? <>Akato からの<br />祝福の手紙が届きました</> : <>你收到一封來自<br />Akato 的祝福信</>}
           </span>
-          <span style={{ position: 'absolute', width: '100%', whiteSpace: 'normal', wordBreak: 'keep-all', fontSize: 'clamp(18px, 3.8vw, 24px)', fontWeight: 400, lineHeight: 1.5, color: '#8B8580', letterSpacing: '0.08em', transition: 'all 0.8s ease-out 0.45s', opacity: isOpened ? 1 : 0, transform: isOpened ? 'translateY(0)' : 'translateY(16px)', pointerEvents: 'none' }}>
+          <span style={{ position: 'absolute', width: '100%', whiteSpace: 'normal', wordBreak: 'keep-all', fontSize: 'clamp(18px, 3.8vw, 24px)', fontWeight: 400, lineHeight: 1.5, color: hasScene ? 'rgba(72, 62, 58, 0.9)' : '#8B8580', letterSpacing: '0.08em', transition: 'all 0.8s ease-out 0.45s', opacity: isOpened ? 1 : 0, transform: isOpened ? 'translateY(0)' : 'translateY(16px)', pointerEvents: 'none' }}>
             {locale === 'ja' ? <>今日のあなたが、<br />やさしさにそっと包まれますように。</> : <>願今天的你，<br />被溫柔地接住。</>}
           </span>
         </h1>
 
         {isOpened ? (
-          <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '14px', transition: 'all 0.8s ease-out', marginTop: '18px', marginBottom: '28px' }}>
-            {categoryCopy && !isSharedFlowerLotLetter ? (
-              <p style={{ fontSize: '12px', fontWeight: 400, letterSpacing: '0.16em', color: '#A39B95', margin: '0 0 2px', position: 'relative', zIndex: 3 }}>
+          <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: hasScene ? '18px' : '14px', transition: 'all 0.8s ease-out', marginTop: '18px', marginBottom: hasScene ? '44px' : '28px', padding: hasScene ? '24px 18px 30px' : undefined, background: hasScene ? 'transparent' : undefined }}>
+            {canRenderDecorativeVisuals && categoryCopy && !isSharedFlowerLotLetter ? (
+              <p style={{ fontSize: '12px', fontWeight: 400, letterSpacing: '0.16em', color: hasScene ? 'rgba(72, 62, 58, 0.7)' : '#A39B95', margin: '0 0 2px', position: 'relative', zIndex: 3, textShadow: hasScene ? '0 1px 2px rgba(255, 250, 240, 0.92), 0 8px 28px rgba(255, 250, 240, 0.48)' : undefined }}>
                 {categoryCopy.label} · {categoryCopy.title}
               </p>
             ) : null}
-            {categoryVisual ? (
+            {canRenderDecorativeVisuals && categoryVisual ? (
               <div
                 style={{
                   position: 'relative',
@@ -226,10 +252,10 @@ export default function LetterPage() {
                 }}
               />
             ) : null}
-            <p style={{ fontSize: 'clamp(23px, 4.8vw, 30px)', fontWeight: 600, lineHeight: 1.65, maxWidth: '440px', color: '#7A736E', letterSpacing: '0.08em', textAlign: 'center', margin: '0 auto', width: '100%', position: 'relative', zIndex: 3, overflowWrap: 'anywhere' }}>
+            <p style={{ fontSize: 'clamp(23px, 4.8vw, 30px)', fontWeight: 600, lineHeight: 1.65, maxWidth: '440px', color: hasScene ? 'rgba(72, 62, 58, 0.94)' : '#7A736E', letterSpacing: '0.08em', textAlign: 'center', margin: '0 auto', width: '100%', position: 'relative', zIndex: 3, overflowWrap: 'anywhere', textShadow: hasScene ? '0 1px 2px rgba(255, 250, 240, 0.92), 0 8px 28px rgba(255, 250, 240, 0.48)' : undefined }}>
               {giftMessage || (locale === 'ja' ? 'ゆっくりで大丈夫。この祝福が少しだけ寄り添えますように。' : '慢慢來也沒關係，這份祝福會陪你一下。')}
             </p>
-            <p style={{ fontSize: '14px', fontWeight: 300, letterSpacing: '0.1em', color: '#A39B95', margin: '18px 0 0', position: 'relative', zIndex: 2 }}>
+            <p style={{ fontSize: '14px', fontWeight: 300, letterSpacing: '0.1em', color: hasScene ? 'rgba(72, 62, 58, 0.72)' : '#A39B95', margin: '18px 0 0', position: 'relative', zIndex: 2, textShadow: hasScene ? '0 1px 2px rgba(255, 250, 240, 0.92), 0 8px 28px rgba(255, 250, 240, 0.48)' : undefined }}>
               {fromName ? (locale === 'ja' ? `${fromName} からの祝福` : `來自 ${fromName} 的祝福`) : ''}
             </p>
             {!isSharedFlowerLotLetter ? <ExtraMessagePanel locale={locale} /> : null}
@@ -280,14 +306,14 @@ export default function LetterPage() {
           </svg>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px', width: '100%' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: hasScene ? '36px' : '20px', width: '100%', paddingBottom: hasScene ? '88px' : '0' }}>
           <div style={{ width: '100%', maxWidth: '240px', transition: 'all 0.7s ease-in-out', opacity: isOpened ? 0 : 1, height: isOpened ? 0 : '64px', overflow: 'hidden', pointerEvents: isOpened ? 'none' : 'auto' }}>
             <button onClick={handleOpenEnvelope} disabled={isClicking} style={{ width: '100%', height: '100%', borderRadius: '9999px', backgroundColor: 'rgba(255,255,255,0.7)', border: '1px solid #D9C9B6', color: '#7A736E', fontSize: '16px', letterSpacing: '0.2em', boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)', cursor: 'pointer', transition: 'all 0.3s', backdropFilter: 'blur(4px)' }}>
               {locale === 'ja' ? '封筒を開く' : '打開信封'}
             </button>
           </div>
-          <div style={{ transition: 'all 0.9s ease-out 0.7s', transform: isOpened ? 'translateY(0)' : 'translateY(-20px)', opacity: 1 }}>
-            <Link href={locale === 'ja' ? '/ja' : '/'} style={{ fontSize: '14px', letterSpacing: '0.1em', color: '#A39B95', textDecoration: 'none', borderBottom: '1px solid rgba(163,155,149,0.3)', paddingBottom: '4px', transition: 'color 0.3s, border-color 0.3s' }}>
+          <div style={{ transition: 'all 0.9s ease-out 0.7s', transform: isOpened ? 'translateY(0)' : 'translateY(-20px)', opacity: 1, marginTop: hasScene ? '16px' : '0', marginBottom: hasScene ? '64px' : '0' }}>
+            <Link href={locale === 'ja' ? '/ja' : '/'} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', minHeight: hasScene ? '40px' : 'auto', padding: hasScene ? '9px 16px 8px' : '0 0 4px', borderRadius: hasScene ? '999px' : '0', background: hasScene ? 'rgba(255, 250, 240, 0.34)' : 'transparent', border: hasScene ? '1px solid rgba(255, 250, 240, 0.34)' : '0', boxShadow: hasScene ? '0 8px 22px rgba(64, 48, 38, 0.1)' : 'none', backdropFilter: hasScene ? 'blur(2px)' : 'none', fontSize: '14px', letterSpacing: '0.1em', color: hasScene ? 'rgba(72, 62, 58, 0.9)' : '#A39B95', textDecoration: 'none', borderBottom: hasScene ? '0' : '1px solid rgba(163,155,149,0.3)', textShadow: hasScene ? '0 1px 2px rgba(255, 250, 240, 0.82), 0 6px 18px rgba(255, 250, 240, 0.36)' : 'none', transition: 'color 0.3s, border-color 0.3s, background 0.3s' }}>
               {locale === 'ja' ? 'わたしも祝福を届けたい' : '我也想送出一封祝福'}
             </Link>
           </div>

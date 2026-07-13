@@ -5,6 +5,7 @@ import styles from "@/app/page.module.css";
 import { getBlessingCardVisual } from "@/components/blessing-card-visuals";
 import { blessingCards, getLocaleCopy } from "@/lib/i18n";
 import type { GiftLocale } from "@/lib/gift-links";
+import { defaultSceneId, sceneItems, type SceneId } from "@/lib/scene-map";
 
 const DEFAULT_ORIGIN = "https://gift.akato.net";
 
@@ -59,6 +60,7 @@ export function GiftEntryPanel({ locale }: GiftEntryPanelProps) {
   const [giftLink, setGiftLink] = useState("");
   const [copyLabel, setCopyLabel] = useState(copy.entry.copyButton);
   const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(null);
+  const [selectedSceneId, setSelectedSceneId] = useState<SceneId>(defaultSceneId);
   const [hasCustomMessage, setHasCustomMessage] = useState(false);
   const [needsRegeneration, setNeedsRegeneration] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -74,6 +76,7 @@ export function GiftEntryPanel({ locale }: GiftEntryPanelProps) {
   const previewTo = form.to.trim() || (locale === "ja" ? "受け取る人" : "收禮人");
   const previewFrom = form.from.trim() || (locale === "ja" ? "贈る人" : "送禮人");
   const previewCategory = selectedTemplateCopy?.title ?? (locale === "ja" ? "まだ花箋を選んでいません" : "尚未選擇花箋");
+  const selectedScene = sceneItems.find((scene) => scene.id === selectedSceneId) ?? sceneItems[0];
   const resultTitle = locale === "ja" ? "祝福の手紙ができました" : "祝福信已經準備好了";
   const resultLead = locale === "ja" ? "リンクをコピーするか、LINE でそのまま届けられます。" : "可以複製連結，或直接用 LINE 送出。";
 
@@ -85,10 +88,13 @@ export function GiftEntryPanel({ locale }: GiftEntryPanelProps) {
     return `${form.from.trim()} ➜ ${form.to.trim()}`;
   }, [copy.entry.summaryFallback, form.from, form.to]);
 
-  function buildGiftLink(from: string, to: string, message: string, localeValue: GiftLocale, cardId?: string | null) {
+  function buildGiftLink(from: string, to: string, message: string, localeValue: GiftLocale, cardId?: string | null, sceneId?: SceneId) {
     const params = new URLSearchParams({ from, to, message, locale: localeValue });
     if (cardId) {
       params.set("cardId", cardId);
+    }
+    if (sceneId) {
+      params.set("sceneId", sceneId);
     }
 
     return `${getOrigin()}/letter?${params.toString()}`;
@@ -145,6 +151,11 @@ export function GiftEntryPanel({ locale }: GiftEntryPanelProps) {
     invalidateGiftLink();
   }
 
+  function chooseScene(sceneId: SceneId) {
+    setSelectedSceneId(sceneId);
+    invalidateGiftLink();
+  }
+
   async function generateGiftLink() {
     const from = form.from.trim();
     const to = form.to.trim();
@@ -158,7 +169,7 @@ export function GiftEntryPanel({ locale }: GiftEntryPanelProps) {
     setErrorMessage("");
 
     try {
-      const nextLink = buildGiftLink(from, to, message, locale, selectedTemplateId);
+      const nextLink = buildGiftLink(from, to, message, locale, selectedTemplateId, selectedSceneId);
       setGiftLink(nextLink);
       setNeedsRegeneration(false);
       setCopyLabel(copy.entry.copyButton);
@@ -276,11 +287,42 @@ export function GiftEntryPanel({ locale }: GiftEntryPanelProps) {
         </label>
       </div>
 
+      <div className={styles.sceneSection}>
+        <div className={styles.templateHeader}>
+          <p className={styles.templateEyebrow}>{locale === "ja" ? "小さな世界を選ぶ" : "選擇小世界場景"}</p>
+          <p className={styles.templateLead}>
+            {locale === "ja" ? "手紙を開いたときに、そっと背景になる小さな景色です。" : "收禮人打開信時，會看見這片小小的故事背景。"}
+          </p>
+        </div>
+        <div className={styles.sceneGrid}>
+          {sceneItems.map((scene) => {
+            const isSelected = scene.id === selectedSceneId;
+
+            return (
+              <button
+                key={scene.id}
+                type="button"
+                className={`${styles.sceneCard} ${isSelected ? styles.sceneCardSelected : ""}`}
+                onClick={() => chooseScene(scene.id)}
+              >
+                <span
+                  className={styles.sceneThumb}
+                  style={{ ["--scene-thumb" as string]: `url(${scene.image})` }}
+                  aria-hidden="true"
+                />
+                <span>{scene.title}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       <div className={styles.letterPreviewCard} aria-live="polite">
         <div className={styles.previewHeader}>
           <span>{previewCategory}</span>
           <span>AKATO LETTER</span>
         </div>
+        <p className={styles.previewScene}>{selectedScene.title}</p>
         <div className={styles.previewBody}>
           <p className={styles.previewTo}>{locale === "ja" ? `宛先 ${previewTo}` : `給 ${previewTo}`}</p>
           <p className={styles.previewMessage}>{previewMessage}</p>
