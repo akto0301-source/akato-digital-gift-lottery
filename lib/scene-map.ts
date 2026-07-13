@@ -19,7 +19,7 @@ export const sceneItems: SceneItem[] = [
   {
     id: "campus-plumeria",
     title: "校園雞蛋花",
-    image: "/gift-scenes/campus-plumeria.webp",
+    image: "/gift-scenes/campus-plumeria-readable.png",
   },
   {
     id: "wire-bird-nest",
