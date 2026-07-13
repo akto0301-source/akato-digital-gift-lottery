@@ -262,8 +262,9 @@ export default function LetterPage() {
           </div>
         ) : null}
 
-        <div style={{ position: 'relative', width: '224px', height: '160px', marginTop: '36px', marginBottom: '32px', display: 'flex', justifyContent: 'center', cursor: 'default' }}>
-          <svg viewBox="0 0 200 140" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%', overflow: 'visible', filter: 'drop-shadow(0px 18px 36px rgba(120, 90, 60, 0.12))' }}>
+        {!isOpened ? (
+          <div style={{ position: 'relative', width: '224px', height: '160px', marginTop: '36px', marginBottom: '32px', display: 'flex', justifyContent: 'center', cursor: 'default' }}>
+            <svg viewBox="0 0 200 140" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%', overflow: 'visible', filter: 'drop-shadow(0px 18px 36px rgba(120, 90, 60, 0.12))' }}>
             <defs>
               <linearGradient id="backGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#e8dcca" /><stop offset="100%" stopColor="#d5c3af" /></linearGradient>
               <linearGradient id="paperGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#ffffff" /><stop offset="100%" stopColor="#fdfbf8" /></linearGradient>
@@ -303,8 +304,9 @@ export default function LetterPage() {
               <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="none" stroke="rgba(255,255,255,0.8)" strokeWidth="1.0" transform="translate(100, 85) scale(0.95) translate(-12, -12)" />
               <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="none" stroke="rgba(210,185,155,0.5)" strokeWidth="0.8" transform="translate(100, 85) scale(0.7) translate(-12, -12)" />
             </g>
-          </svg>
-        </div>
+            </svg>
+          </div>
+        ) : null}
 
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: hasScene ? '36px' : '20px', width: '100%', paddingBottom: hasScene ? '88px' : '0' }}>
           <div style={{ width: '100%', maxWidth: '240px', transition: 'all 0.7s ease-in-out', opacity: isOpened ? 0 : 1, height: isOpened ? 0 : '64px', overflow: 'hidden', pointerEvents: isOpened ? 'none' : 'auto' }}>
