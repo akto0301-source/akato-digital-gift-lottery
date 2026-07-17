@@ -165,6 +165,92 @@ export default function LetterPage() {
       }}
     >
       <PetalsBackground />
+      {hasScene ? (
+        <>
+          <style
+            dangerouslySetInnerHTML={{
+              __html: `
+                .giftLetterButterfly {
+                  position: fixed;
+                  top: clamp(92px, 13svh, 132px);
+                  right: clamp(16px, 7vw, 72px);
+                  z-index: 2;
+                  width: clamp(48px, 13vw, 72px);
+                  aspect-ratio: 1;
+                  opacity: 0;
+                  pointer-events: none;
+                  user-select: none;
+                  transform-origin: 50% 58%;
+                  animation: giftLetterButterflyFloat 12s ease-in-out infinite;
+                }
+
+                .giftLetterButterfly img {
+                  display: block;
+                  width: 100%;
+                  height: auto;
+                  filter: drop-shadow(0 4px 10px rgba(114, 93, 55, 0.16));
+                  transform-origin: 50% 58%;
+                  animation: giftLetterButterflyBreathe 5.8s ease-in-out infinite;
+                }
+
+                @keyframes giftLetterButterflyFloat {
+                  0% {
+                    opacity: 0;
+                    transform: translate3d(0, 8px, 0) rotate(-8deg) scale(0.96);
+                  }
+                  16% {
+                    opacity: 0.78;
+                  }
+                  42% {
+                    opacity: 0.84;
+                    transform: translate3d(-8px, -4px, 0) rotate(-3deg) scale(1);
+                  }
+                  72% {
+                    opacity: 0.8;
+                    transform: translate3d(5px, 5px, 0) rotate(-10deg) scale(0.98);
+                  }
+                  100% {
+                    opacity: 0;
+                    transform: translate3d(0, 8px, 0) rotate(-8deg) scale(0.96);
+                  }
+                }
+
+                @keyframes giftLetterButterflyBreathe {
+                  0%, 100% {
+                    transform: rotate(0deg) scale(0.985);
+                  }
+                  50% {
+                    transform: rotate(2deg) scale(1.035);
+                  }
+                }
+
+                @media (max-width: 420px) {
+                  .giftLetterButterfly {
+                    top: 104px;
+                    right: 14px;
+                    width: 52px;
+                  }
+                }
+
+                @media (prefers-reduced-motion: reduce) {
+                  .giftLetterButterfly,
+                  .giftLetterButterfly img {
+                    animation: none;
+                  }
+
+                  .giftLetterButterfly {
+                    opacity: 0.78;
+                    transform: rotate(-6deg);
+                  }
+                }
+              `,
+            }}
+          />
+          <span className="giftLetterButterfly" aria-hidden="true">
+            <img src="/gift/butterfly-watercolor-yellow-white.png" alt="" draggable={false} />
+          </span>
+        </>
+      ) : null}
       <div style={{ position: 'relative', zIndex: 10, width: 'min(560px, calc(100% - 32px))', padding: hasScene ? '32px 24px 108px' : '32px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', borderRadius: '0', background: 'transparent', border: '0', boxShadow: 'none', backdropFilter: 'none' }}>
         <p style={{ fontSize: '12px', letterSpacing: '0.25em', fontWeight: 300, marginBottom: '16px', transition: 'opacity 0.7s ease', opacity: isOpened ? 0.46 : 0.62, color: hasScene ? 'rgba(72, 62, 58, 0.78)' : undefined, textShadow: hasScene ? '0 1px 2px rgba(255, 250, 240, 0.92), 0 8px 28px rgba(255, 250, 240, 0.48)' : undefined }}>
           AKATO GIFT LETTER
