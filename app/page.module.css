@@ -752,9 +752,9 @@
   height: 168px;
   border-radius: 999px;
   background:
-    radial-gradient(circle at 50% 48%, rgba(255, 249, 239, 0.72), transparent 66%),
-    radial-gradient(circle at 36% 44%, rgba(238, 216, 195, 0.14), transparent 60%),
-    radial-gradient(circle at 66% 58%, rgba(220, 186, 185, 0.1), transparent 62%);
+    radial-gradient(circle at 50% 48%, rgba(255, 250, 242, 0.82), transparent 68%),
+    radial-gradient(circle at 36% 44%, rgba(238, 216, 195, 0.12), transparent 62%),
+    radial-gradient(circle at 66% 58%, rgba(220, 186, 185, 0.08), transparent 64%);
   transform: translate(-50%, -50%) rotate(-4deg);
   pointer-events: none;
   z-index: 0;
@@ -784,14 +784,22 @@
   transform: scale(1.12);
   transform-origin: 50% 50%;
   border-radius: 18px;
-  background: rgba(255, 250, 241, 0.18);
+  background: rgba(255, 251, 244, 0.24);
   mix-blend-mode: multiply;
-  opacity: 0.92;
-  filter: saturate(0.96) contrast(0.98) brightness(1.02);
-  -webkit-mask-image: radial-gradient(ellipse at 50% 48%, #000 58%, rgba(0, 0, 0, 0.86) 72%, rgba(0, 0, 0, 0.34) 86%, transparent 98%);
-  mask-image: radial-gradient(ellipse at 50% 48%, #000 58%, rgba(0, 0, 0, 0.86) 72%, rgba(0, 0, 0, 0.34) 86%, transparent 98%);
+  opacity: 0.93;
+  filter: saturate(0.98) contrast(0.985) brightness(1.025);
+  -webkit-mask-image: radial-gradient(ellipse at 50% 48%, #000 52%, rgba(0, 0, 0, 0.9) 68%, rgba(0, 0, 0, 0.42) 82%, transparent 96%);
+  mask-image: radial-gradient(ellipse at 50% 48%, #000 52%, rgba(0, 0, 0, 0.9) 68%, rgba(0, 0, 0, 0.42) 82%, transparent 96%);
   pointer-events: none;
   user-select: none;
+}
+
+.lotIllustrationImage[src$="/flowers/bouquet.png"] {
+  background: rgba(255, 251, 244, 0.34);
+  opacity: 0.91;
+  filter: saturate(0.96) contrast(0.98) brightness(1.035);
+  -webkit-mask-image: radial-gradient(ellipse at 50% 48%, #000 48%, rgba(0, 0, 0, 0.84) 64%, rgba(0, 0, 0, 0.28) 80%, transparent 94%);
+  mask-image: radial-gradient(ellipse at 50% 48%, #000 48%, rgba(0, 0, 0, 0.84) 64%, rgba(0, 0, 0, 0.28) 80%, transparent 94%);
 }
 
 .lotButterfly {
