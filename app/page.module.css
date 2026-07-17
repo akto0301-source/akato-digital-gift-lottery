@@ -738,7 +738,7 @@
   position: relative;
   display: flex;
   justify-content: center;
-  margin: -18px 0 10px;
+  margin: -18px 0 30px;
   padding-top: 0;
   isolation: isolate;
 }
@@ -769,6 +769,7 @@
   margin: 0;
   opacity: 1;
   filter: drop-shadow(0 10px 22px rgba(90, 70, 50, 0.055));
+  transform: translateY(-4px);
   pointer-events: none;
   user-select: none;
   animation: flowerCardFadeIn 0.72s ease both;
@@ -1047,7 +1048,7 @@
   }
 
   .lotIllustrationWrap {
-    margin: -12px 0 10px;
+    margin: -12px 0 32px;
   }
 
   .lotIllustrationWrap::before {
