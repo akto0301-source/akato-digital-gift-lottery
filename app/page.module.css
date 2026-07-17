@@ -738,7 +738,7 @@
   position: relative;
   display: flex;
   justify-content: center;
-  margin: -18px 0 30px;
+  margin: -18px 0 38px;
   padding-top: 0;
   isolation: isolate;
 }
@@ -807,7 +807,7 @@
   transform-style: preserve-3d;
   perspective: 240px;
   filter: drop-shadow(0 2px 4px rgba(120, 90, 40, 0.16));
-  animation: butterflyStableFloat 6.8s ease-in-out infinite;
+  animation: butterflyStableFloat 12s ease-in-out infinite;
 }
 
 .lotButterflyPng {
@@ -826,24 +826,28 @@
   opacity: 0;
   transform: rotate(-8deg);
   transform-origin: 50% 58%;
-  animation: none;
+  animation: butterflyWingFrame 1.08s steps(1, end) infinite;
 }
 
 .lotButterflyPngFrame:nth-child(1) {
   background-image: url("/lot-butterfly/butterfly-yellow-1.png");
+  animation-delay: 0s;
 }
 
 .lotButterflyPngFrame:nth-child(2) {
   background-image: url("/lot-butterfly/butterfly-yellow-2.png");
   opacity: 1;
+  animation-delay: -0.27s;
 }
 
 .lotButterflyPngFrame:nth-child(3) {
   background-image: url("/lot-butterfly/butterfly-yellow-3.png");
+  animation-delay: -0.54s;
 }
 
 .lotButterflyPngFrame:nth-child(4) {
   background-image: url("/lot-butterfly/butterfly-yellow-4.png");
+  animation-delay: -0.81s;
 }
 .card h2 {
   font-size: clamp(1.8rem, 4vw, 2.8rem);
@@ -1001,17 +1005,39 @@
 @keyframes butterflyStableFloat {
   0% {
     opacity: 0.94;
-    transform: translate3d(0, 0, 0) rotate(-2deg) scale(0.96);
+    transform: translate3d(0, 0, 0) rotate(-6deg) scale(0.96);
   }
 
-  45% {
+  22% {
     opacity: 1;
-    transform: translate3d(-3px, 3px, 0) rotate(2deg) scale(1);
+    transform: translate3d(-12px, -10px, 0) rotate(4deg) scale(1.02);
+  }
+
+  48% {
+    opacity: 0.98;
+    transform: translate3d(-18px, 3px, 0) rotate(-2deg) scale(1);
+  }
+
+  74% {
+    opacity: 1;
+    transform: translate3d(-7px, 12px, 0) rotate(5deg) scale(0.98);
   }
 
   100% {
     opacity: 0.94;
-    transform: translate3d(0, 0, 0) rotate(-2deg) scale(0.96);
+    transform: translate3d(0, 0, 0) rotate(-6deg) scale(0.96);
+  }
+}
+
+@keyframes butterflyWingFrame {
+  0%,
+  24.99% {
+    opacity: 1;
+  }
+
+  25%,
+  100% {
+    opacity: 0;
   }
 }
 
@@ -1048,7 +1074,7 @@
   }
 
   .lotIllustrationWrap {
-    margin: -12px 0 32px;
+    margin: -12px 0 40px;
   }
 
   .lotIllustrationWrap::before {
