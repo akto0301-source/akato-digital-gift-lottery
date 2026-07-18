@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import styles from "@/app/admin/orders/admin-orders.module.css";
 import type { BatchContext } from "@/components/admin-orders-batch-preview-workspace";
 
@@ -44,6 +44,8 @@ const sampleCardText = [
 
 const blessingPhrases = ["榮陞誌慶", "榮任誌慶", "喬遷誌慶", "開幕誌慶", "開業誌慶", "生日快樂", "平安順心"];
 const titleWords = ["處長", "經理", "副總", "主任", "董事長", "總經理", "協理", "店長", "老師", "醫師"];
+const cardOpeningPattern = /^(?:\d+\s*)?(?:祝|賀)\s*/;
+const delimitedCardOpeningPattern = /^\d+\s*[|｜]\s*\S+/;
 
 function inferItemType(value: string) {
   if (value.includes("永生")) return "永生花";
@@ -59,7 +61,10 @@ function splitCardBlocks(input: string) {
   let current: string[] = [];
 
   lines.forEach((line) => {
-    const startsNewCard = /^祝\s+/.test(line.trim()) && current.some((item) => item.trim());
+    const trimmedLine = line.trim();
+    const startsNewCard =
+      (cardOpeningPattern.test(trimmedLine) || delimitedCardOpeningPattern.test(trimmedLine)) &&
+      current.some((item) => item.trim());
 
     if (startsNewCard) {
       blocks.push(current);
@@ -80,11 +85,33 @@ function splitCardBlocks(input: string) {
 }
 
 function parseRecipient(line: string) {
-  const cleaned = line.replace(/^祝\s*/, "").trim();
+  const delimitedFields = line.split(/[|｜]/).map((field) => field.trim()).filter(Boolean);
+  const cleaned =
+    delimitedFields.length > 1 && /^\d+$/.test(delimitedFields[0])
+      ? delimitedFields[1]
+      : line.replace(cardOpeningPattern, "").trim();
   const title = titleWords.find((word) => cleaned.includes(word)) ?? "";
   const recipientName = title ? cleaned.replace(title, "").trim() : cleaned;
 
   return { recipientName, title };
+}
+
+function getDelimitedFields(line: string) {
+  return line.split(/[|｜]/).map((field) => field.trim()).filter(Boolean);
+}
+
+function getCompactDeliveryText(card: ProductionCard) {
+  const fields = getDelimitedFields(card.recipientLine);
+  if (fields.length > 2 && /^\d+$/.test(fields[0])) {
+    return fields.slice(2).join("・");
+  }
+
+  return "請人工確認";
+}
+
+function getCompactSenderText(card: ProductionCard) {
+  const firstLine = card.senderText.split(/\r?\n/).map((line) => line.trim()).filter(Boolean)[0];
+  return firstLine || "請人工確認";
 }
 
 function parseProductionCards(input: string, batchContext?: BatchContext): ParseResult {
@@ -97,7 +124,7 @@ function parseProductionCards(input: string, batchContext?: BatchContext): Parse
   const blocks = splitCardBlocks(trimmedInput);
   const cards: ProductionCard[] = blocks.map((block, index) => {
     const lines = block.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
-    const recipientLine = lines.find((line) => line.startsWith("祝 ")) ?? "";
+    const recipientLine = lines.find((line) => cardOpeningPattern.test(line) || delimitedCardOpeningPattern.test(line)) ?? "";
     const { recipientName, title } = parseRecipient(recipientLine);
     const blessingPhrase = lines.find((line) => blessingPhrases.includes(line)) ?? "";
     const amountNote = lines.findLast((line) => /^\d{3,6}\s*\S+/.test(line)) ?? "";
@@ -151,13 +178,19 @@ function parseProductionCards(input: string, batchContext?: BatchContext): Parse
 
 export function AdminOrdersCardProductionPreview({
   batchContext,
+  draft,
   onPreviewCardsChange,
+  onDraftChange,
+  onParseRequestedChange,
+  parseRequested,
 }: {
   batchContext?: BatchContext;
+  draft: string;
   onPreviewCardsChange?: (cards: ProductionCard[]) => void;
+  onDraftChange: (draft: string) => void;
+  onParseRequestedChange: (parseRequested: boolean) => void;
+  parseRequested: boolean;
 }) {
-  const [draft, setDraft] = useState("");
-  const [parseRequested, setParseRequested] = useState(false);
   const parseResult = useMemo(
     () => (parseRequested ? parseProductionCards(draft, batchContext) : { cards: [], errors: [] }),
     [batchContext, draft, parseRequested],
@@ -193,8 +226,8 @@ export function AdminOrdersCardProductionPreview({
         <span>貼上 mock/sample 賀卡文字</span>
         <textarea
           onChange={(event) => {
-            setDraft(event.target.value);
-            setParseRequested(false);
+            onDraftChange(event.target.value);
+            onParseRequestedChange(false);
             onPreviewCardsChange?.([]);
           }}
           placeholder={sampleCardText}
@@ -203,12 +236,12 @@ export function AdminOrdersCardProductionPreview({
       </label>
 
       <div className={styles.cardProductionActions}>
-        <button type="button" onClick={() => setParseRequested(true)}>解析預覽</button>
+        <button type="button" onClick={() => onParseRequestedChange(true)}>解析預覽</button>
         <button
           type="button"
           onClick={() => {
-            setDraft("");
-            setParseRequested(false);
+            onDraftChange("");
+            onParseRequestedChange(false);
             onPreviewCardsChange?.([]);
           }}
         >
@@ -238,23 +271,24 @@ export function AdminOrdersCardProductionPreview({
 
           <div className={styles.cardProductionGrid}>
             {parseResult.cards.map((card, index) => (
-              <article key={card.id} className={styles.productionCard}>
-                <div className={styles.productionCardHeader}>
+              <details key={card.id} className={styles.productionCard}>
+                <summary className={styles.productionCardSummaryLine}>
                   <div>
-                    <span>第 {index + 1} 張賀卡</span>
-                    <strong>{card.recipientName || "請人工確認收禮人"}</strong>
+                    <strong>{index + 1}｜{card.recipientName || "請人工確認收禮人"}</strong>
+                    <span>{getCompactDeliveryText(card)}</span>
                   </div>
                   <em className={card.status === "可打卡" ? styles.productionCardReady : styles.productionCardNeedsCheck}>
                     {card.status}
                   </em>
-                </div>
+                </summary>
 
-                <dl>
-                  <div><dt>職稱</dt><dd>{card.title || "請人工確認"}</dd></div>
+                <dl className={styles.productionCardCompactRows}>
+                  <div><dt>收禮人</dt><dd>{card.recipientName || "請人工確認"}</dd></div>
                   <div><dt>賀詞</dt><dd>{card.blessingPhrase || "請人工確認"}</dd></div>
-                  <div><dt>品項金額</dt><dd>{card.amountNote || "請人工確認"}</dd></div>
-                  <div><dt>品項</dt><dd>{card.itemType}</dd></div>
-                  <div><dt>批次日期</dt><dd>{batchContext?.deliveryDate ?? "請人工確認"}</dd></div>
+                  <div><dt>送禮人</dt><dd>{getCompactSenderText(card)}</dd></div>
+                  <div><dt>配送</dt><dd>{getCompactDeliveryText(card)}</dd></div>
+                  <div><dt>品項</dt><dd>{card.amountNote || "請人工確認"}</dd></div>
+                  <div><dt>日期</dt><dd>{batchContext?.deliveryDate ?? "請人工確認"}</dd></div>
                 </dl>
 
                 <div className={styles.productionCardText}>
@@ -272,7 +306,7 @@ export function AdminOrdersCardProductionPreview({
                     </ul>
                   </div>
                 ) : null}
-              </article>
+              </details>
             ))}
           </div>
         </>
