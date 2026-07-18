@@ -1130,23 +1130,23 @@
   58%,
   100% {
     opacity: 0;
-    transform: rotate(-2deg) scale(1.08);
+    transform: scaleX(-1) rotate(-2deg) scale(1.08);
   }
 
   43.15% {
     opacity: 0.55;
-    transform: rotate(-2deg) scale(1.08);
+    transform: scaleX(-1) rotate(-2deg) scale(1.08);
   }
 
   44%,
   56.5% {
     opacity: 1;
-    transform: rotate(-1deg) scale(1.08);
+    transform: scaleX(-1) rotate(-1deg) scale(1.08);
   }
 
   57.25% {
     opacity: 0.45;
-    transform: rotate(-2deg) scale(1.08);
+    transform: scaleX(-1) rotate(-2deg) scale(1.08);
   }
 }
 
