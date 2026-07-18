@@ -808,7 +808,7 @@
   right: clamp(30px, 17%, 96px);
   z-index: 3;
   display: block;
-  width: clamp(58px, 8vw, 76px);
+  width: clamp(62px, 7.5vw, 78px);
   aspect-ratio: 1;
   opacity: 1;
   pointer-events: none;
@@ -817,16 +817,16 @@
   transform-style: preserve-3d;
   perspective: 240px;
   filter: drop-shadow(0 2px 4px rgba(120, 90, 40, 0.2));
-  animation: butterflyFlightPath 10.4s linear infinite;
+  animation: butterflyFlightPath 8.8s linear infinite;
   will-change: opacity, transform;
 }
 
 .lotButterflyPng {
-  --butterfly-wing-1: url("/lot-butterfly/butterfly-yellow-1.png");
-  --butterfly-wing-2: url("/lot-butterfly/butterfly-yellow-2.png");
-  --butterfly-wing-3: url("/lot-butterfly/butterfly-yellow-3.png");
-  --butterfly-wing-4: url("/lot-butterfly/butterfly-yellow-4.png");
-  --butterfly-resting: url("/lot-butterfly/butterfly-yellow-resting.png");
+  --butterfly-wing-1: url("/lot-butterfly/butterfly-kai-open.png");
+  --butterfly-wing-2: url("/lot-butterfly/butterfly-kai-mid.png");
+  --butterfly-wing-3: url("/lot-butterfly/butterfly-kai-closed.png");
+  --butterfly-wing-4: url("/lot-butterfly/butterfly-kai-mid.png");
+  --butterfly-resting: url("/lot-butterfly/butterfly-kai-closed.png");
   filter:
     saturate(1.08)
     contrast(1.12)
@@ -845,7 +845,7 @@
 }
 
 .lotButterflyFlight {
-  animation: butterflyFlightPosture 10.4s ease-in-out infinite;
+  animation: butterflyFlightPosture 8.8s ease-in-out infinite;
 }
 
 .lotButterflyFlyingPose,
@@ -857,14 +857,14 @@
   background-image: var(--butterfly-wing-1);
   opacity: 1;
   animation:
-    butterflyFlyingVisibility 10.4s linear infinite,
-    butterflyFlyingPose 10.4s step-end infinite;
+    butterflyFlyingVisibility 8.8s linear infinite,
+    butterflyFlyingPose 0.42s step-end infinite;
 }
 
 .lotButterflyRestingPose {
   background-image: var(--butterfly-resting);
   opacity: 0;
-  animation: butterflyRestingPose 10.4s linear infinite;
+  animation: butterflyRestingPose 8.8s linear infinite;
 }
 .card h2 {
   font-size: clamp(1.8rem, 4vw, 2.8rem);
@@ -1021,7 +1021,7 @@
 
 @keyframes butterflyFlightPath {
   0% {
-    opacity: 0;
+    opacity: 1;
     transform: translate3d(28px, -10px, 0) rotate(-18deg) scale(0.98);
   }
 
@@ -1091,12 +1091,12 @@
   }
 
   96% {
-    opacity: 0.94;
+    opacity: 1;
     transform: translate3d(6px, -18px, 0) rotate(9deg) scale(0.98);
   }
 
   100% {
-    opacity: 0;
+    opacity: 1;
     transform: translate3d(24px, -24px, 0) rotate(14deg) scale(0.96);
   }
 }
@@ -1158,25 +1158,34 @@
   }
 
   44.5% {
-    opacity: 0.42;
+    opacity: 0.82;
   }
 
-  46.5%,
+  46.5% {
+    opacity: 0.38;
+  }
+
+  48%,
   63.5% {
     opacity: 0;
   }
 
+  64.5% {
+    opacity: 0.35;
+  }
+
   65% {
-    opacity: 0.72;
+    opacity: 0.58;
   }
 
-  66.5%,
-  95% {
-    opacity: 1;
+  66.5% {
+    opacity: 0.86;
   }
 
+  67.5%,
+  95%,
   100% {
-    opacity: 0;
+    opacity: 1;
   }
 }
 
@@ -1288,27 +1297,37 @@
 
 @keyframes butterflyRestingPose {
   0%,
-  43%,
-  65.5%,
+  43.5%,
+  67.5%,
   100% {
     opacity: 0;
-    transform: scaleX(-1) rotate(-2deg) scale(1.08);
+    transform: translate3d(0, 0, 0) rotate(-2deg) scale(1);
   }
 
   45% {
-    opacity: 0.58;
-    transform: scaleX(-1) rotate(-2deg) scale(1.08);
+    opacity: 0.42;
+    transform: translate3d(0, 0, 0) rotate(-2deg) scale(1);
   }
 
-  47%,
+  46.5% {
+    opacity: 0.82;
+    transform: translate3d(0, 0, 0) rotate(-1deg) scale(1);
+  }
+
+  48%,
   62.5% {
     opacity: 1;
-    transform: scaleX(-1) rotate(-1deg) scale(1.08);
+    transform: translate3d(0, 0, 0) rotate(-1deg) scale(1);
   }
 
   64.5% {
-    opacity: 0.38;
-    transform: scaleX(-1) rotate(-2deg) scale(1.08);
+    opacity: 0.55;
+    transform: translate3d(0, 0, 0) rotate(-2deg) scale(1);
+  }
+
+  66% {
+    opacity: 0.18;
+    transform: translate3d(0, 0, 0) rotate(-2deg) scale(1);
   }
 }
 
@@ -1368,7 +1387,7 @@
   .lotButterfly {
     top: 12%;
     right: clamp(30px, 15%, 58px);
-    width: 62px;
+    width: 68px;
   }
 
   .lotButterflyPng {
