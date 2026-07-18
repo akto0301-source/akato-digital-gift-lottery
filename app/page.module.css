@@ -804,11 +804,11 @@
 
 .lotButterfly {
   position: absolute;
-  top: 14%;
-  right: clamp(34px, 18%, 108px);
+  top: 11%;
+  right: clamp(30px, 17%, 96px);
   z-index: 3;
   display: block;
-  width: clamp(42px, 8vw, 58px);
+  width: clamp(58px, 8vw, 76px);
   aspect-ratio: 1;
   opacity: 1;
   pointer-events: none;
@@ -817,15 +817,15 @@
   transform-style: preserve-3d;
   perspective: 240px;
   filter: drop-shadow(0 2px 4px rgba(120, 90, 40, 0.2));
-  animation: butterflyStableFloat 12s ease-in-out infinite;
+  animation: butterflyFlightPath 10.4s linear infinite;
+  will-change: opacity, transform;
 }
 
 .lotButterflyPng {
-  top: 11%;
-  right: clamp(38px, 18%, 104px);
-  width: clamp(52px, 8vw, 70px);
-  opacity: 1;
-  --butterfly-flying: url("/lot-butterfly/butterfly-yellow-flying.png");
+  --butterfly-wing-1: url("/lot-butterfly/butterfly-yellow-1.png");
+  --butterfly-wing-2: url("/lot-butterfly/butterfly-yellow-2.png");
+  --butterfly-wing-3: url("/lot-butterfly/butterfly-yellow-3.png");
+  --butterfly-wing-4: url("/lot-butterfly/butterfly-yellow-4.png");
   --butterfly-resting: url("/lot-butterfly/butterfly-yellow-resting.png");
   filter:
     saturate(1.08)
@@ -834,34 +834,37 @@
     drop-shadow(0 3px 6px rgba(120, 90, 40, 0.16));
 }
 
-.lotButterflyPngFrame {
+.lotButterflyFlight,
+.lotButterflyFlyingPose,
+.lotButterflyRestingPose {
   position: absolute;
   inset: 0;
   display: block;
-  background: center / contain no-repeat;
-  opacity: 0;
-  transform: rotate(-8deg);
   transform-origin: 50% 58%;
-  filter: saturate(1.08) contrast(1.1);
-  animation-duration: 12s;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
   will-change: opacity, transform;
 }
 
-.lotButterflyPngFrame:nth-child(1) {
-  background-image: var(--butterfly-flying);
-  animation-name: butterflyFlyingPose;
+.lotButterflyFlight {
+  animation: butterflyFlightPosture 10.4s ease-in-out infinite;
 }
 
-.lotButterflyPngFrame:nth-child(2) {
+.lotButterflyFlyingPose,
+.lotButterflyRestingPose {
+  background: center / contain no-repeat;
+}
+
+.lotButterflyFlyingPose {
+  background-image: var(--butterfly-wing-1);
+  opacity: 1;
+  animation:
+    butterflyFlyingVisibility 10.4s linear infinite,
+    butterflyFlyingPose 10.4s step-end infinite;
+}
+
+.lotButterflyRestingPose {
   background-image: var(--butterfly-resting);
-  animation-name: butterflyRestingPose;
-}
-
-.lotButterflyPngFrame:nth-child(3),
-.lotButterflyPngFrame:nth-child(4) {
-  display: none;
+  opacity: 0;
+  animation: butterflyRestingPose 10.4s linear infinite;
 }
 .card h2 {
   font-size: clamp(1.8rem, 4vw, 2.8rem);
@@ -1016,156 +1019,318 @@
   }
 }
 
-@keyframes butterflyStableFloat {
+@keyframes butterflyFlightPath {
   0% {
-    opacity: 0.98;
-    transform: translate3d(0, 0, 0) rotate(-5deg) scale(0.98);
+    opacity: 0;
+    transform: translate3d(28px, -10px, 0) rotate(-18deg) scale(0.98);
   }
 
-  18% {
+  4% {
     opacity: 1;
-    transform: translate3d(-16px, -6px, 0) rotate(-2deg) scale(1);
+    transform: translate3d(22px, -18px, 0) rotate(-24deg) scale(1);
   }
 
-  34% {
+  9% {
     opacity: 1;
-    transform: translate3d(-38px, 24px, 0) rotate(2deg) scale(1.03);
+    transform: translate3d(4px, -22px, 0) rotate(-15deg) scale(1.02);
+  }
+
+  15% {
+    opacity: 1;
+    transform: translate3d(-18px, -10px, 0) rotate(-6deg) scale(1.01);
+  }
+
+  23% {
+    opacity: 1;
+    transform: translate3d(-35px, 12px, 0) rotate(8deg) scale(1.02);
+  }
+
+  32% {
+    opacity: 1;
+    transform: translate3d(-50px, 38px, 0) rotate(10deg) scale(1.01);
   }
 
   40% {
     opacity: 1;
-    transform: translate3d(-54px, 58px, 0) rotate(5deg) scale(1.01);
+    transform: translate3d(-58px, 60px, 0) rotate(6deg) scale(1);
   }
 
-  42% {
+  44% {
     opacity: 1;
-    transform: translate3d(-55px, 59px, 0) rotate(4deg) scale(1.01);
+    transform: translate3d(-60px, 70px, 0) rotate(3deg) scale(1);
   }
 
-  44.5% {
+  47% {
     opacity: 1;
-    transform: translate3d(-55px, 59px, 0) rotate(4deg) scale(1.01);
+    transform: translate3d(-60px, 70px, 0) rotate(3deg) scale(1);
   }
 
-  49% {
+  62% {
     opacity: 1;
-    transform: translate3d(-55px, 60px, 0) rotate(4deg) scale(1.01);
+    transform: translate3d(-60px, 70px, 0) rotate(3deg) scale(1);
   }
 
-  56.5% {
+  65% {
     opacity: 1;
-    transform: translate3d(-55px, 59px, 0) rotate(4deg) scale(1.01);
+    transform: translate3d(-60px, 70px, 0) rotate(3deg) scale(1);
   }
 
-  58% {
+  69% {
     opacity: 1;
-    transform: translate3d(-55px, 59px, 0) rotate(4deg) scale(1.01);
+    transform: translate3d(-70px, 50px, 0) rotate(-18deg) scale(1.03);
   }
 
-  58.5% {
+  77% {
     opacity: 1;
-    transform: translate3d(-55px, 59px, 0) rotate(4deg) scale(1.01);
+    transform: translate3d(-52px, 18px, 0) rotate(-20deg) scale(1.01);
   }
 
-  59.25% {
+  88% {
     opacity: 1;
-    transform: translate3d(-55px, 59px, 0) rotate(4deg) scale(1.01);
+    transform: translate3d(-28px, -3px, 0) rotate(-8deg) scale(0.99);
   }
 
-  60% {
-    opacity: 1;
-    transform: translate3d(-55px, 59px, 0) rotate(4deg) scale(1.01);
-  }
-
-  61% {
-    opacity: 1;
-    transform: translate3d(-55px, 59px, 0) rotate(4deg) scale(1.01);
-  }
-
-  66% {
-    opacity: 1;
-    transform: translate3d(-42px, 38px, 0) rotate(3deg) scale(1.02);
-  }
-
-  76% {
-    opacity: 1;
-    transform: translate3d(-24px, 16px, 0) rotate(4deg) scale(1);
+  96% {
+    opacity: 0.94;
+    transform: translate3d(6px, -18px, 0) rotate(9deg) scale(0.98);
   }
 
   100% {
-    opacity: 0.98;
-    transform: translate3d(0, 0, 0) rotate(-5deg) scale(0.98);
+    opacity: 0;
+    transform: translate3d(24px, -24px, 0) rotate(14deg) scale(0.96);
+  }
+}
+
+@keyframes butterflyFlightPosture {
+  0% {
+    transform: translate3d(0, 0, 0) rotateX(0deg);
+  }
+
+  8% {
+    transform: translate3d(0, -4px, 0) rotateX(8deg);
+  }
+
+  15% {
+    transform: translate3d(0, 1px, 0) rotateX(2deg);
+  }
+
+  23% {
+    transform: translate3d(0, -3px, 0) rotateX(7deg);
+  }
+
+  32% {
+    transform: translate3d(0, 2px, 0) rotateX(3deg);
+  }
+
+  40% {
+    transform: translate3d(0, 1px, 0) rotateX(1deg);
+  }
+
+  44%,
+  65% {
+    transform: translate3d(0, 0, 0) rotateX(0deg);
+  }
+
+  69% {
+    transform: translate3d(0, -4px, 0) rotateX(8deg);
+  }
+
+  77% {
+    transform: translate3d(0, -1px, 0) rotateX(3deg);
+  }
+
+  88% {
+    transform: translate3d(0, 2px, 0) rotateX(1deg);
+  }
+
+  100% {
+    transform: translate3d(0, 0, 0) rotateX(0deg);
+  }
+}
+
+@keyframes butterflyFlyingVisibility {
+  0% {
+    opacity: 1;
+  }
+
+  41% {
+    opacity: 1;
+  }
+
+  44.5% {
+    opacity: 0.42;
+  }
+
+  46.5%,
+  63.5% {
+    opacity: 0;
+  }
+
+  65% {
+    opacity: 0.72;
+  }
+
+  66.5%,
+  95% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
   }
 }
 
 @keyframes butterflyFlyingPose {
-  0%,
-  42.25%,
-  58%,
+  0% {
+    background-image: var(--butterfly-wing-1);
+  }
+
+  2% {
+    background-image: var(--butterfly-wing-2);
+  }
+
+  4% {
+    background-image: var(--butterfly-wing-3);
+  }
+
+  6% {
+    background-image: var(--butterfly-wing-4);
+  }
+
+  8% {
+    background-image: var(--butterfly-wing-2);
+  }
+
+  10% {
+    background-image: var(--butterfly-wing-1);
+  }
+
+  15% {
+    background-image: var(--butterfly-wing-1);
+  }
+
+  19% {
+    background-image: var(--butterfly-wing-2);
+  }
+
+  22% {
+    background-image: var(--butterfly-wing-3);
+  }
+
+  25% {
+    background-image: var(--butterfly-wing-4);
+  }
+
+  28% {
+    background-image: var(--butterfly-wing-2);
+  }
+
+  31% {
+    background-image: var(--butterfly-wing-1);
+  }
+
+  34% {
+    background-image: var(--butterfly-wing-3);
+  }
+
+  37% {
+    background-image: var(--butterfly-wing-2);
+  }
+
+  41% {
+    background-image: var(--butterfly-wing-1);
+  }
+
+  65% {
+    background-image: var(--butterfly-wing-2);
+  }
+
+  66.5% {
+    background-image: var(--butterfly-wing-3);
+  }
+
+  68.5% {
+    background-image: var(--butterfly-wing-4);
+  }
+
+  70.5% {
+    background-image: var(--butterfly-wing-2);
+  }
+
+  73% {
+    background-image: var(--butterfly-wing-1);
+  }
+
+  78% {
+    background-image: var(--butterfly-wing-1);
+  }
+
+  82% {
+    background-image: var(--butterfly-wing-2);
+  }
+
+  86% {
+    background-image: var(--butterfly-wing-1);
+  }
+
+  91% {
+    background-image: var(--butterfly-wing-3);
+  }
+
+  95% {
+    background-image: var(--butterfly-wing-1);
+  }
+
   100% {
-    opacity: 1;
-    transform: rotate(-8deg) scale(1);
-  }
-
-  43.15% {
-    opacity: 0.45;
-    transform: rotate(-5deg) scale(1.01);
-  }
-
-  44%,
-  56.5% {
-    opacity: 0;
-    transform: rotate(-4deg) scale(1);
-  }
-
-  57.25% {
-    opacity: 0.55;
-    transform: rotate(-5deg) scale(1.01);
+    background-image: var(--butterfly-wing-1);
   }
 }
 
 @keyframes butterflyRestingPose {
   0%,
-  42.25%,
-  58%,
+  43%,
+  65.5%,
   100% {
     opacity: 0;
     transform: scaleX(-1) rotate(-2deg) scale(1.08);
   }
 
-  43.15% {
-    opacity: 0.55;
+  45% {
+    opacity: 0.58;
     transform: scaleX(-1) rotate(-2deg) scale(1.08);
   }
 
-  44%,
-  56.5% {
+  47%,
+  62.5% {
     opacity: 1;
     transform: scaleX(-1) rotate(-1deg) scale(1.08);
   }
 
-  57.25% {
-    opacity: 0.45;
+  64.5% {
+    opacity: 0.38;
     transform: scaleX(-1) rotate(-2deg) scale(1.08);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .lotButterfly,
-  .lotButterflyPngFrame {
+  .lotButterflyFlight,
+  .lotButterflyFlyingPose,
+  .lotButterflyRestingPose {
     animation: none;
   }
 
   .lotButterfly {
     opacity: 1;
-    transform: none;
+    transform: translate3d(-42px, 34px, 0) rotate(-6deg) scale(1);
   }
 
-  .lotButterflyPngFrame:nth-child(1) {
+  .lotButterflyFlyingPose {
     opacity: 1;
+    background-image: var(--butterfly-wing-1);
   }
 
-  .lotButterflyPngFrame:nth-child(2) {
+  .lotButterflyRestingPose {
     opacity: 0;
   }
 }
@@ -1201,15 +1366,17 @@
   }
 
   .lotButterfly {
-    top: 15%;
-    right: clamp(28px, 15%, 58px);
-    width: 42px;
+    top: 12%;
+    right: clamp(30px, 15%, 58px);
+    width: 62px;
   }
 
   .lotButterflyPng {
-    top: 12%;
-    right: clamp(34px, 16%, 62px);
-    width: 52px;
+    filter:
+      saturate(1.08)
+      contrast(1.12)
+      brightness(1.03)
+      drop-shadow(0 3px 6px rgba(120, 90, 40, 0.16));
   }
 
   .formGrid,
