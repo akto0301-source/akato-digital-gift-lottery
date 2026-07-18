@@ -808,7 +808,7 @@
   right: clamp(34px, 18%, 108px);
   z-index: 3;
   display: block;
-  width: clamp(38px, 7vw, 52px);
+  width: clamp(42px, 8vw, 58px);
   aspect-ratio: 1;
   opacity: 1;
   pointer-events: none;
@@ -816,16 +816,20 @@
   transform-origin: 50% 58%;
   transform-style: preserve-3d;
   perspective: 240px;
-  filter: drop-shadow(0 2px 4px rgba(120, 90, 40, 0.16));
+  filter: drop-shadow(0 2px 4px rgba(120, 90, 40, 0.2));
   animation: butterflyStableFloat 12s ease-in-out infinite;
 }
 
 .lotButterflyPng {
   top: 11%;
-  right: clamp(44px, 20%, 112px);
-  width: clamp(46px, 7vw, 62px);
+  right: clamp(38px, 18%, 104px);
+  width: clamp(52px, 8vw, 70px);
   opacity: 1;
-  filter: drop-shadow(0 3px 6px rgba(120, 90, 40, 0.14));
+  filter:
+    saturate(1.08)
+    contrast(1.12)
+    brightness(1.03)
+    drop-shadow(0 3px 6px rgba(120, 90, 40, 0.16));
 }
 
 .lotButterflyPngFrame {
@@ -836,6 +840,7 @@
   opacity: 0;
   transform: rotate(-8deg);
   transform-origin: 50% 58%;
+  filter: saturate(1.08) contrast(1.1);
   animation: butterflyWingFrame 1.08s steps(1, end) infinite;
 }
 
@@ -1014,38 +1019,38 @@
 
 @keyframes butterflyStableFloat {
   0% {
-    opacity: 0.94;
-    transform: translate3d(0, 0, 0) rotate(-7deg) scale(0.96);
+    opacity: 0.98;
+    transform: translate3d(0, 0, 0) rotate(-5deg) scale(0.98);
   }
 
   18% {
     opacity: 1;
-    transform: translate3d(-10px, -4px, 0) rotate(-3deg) scale(0.98);
+    transform: translate3d(-16px, -6px, 0) rotate(-2deg) scale(1);
   }
 
   42% {
     opacity: 1;
-    transform: translate3d(-70px, 18px, 0) rotate(3deg) scale(1.02);
+    transform: translate3d(-78px, 22px, 0) rotate(3deg) scale(1.04);
   }
 
   49% {
     opacity: 1;
-    transform: translate3d(-72px, 16px, 0) rotate(-1deg) scale(1.01);
+    transform: translate3d(-82px, 20px, 0) rotate(-1deg) scale(1.03);
   }
 
   58% {
     opacity: 1;
-    transform: translate3d(-69px, 20px, 0) rotate(2deg) scale(1.02);
+    transform: translate3d(-79px, 24px, 0) rotate(2deg) scale(1.04);
   }
 
   76% {
-    opacity: 0.98;
-    transform: translate3d(-36px, 24px, 0) rotate(5deg) scale(0.98);
+    opacity: 1;
+    transform: translate3d(-38px, 26px, 0) rotate(4deg) scale(1);
   }
 
   100% {
-    opacity: 0.94;
-    transform: translate3d(0, 0, 0) rotate(-7deg) scale(0.96);
+    opacity: 0.98;
+    transform: translate3d(0, 0, 0) rotate(-5deg) scale(0.98);
   }
 }
 
@@ -1110,13 +1115,13 @@
   .lotButterfly {
     top: 15%;
     right: clamp(28px, 15%, 58px);
-    width: 38px;
+    width: 42px;
   }
 
   .lotButterflyPng {
     top: 12%;
-    right: clamp(42px, 18%, 70px);
-    width: 46px;
+    right: clamp(34px, 16%, 62px);
+    width: 52px;
   }
 
   .formGrid,
