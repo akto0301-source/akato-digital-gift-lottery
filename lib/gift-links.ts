@@ -70,13 +70,24 @@ export function buildGiftUrl(id: string, requestOrigin?: string) {
 
 function getSupabaseConfig() {
   const url = process.env.SUPABASE_URL?.replace(/\/$/, "");
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const secretKey = process.env.SUPABASE_SECRET_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-  if (!url || !serviceRoleKey) {
+  if (!url || !secretKey) {
     throw new Error("Supabase gift link storage is not configured.");
   }
 
-  return { serviceRoleKey, url };
+  return { secretKey, url };
+}
+
+function isLegacyJwtKey(key: string) {
+  return !key.startsWith("sb_secret_") && key.split(".").length === 3;
+}
+
+function createSupabaseHeaders(secretKey: string): HeadersInit {
+  return {
+    apikey: secretKey,
+    ...(isLegacyJwtKey(secretKey) ? { Authorization: `Bearer ${secretKey}` } : {}),
+  };
 }
 
 function toRow(id: string, input: CreateGiftRecordInput): Omit<GiftLinkRow, "created_at"> {
@@ -121,15 +132,14 @@ function isConflict(status: number) {
 }
 
 export async function createGiftRecord(input: CreateGiftRecordInput) {
-  const { serviceRoleKey, url } = getSupabaseConfig();
+  const { secretKey, url } = getSupabaseConfig();
 
   for (let attempt = 0; attempt < 5; attempt += 1) {
     const id = createId();
     const response = await fetch(`${url}/rest/v1/gift_links`, {
       method: "POST",
       headers: {
-        apikey: serviceRoleKey,
-        Authorization: `Bearer ${serviceRoleKey}`,
+        ...createSupabaseHeaders(secretKey),
         "Content-Type": "application/json",
         Prefer: "return=representation",
       },
@@ -150,14 +160,11 @@ export async function createGiftRecord(input: CreateGiftRecordInput) {
 }
 
 export async function getGiftRecord(id: string) {
-  const { serviceRoleKey, url } = getSupabaseConfig();
+  const { secretKey, url } = getSupabaseConfig();
   const response = await fetch(
     `${url}/rest/v1/gift_links?id=eq.${encodeURIComponent(id)}&select=*&limit=1`,
     {
-      headers: {
-        apikey: serviceRoleKey,
-        Authorization: `Bearer ${serviceRoleKey}`,
-      },
+      headers: createSupabaseHeaders(secretKey),
       cache: "no-store",
     },
   );
