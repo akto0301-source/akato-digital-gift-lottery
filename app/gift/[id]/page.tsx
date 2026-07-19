@@ -1,11 +1,7 @@
 import type { Metadata } from "next";
-import { ExtraMessagePanel } from "@/app/confirm/extra-message-panel";
+import { GiftLetterExperience } from "@/components/gift-letter-experience";
 import styles from "@/app/confirm/confirm-page.module.css";
-import { FlowerCardImage } from "@/components/flower-card-image";
-import { OrchidIllustration } from "@/components/orchid-illustration";
-import { getLocaleCopy } from "@/lib/i18n";
-import { getGiftRecord, isGiftRecordAvailable, type GiftLocale, type GiftRecord } from "@/lib/gift-links";
-import { defaultSceneId, sceneMap } from "@/lib/scene-map";
+import { getGiftRecord, isGiftRecordAvailable } from "@/lib/gift-links";
 
 type GiftPageProps = {
   params: Promise<{ id: string }>;
@@ -47,10 +43,6 @@ export const metadata: Metadata = {
 
 function isValidGiftId(id: string) {
   return /^[A-Za-z0-9_-]{12,64}$/.test(id);
-}
-
-function resolveLocale(record: GiftRecord | null): GiftLocale {
-  return record?.locale === "ja" ? "ja" : "zh";
 }
 
 async function loadGift(id: string) {
@@ -113,41 +105,15 @@ export default async function GiftPage({ params }: GiftPageProps) {
     return <MissingGiftMessage />;
   }
 
-  const locale = resolveLocale(gift);
-  const copy = getLocaleCopy(locale);
-  const scene = gift.sceneId ? sceneMap[gift.sceneId] : null;
-  const hasScene = Boolean(scene);
-  const resolvedScene = scene ?? sceneMap[defaultSceneId];
-
   return (
-    <main
-      className={`${styles.page} ${hasScene ? styles.scenePage : ""}`}
-      style={hasScene ? { ["--scene-image" as string]: `url(${resolvedScene.image})` } : undefined}
-    >
-      <PetalsLayer />
-
-      <section className={styles.card}>
-        <p className={styles.eyebrow}>{copy.confirm.eyebrow}</p>
-        <h1 className={styles.recipient}>{gift.toName || copy.confirm.recipientFallback}</h1>
-        <p className={styles.meta}>{copy.confirm.meta(gift.fromName)}</p>
-        {!hasScene && gift.lotSnapshot ? (
-          <FlowerCardImage lot={gift.lotSnapshot} className={styles.flowerLotIllustration} imageClassName={styles.flowerLotImage} size={132} />
-        ) : !hasScene ? (
-          <OrchidIllustration
-            orchidKey="romantic"
-            className={styles.flowerIllustrationWrap}
-            imageClassName={styles.flowerIllustration}
-            glowClassName={styles.flowerGlow}
-          />
-        ) : null}
-        <div className={styles.messageCard}>{gift.message || copy.confirm.messageFallback}</div>
-        <ExtraMessagePanel locale={locale} />
-        <div className={styles.footerAction}>
-          <a className={styles.backLink} href={copy.confirm.footerHref}>
-            {copy.confirm.footerButton}
-          </a>
-        </div>
-      </section>
-    </main>
+    <GiftLetterExperience
+      locale={gift.locale}
+      fromName={gift.fromName}
+      toName={gift.toName}
+      giftMessage={gift.message}
+      categoryId={gift.cardId}
+      sceneId={gift.sceneId}
+      sharedFlowerLot={gift.lotSnapshot}
+    />
   );
 }

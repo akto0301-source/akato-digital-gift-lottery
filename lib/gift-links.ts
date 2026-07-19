@@ -4,6 +4,11 @@ import { resolveSceneId, type SceneId } from "@/lib/scene-map";
 
 export type GiftLocale = "zh" | "ja";
 export type GiftLinkStatus = "active" | "disabled";
+export type GiftLotSnapshot = Pick<
+  ContentLot,
+  "id" | "order" | "label" | "title" | "flowerName" | "flowerIllustration" | "flowerAlt"
+> &
+  Partial<Pick<ContentLot, "fortune" | "blessing" | "category">>;
 
 export type GiftRecord = {
   id: string;
@@ -14,7 +19,7 @@ export type GiftRecord = {
   cardId: string | null;
   sceneId: SceneId | null;
   lotKey: string | null;
-  lotSnapshot: ContentLot | null;
+  lotSnapshot: GiftLotSnapshot | null;
   status: GiftLinkStatus;
   schemaVersion: number;
   createdAt: string;
@@ -29,7 +34,7 @@ export type CreateGiftRecordInput = {
   cardId?: string | null;
   sceneId?: string | null;
   lotKey?: string | null;
-  lotSnapshot?: ContentLot | null;
+  lotSnapshot?: GiftLotSnapshot | null;
   expiresAt?: string | null;
 };
 
@@ -42,7 +47,7 @@ type GiftLinkRow = {
   card_id: string | null;
   scene_id: string | null;
   lot_key: string | null;
-  lot_snapshot: ContentLot | null;
+  lot_snapshot: GiftLotSnapshot | null;
   status: GiftLinkStatus;
   schema_version: number;
   created_at: string;
@@ -53,8 +58,12 @@ const alphabet = "23456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
 const createId = customAlphabet(alphabet, 12);
 const schemaVersion = 1;
 
-export function buildGiftUrl(id: string) {
-  const baseUrl = process.env.AKATO_GIFT_BASE_URL ?? "https://gift.akato.net";
+export function buildGiftUrl(id: string, requestOrigin?: string) {
+  const baseUrl = process.env.AKATO_GIFT_BASE_URL ?? requestOrigin;
+
+  if (!baseUrl) {
+    throw new Error("Gift link base URL is not configured.");
+  }
 
   return `${baseUrl.replace(/\/$/, "")}/gift/${id}`;
 }
@@ -68,13 +77,6 @@ function getSupabaseConfig() {
   }
 
   return { serviceRoleKey, url };
-}
-
-function getDefaultExpiresAt() {
-  const expiresAt = new Date();
-  expiresAt.setDate(expiresAt.getDate() + 180);
-
-  return expiresAt.toISOString();
 }
 
 function toRow(id: string, input: CreateGiftRecordInput): Omit<GiftLinkRow, "created_at"> {
@@ -92,7 +94,7 @@ function toRow(id: string, input: CreateGiftRecordInput): Omit<GiftLinkRow, "cre
     lot_snapshot: input.lotSnapshot ?? null,
     status: "active",
     schema_version: schemaVersion,
-    expires_at: input.expiresAt ?? getDefaultExpiresAt(),
+    expires_at: input.expiresAt ?? null,
   };
 }
 
