@@ -30,10 +30,6 @@ type SavedShareState = {
 
 const LOT_SHARE_STORAGE_KEY = "akato-lot-share-state";
 
-function getOrigin() {
-  return typeof window === "undefined" ? "" : window.location.origin;
-}
-
 function readSavedShareState() {
   if (typeof window === "undefined") {
     return null;
@@ -212,22 +208,43 @@ export function LotteryPanel({ library, initialLot, locale, showNotes = true, sh
     await navigator.clipboard.writeText(letterLink);
   }
 
-  function generateLetterLink() {
+  async function generateLetterLink() {
     if (!lot || !fromName.trim() || !toName.trim()) {
       return;
     }
 
     const message = buildLetterMessage(lot);
-    const origin = getOrigin();
-    const query = [
-      `from=${encodeURIComponent(fromName.trim())}`,
-      `to=${encodeURIComponent(toName.trim())}`,
-      `message=${encodeURIComponent(message)}`,
-      "locale=zh",
-      "cardId=shared-blessing",
-    ].join("&");
+    setError(null);
 
-    setLetterLink(`${origin}/letter?${query}`);
+    try {
+      const response = await fetch("/api/gift-links", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          fromName: fromName.trim(),
+          toName: toName.trim(),
+          message,
+          locale,
+          cardId: "shared-blessing",
+          lotKey: lot.id,
+          lotSnapshot: lot,
+        }),
+      });
+      const data = (await response.json()) as { error?: string; url?: string };
+
+      if (!response.ok || !data.url) {
+        throw new Error(data.error ?? library.fallbackMessages.error);
+      }
+
+      setLetterLink(data.url);
+    } catch (caughtError) {
+      const message =
+        caughtError instanceof Error ? caughtError.message : library.fallbackMessages.error;
+      setLetterLink("");
+      setError(message);
+    }
   }
 
   const canGenerateLetter = Boolean(lot && fromName.trim() && toName.trim());
