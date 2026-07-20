@@ -10,7 +10,8 @@ import type { GiftLocale } from "@/lib/gift-links";
 import { blessingCards } from "@/lib/i18n";
 import { defaultSceneId, resolveSceneId, sceneMap, type SceneId } from "@/lib/scene-map";
 
-type SharedFlowerLot = Pick<ContentLot, "flowerIllustration" | "flowerName" | "flowerAlt" | "title">;
+type SharedFlowerLot = Pick<ContentLot, "flowerIllustration" | "flowerName" | "flowerAlt" | "title"> &
+  Partial<Pick<ContentLot, "label" | "fortune" | "blessing">>;
 
 type GiftLetterExperienceProps = {
   locale: GiftLocale;
@@ -90,6 +91,43 @@ function getSharedFlowerLot(giftMessage: string | null) {
   return getAllLots().find((lot) => giftMessage.includes(`${lot.label}｜${lot.title}`) || giftMessage.includes(lot.title)) ?? null;
 }
 
+function getSharedFlowerFortunePoem(fortune: string | undefined) {
+  if (!fortune) {
+    return "";
+  }
+
+  return fortune
+    .replace(/^小籤詩：/, "")
+    .split("溫柔解讀：")[0]
+    ?.trim() ?? "";
+}
+
+function getSharedFlowerLetterContent(giftMessage: string | null, lot: SharedFlowerLot) {
+  const lines = giftMessage
+    ?.split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean) ?? [];
+  const headingLine = lines.find((line) => line.includes("｜")) ?? [lot.label, lot.title].filter(Boolean).join("｜") ?? lot.title;
+  const [parsedLabel, parsedTitle] = headingLine.split("｜").map((part) => part.trim());
+  const poemIndex = lines.findIndex((line) => line.startsWith("小籤詩"));
+  const blessingIndex = lines.findIndex((line) => line.startsWith("今日花語"));
+  const poemFromInlineLabel = poemIndex >= 0 ? lines[poemIndex]?.replace(/^小籤詩：?/, "").trim() : "";
+  const blessingFromInlineLabel = blessingIndex >= 0 ? lines[blessingIndex]?.replace(/^今日花語：?/, "").trim() : "";
+  const poemFromNextLine =
+    poemIndex >= 0 && !poemFromInlineLabel
+      ? lines.slice(poemIndex + 1, blessingIndex >= 0 ? blessingIndex : undefined).join(" ").trim()
+      : "";
+  const blessingFromNextLine =
+    blessingIndex >= 0 && !blessingFromInlineLabel ? lines.slice(blessingIndex + 1).join(" ").trim() : "";
+
+  return {
+    label: parsedTitle ? parsedLabel : lot.label ?? "",
+    title: parsedTitle || parsedLabel || lot.title,
+    poem: poemFromInlineLabel || poemFromNextLine || getSharedFlowerFortunePoem(lot.fortune),
+    blessing: blessingFromInlineLabel || blessingFromNextLine || lot.blessing || "",
+  };
+}
+
 export function GiftLetterExperience({
   locale,
   fromName,
@@ -115,6 +153,10 @@ export function GiftLetterExperience({
   const sharedFlowerLot = useMemo(
     () => (isSharedFlowerLotLetter && canRenderDecorativeVisuals ? providedSharedFlowerLot ?? getSharedFlowerLot(giftMessage) : null),
     [canRenderDecorativeVisuals, giftMessage, isSharedFlowerLotLetter, providedSharedFlowerLot],
+  );
+  const sharedFlowerLetterContent = useMemo(
+    () => (sharedFlowerLot ? getSharedFlowerLetterContent(giftMessage, sharedFlowerLot) : null),
+    [giftMessage, sharedFlowerLot],
   );
   const categoryVisual = canRenderDecorativeVisuals && categoryCard && !isSharedFlowerLotLetter ? getBlessingCardVisual(categoryCard.id) : null;
 
@@ -143,6 +185,398 @@ export function GiftLetterExperience({
       }}
     >
       <PetalsBackground />
+      {isSharedFlowerLotLetter ? (
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `
+              .giftSharedFlowerCard {
+                position: relative;
+                width: 100%;
+                max-width: 430px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 12px;
+                margin: -2px auto 0;
+                padding: 0 0 4px;
+              }
+
+              .giftSharedFlowerButterfly {
+                --gift-shared-wing-1: url("/lot-butterfly/butterfly-kai-open.png");
+                --gift-shared-wing-2: url("/lot-butterfly/butterfly-kai-mid.png");
+                --gift-shared-wing-3: url("/lot-butterfly/butterfly-kai-closed.png");
+                --gift-shared-resting: url("/lot-butterfly/butterfly-kai-closed.png");
+                position: absolute;
+                top: clamp(52px, 14vw, 78px);
+                right: clamp(0px, 3vw, 20px);
+                z-index: 4;
+                display: block;
+                width: clamp(36px, 9vw, 46px);
+                aspect-ratio: 1;
+                opacity: 1;
+                pointer-events: none;
+                user-select: none;
+                transform-origin: 50% 58%;
+                transform-style: preserve-3d;
+                perspective: 220px;
+                filter:
+                  saturate(1.12)
+                  contrast(1.1)
+                  brightness(0.96)
+                  drop-shadow(0 5px 12px rgba(82, 52, 34, 0.22));
+                animation: giftSharedFlowerButterflyPath 8.8s linear infinite;
+                will-change: opacity, transform;
+              }
+
+              .giftSharedFlowerButterflyFlight,
+              .giftSharedFlowerButterflyFlyingPose,
+              .giftSharedFlowerButterflyRestingPose {
+                position: absolute;
+                inset: 0;
+                display: block;
+                transform-origin: 50% 58%;
+                will-change: opacity, transform;
+              }
+
+              .giftSharedFlowerButterflyFlight {
+                animation: giftSharedFlowerButterflyPosture 8.8s ease-in-out infinite;
+              }
+
+              .giftSharedFlowerButterflyFlyingPose,
+              .giftSharedFlowerButterflyRestingPose {
+                background: center / contain no-repeat;
+              }
+
+              .giftSharedFlowerButterflyFlyingPose {
+                background-image: var(--gift-shared-wing-1);
+                opacity: 1;
+                animation:
+                  giftSharedFlowerButterflyFlyingVisibility 8.8s linear infinite,
+                  giftSharedFlowerButterflyFlyingPose 0.38s step-end infinite;
+              }
+
+              .giftSharedFlowerButterflyRestingPose {
+                background-image: var(--gift-shared-resting);
+                opacity: 0;
+                animation: giftSharedFlowerButterflyRestingPose 8.8s linear infinite;
+              }
+
+              .giftSharedFlowerImage {
+                background: #f7e9e7;
+                isolation: isolate;
+                overflow: hidden;
+                border-radius: 42% 42% 38% 38%;
+              }
+
+              .giftSharedFlowerImage::before {
+                content: "";
+                position: absolute;
+                inset: -14% -13% -18%;
+                z-index: -1;
+                border-radius: 48% 48% 44% 44%;
+                background:
+                  radial-gradient(ellipse at 50% 48%, rgba(255, 247, 239, 0.38) 0%, rgba(248, 237, 231, 0.32) 42%, rgba(247, 233, 229, 0) 72%);
+                filter: blur(14px);
+              }
+
+              .giftSharedFlowerImage::after {
+                content: "";
+                position: absolute;
+                inset: 0;
+                z-index: 2;
+                pointer-events: none;
+                border-radius: inherit;
+                background:
+                  radial-gradient(ellipse 54% 61% at 50% 47%, rgba(247, 233, 229, 0) 0%, rgba(247, 233, 229, 0) 48%, rgba(247, 233, 229, 0.2) 66%, rgba(247, 233, 229, 0.64) 86%, rgba(247, 233, 229, 0.95) 100%),
+                  linear-gradient(to bottom, rgba(247, 233, 229, 0) 0%, rgba(247, 233, 229, 0) 68%, rgba(247, 233, 229, 0.52) 87%, rgba(247, 233, 229, 0.96) 100%),
+                  linear-gradient(to right, rgba(247, 233, 229, 0.78) 0%, rgba(247, 233, 229, 0.16) 16%, rgba(247, 233, 229, 0) 30%, rgba(247, 233, 229, 0) 70%, rgba(247, 233, 229, 0.16) 84%, rgba(247, 233, 229, 0.78) 100%);
+              }
+
+              .giftSharedFlowerImageElement {
+                border-radius: inherit;
+                opacity: 0.93;
+                mix-blend-mode: multiply;
+                filter: brightness(1.055) contrast(0.965) saturate(1.08);
+                -webkit-mask-image: radial-gradient(ellipse 47% 56% at 50% 47%, #000 44%, rgba(0, 0, 0, 0.9) 57%, rgba(0, 0, 0, 0.62) 70%, rgba(0, 0, 0, 0.24) 84%, transparent 100%);
+                mask-image: radial-gradient(ellipse 47% 56% at 50% 47%, #000 44%, rgba(0, 0, 0, 0.9) 57%, rgba(0, 0, 0, 0.62) 70%, rgba(0, 0, 0, 0.24) 84%, transparent 100%);
+              }
+
+              @keyframes giftSharedFlowerButterflyPath {
+                0% {
+                  opacity: 1;
+                  transform: translate3d(18px, -12px, 0) rotate(-18deg) scale(0.98);
+                }
+
+                7% {
+                  opacity: 1;
+                  transform: translate3d(7px, -21px, 0) rotate(-23deg) scale(1);
+                }
+
+                15% {
+                  opacity: 1;
+                  transform: translate3d(-16px, -10px, 0) rotate(-10deg) scale(1.02);
+                }
+
+                26% {
+                  opacity: 1;
+                  transform: translate3d(-42px, 18px, 0) rotate(6deg) scale(1.02);
+                }
+
+                36% {
+                  opacity: 1;
+                  transform: translate3d(-52px, 48px, 0) rotate(8deg) scale(1.01);
+                }
+
+                43% {
+                  opacity: 1;
+                  transform: translate3d(-52px, 58px, 0) rotate(4deg) scale(1);
+                }
+
+                47%,
+                62% {
+                  opacity: 1;
+                  transform: translate3d(-52px, 58px, 0) rotate(4deg) scale(1);
+                }
+
+                67% {
+                  opacity: 1;
+                  transform: translate3d(-46px, 38px, 0) rotate(-15deg) scale(1.02);
+                }
+
+                78% {
+                  opacity: 1;
+                  transform: translate3d(-28px, 10px, 0) rotate(-19deg) scale(1);
+                }
+
+                90% {
+                  opacity: 1;
+                  transform: translate3d(2px, -18px, 0) rotate(-7deg) scale(0.98);
+                }
+
+                100% {
+                  opacity: 1;
+                  transform: translate3d(18px, -12px, 0) rotate(8deg) scale(0.98);
+                }
+              }
+
+              @keyframes giftSharedFlowerButterflyPosture {
+                0% {
+                  transform: translate3d(0, 0, 0) rotateX(0deg);
+                }
+
+                8% {
+                  transform: translate3d(0, -3px, 0) rotateX(8deg);
+                }
+
+                15% {
+                  transform: translate3d(0, 1px, 0) rotateX(2deg);
+                }
+
+                26% {
+                  transform: translate3d(0, -3px, 0) rotateX(7deg);
+                }
+
+                36% {
+                  transform: translate3d(0, 1px, 0) rotateX(2deg);
+                }
+
+                43%,
+                64% {
+                  transform: translate3d(0, 0, 0) rotateX(0deg);
+                }
+
+                67% {
+                  transform: translate3d(0, -4px, 0) rotateX(8deg);
+                }
+
+                78% {
+                  transform: translate3d(0, -1px, 0) rotateX(3deg);
+                }
+
+                100% {
+                  transform: translate3d(0, 0, 0) rotateX(0deg);
+                }
+              }
+
+              @keyframes giftSharedFlowerButterflyFlyingVisibility {
+                0%,
+                41% {
+                  opacity: 1;
+                }
+
+                44.5% {
+                  opacity: 0.82;
+                }
+
+                46.5% {
+                  opacity: 0.38;
+                }
+
+                48%,
+                63.5% {
+                  opacity: 0;
+                }
+
+                64.5% {
+                  opacity: 0.35;
+                }
+
+                66.5% {
+                  opacity: 0.86;
+                }
+
+                68%,
+                100% {
+                  opacity: 1;
+                }
+              }
+
+              @keyframes giftSharedFlowerButterflyFlyingPose {
+                0% {
+                  background-image: var(--gift-shared-wing-1);
+                }
+
+                2% {
+                  background-image: var(--gift-shared-wing-2);
+                }
+
+                4% {
+                  background-image: var(--gift-shared-wing-3);
+                }
+
+                6% {
+                  background-image: var(--gift-shared-wing-2);
+                }
+
+                8%,
+                15% {
+                  background-image: var(--gift-shared-wing-1);
+                }
+
+                19% {
+                  background-image: var(--gift-shared-wing-2);
+                }
+
+                22% {
+                  background-image: var(--gift-shared-wing-3);
+                }
+
+                25% {
+                  background-image: var(--gift-shared-wing-2);
+                }
+
+                29% {
+                  background-image: var(--gift-shared-wing-1);
+                }
+
+                33% {
+                  background-image: var(--gift-shared-wing-3);
+                }
+
+                37%,
+                41% {
+                  background-image: var(--gift-shared-wing-1);
+                }
+
+                65% {
+                  background-image: var(--gift-shared-wing-2);
+                }
+
+                67% {
+                  background-image: var(--gift-shared-wing-3);
+                }
+
+                69% {
+                  background-image: var(--gift-shared-wing-2);
+                }
+
+                72%,
+                80% {
+                  background-image: var(--gift-shared-wing-1);
+                }
+
+                85% {
+                  background-image: var(--gift-shared-wing-2);
+                }
+
+                90%,
+                100% {
+                  background-image: var(--gift-shared-wing-1);
+                }
+              }
+
+              @keyframes giftSharedFlowerButterflyRestingPose {
+                0%,
+                43.5%,
+                67.5%,
+                100% {
+                  opacity: 0;
+                  transform: rotate(-1deg) scale(1);
+                }
+
+                45% {
+                  opacity: 0.42;
+                  transform: rotate(-1deg) scale(1);
+                }
+
+                46.5% {
+                  opacity: 0.82;
+                  transform: rotate(0deg) scale(1);
+                }
+
+                48%,
+                62.5% {
+                  opacity: 1;
+                  transform: rotate(0deg) scale(1);
+                }
+
+                64.5% {
+                  opacity: 0.55;
+                  transform: rotate(-1deg) scale(1);
+                }
+
+                66% {
+                  opacity: 0.18;
+                  transform: rotate(-1deg) scale(1);
+                }
+              }
+
+              @media (max-width: 420px) {
+                .giftSharedFlowerCard {
+                  max-width: 356px;
+                }
+
+                .giftSharedFlowerButterfly {
+                  right: 8px;
+                  width: 36px;
+                }
+              }
+
+              @media (prefers-reduced-motion: reduce) {
+                .giftSharedFlowerButterfly,
+                .giftSharedFlowerButterflyFlight,
+                .giftSharedFlowerButterflyFlyingPose,
+                .giftSharedFlowerButterflyRestingPose {
+                  animation: none;
+                }
+
+                .giftSharedFlowerButterfly {
+                  transform: translate3d(-48px, 42px, 0) rotate(-6deg) scale(1);
+                }
+
+                .giftSharedFlowerButterflyFlyingPose {
+                  opacity: 1;
+                  background-image: var(--gift-shared-wing-1);
+                }
+
+                .giftSharedFlowerButterflyRestingPose {
+                  opacity: 0;
+                }
+              }
+            `,
+          }}
+        />
+      ) : null}
       {hasScene ? (
         <>
           <style
@@ -244,13 +678,13 @@ export function GiftLetterExperience({
           <span style={{ position: "absolute", width: "100%", whiteSpace: "normal", wordBreak: "keep-all", transition: "all 0.6s ease-out", opacity: isOpened ? 0 : 1, transform: isOpened ? "translateY(-8px)" : "translateY(0)", pointerEvents: isOpened ? "none" : "auto" }}>
             {locale === "ja" ? <>Akato からの<br />祝福の手紙が届きました</> : <>你收到一封來自<br />Akato 的祝福信</>}
           </span>
-          <span style={{ position: "absolute", width: "100%", whiteSpace: "normal", wordBreak: "keep-all", fontSize: "clamp(18px, 3.8vw, 24px)", fontWeight: 400, lineHeight: 1.5, color: hasScene ? "rgba(72, 62, 58, 0.9)" : "#8B8580", letterSpacing: "0.08em", transition: "all 0.8s ease-out 0.45s", opacity: isOpened ? 1 : 0, transform: isOpened ? "translateY(0)" : "translateY(16px)", pointerEvents: "none" }}>
+          <span style={{ position: "absolute", width: "100%", whiteSpace: "normal", wordBreak: "keep-all", fontSize: isSharedFlowerLotLetter ? "clamp(15px, 3.6vw, 20px)" : "clamp(18px, 3.8vw, 24px)", fontWeight: 400, lineHeight: isSharedFlowerLotLetter ? 1.58 : 1.5, color: hasScene ? "rgba(72, 62, 58, 0.9)" : "#8B8580", letterSpacing: "0.08em", transition: "all 0.8s ease-out 0.45s", opacity: isOpened ? 1 : 0, transform: isOpened ? "translateY(0)" : "translateY(16px)", pointerEvents: "none" }}>
             {locale === "ja" ? <>今日のあなたが、<br />やさしさにそっと包まれますように。</> : <>願今天的你，<br />被溫柔地接住。</>}
           </span>
         </h1>
 
         {isOpened ? (
-          <div style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", gap: hasScene ? "18px" : "14px", transition: "all 0.8s ease-out", marginTop: "18px", marginBottom: hasScene ? "44px" : "28px", padding: hasScene ? "24px 18px 30px" : undefined, background: hasScene ? "transparent" : undefined }}>
+          <div style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", gap: sharedFlowerLot ? "12px" : hasScene ? "18px" : "14px", transition: "all 0.8s ease-out", marginTop: sharedFlowerLot ? "6px" : "18px", marginBottom: hasScene ? "44px" : sharedFlowerLot ? "24px" : "28px", padding: hasScene ? "24px 18px 30px" : undefined, background: hasScene ? "transparent" : undefined }}>
             {canRenderDecorativeVisuals && categoryCopy && !isSharedFlowerLotLetter ? (
               <p style={{ fontSize: "12px", fontWeight: 400, letterSpacing: "0.16em", color: hasScene ? "rgba(72, 62, 58, 0.7)" : "#A39B95", margin: "0 0 2px", position: "relative", zIndex: 3, textShadow: hasScene ? "0 1px 2px rgba(255, 250, 240, 0.92), 0 8px 28px rgba(255, 250, 240, 0.48)" : undefined }}>
                 {categoryCopy.label} · {categoryCopy.title}
@@ -293,32 +727,70 @@ export function GiftLetterExperience({
                 />
               </div>
             ) : null}
-            {sharedFlowerLot ? (
-              <FlowerCardImage
-                lot={sharedFlowerLot}
-                size={112}
-                style={{
-                  margin: "0 auto 4px",
-                  width: "min(112px, 34vw)",
-                  opacity: 0.9,
-                  filter: "drop-shadow(0 12px 24px rgba(120, 90, 60, 0.08))",
-                  position: "relative",
-                  zIndex: 3,
-                }}
-                imageStyle={{
-                  display: "block",
-                  width: "100%",
-                  height: "auto",
-                  maxWidth: "100%",
-                  objectFit: "contain",
-                  pointerEvents: "none",
-                  userSelect: "none",
-                }}
-              />
+            {sharedFlowerLot && sharedFlowerLetterContent ? (
+              <div className="giftSharedFlowerCard">
+                <span className="giftSharedFlowerButterfly" aria-hidden="true">
+                  <span className="giftSharedFlowerButterflyFlight">
+                    <span className="giftSharedFlowerButterflyFlyingPose" />
+                    <span className="giftSharedFlowerButterflyRestingPose" />
+                  </span>
+                </span>
+                <FlowerCardImage
+                  lot={sharedFlowerLot}
+                  className="giftSharedFlowerImage"
+                  imageClassName="giftSharedFlowerImageElement"
+                  size={192}
+                  style={{
+                    margin: "0 auto -2px",
+                    width: "min(250px, 66vw)",
+                    opacity: 0.99,
+                    filter: "drop-shadow(0 10px 18px rgba(120, 90, 60, 0.035))",
+                    position: "relative",
+                    zIndex: 3,
+                  }}
+                  imageStyle={{
+                    display: "block",
+                    width: "100%",
+                    height: "auto",
+                    maxWidth: "100%",
+                    objectFit: "contain",
+                    pointerEvents: "none",
+                    userSelect: "none",
+                  }}
+                />
+                <div style={{ position: "relative", zIndex: 3, width: "100%", display: "flex", flexDirection: "column", alignItems: "center", gap: "8px", textAlign: "center" }}>
+                  {sharedFlowerLetterContent.label ? (
+                    <p style={{ margin: "0", fontSize: "12px", lineHeight: 1.45, fontWeight: 400, letterSpacing: "0.16em", color: "#A08D83" }}>
+                      {sharedFlowerLetterContent.label}
+                    </p>
+                  ) : null}
+                  <h2 style={{ margin: "0", fontSize: "clamp(21px, 5.4vw, 26px)", lineHeight: 1.35, fontWeight: 600, letterSpacing: "0.08em", color: "#6F625D", textWrap: "balance" }}>
+                    {sharedFlowerLetterContent.title}
+                  </h2>
+                  {sharedFlowerLetterContent.poem ? (
+                    <div style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", gap: "5px", marginTop: "4px" }}>
+                      <p style={{ margin: "0", fontSize: "12px", fontWeight: 400, letterSpacing: "0.14em", color: "#A08D83" }}>小籤詩</p>
+                      <p style={{ margin: "0", maxWidth: "330px", fontSize: "clamp(14px, 3.7vw, 16px)", lineHeight: 1.82, fontWeight: 400, letterSpacing: "0.04em", color: "#7B706B", overflowWrap: "anywhere" }}>
+                        {sharedFlowerLetterContent.poem}
+                      </p>
+                    </div>
+                  ) : null}
+                  {sharedFlowerLetterContent.blessing ? (
+                    <div style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", gap: "5px", marginTop: "4px" }}>
+                      <p style={{ margin: "0", fontSize: "12px", fontWeight: 400, letterSpacing: "0.14em", color: "#A08D83" }}>今日花語</p>
+                      <p style={{ margin: "0", maxWidth: "330px", fontSize: "clamp(13px, 3.5vw, 15px)", lineHeight: 1.84, fontWeight: 400, letterSpacing: "0.04em", color: "#877973", overflowWrap: "anywhere" }}>
+                        {sharedFlowerLetterContent.blessing}
+                      </p>
+                    </div>
+                  ) : null}
+                </div>
+              </div>
             ) : null}
-            <p style={{ fontSize: "clamp(23px, 4.8vw, 30px)", fontWeight: 600, lineHeight: 1.65, maxWidth: "440px", color: hasScene ? "rgba(72, 62, 58, 0.94)" : "#7A736E", letterSpacing: "0.08em", textAlign: "center", margin: "0 auto", width: "100%", position: "relative", zIndex: 3, overflowWrap: "anywhere", textShadow: hasScene ? "0 1px 2px rgba(255, 250, 240, 0.92), 0 8px 28px rgba(255, 250, 240, 0.48)" : undefined }}>
-              {giftMessage || (locale === "ja" ? "ゆっくりで大丈夫。この祝福が少しだけ寄り添えますように。" : "慢慢來也沒關係，這份祝福會陪你一下。")}
-            </p>
+            {!sharedFlowerLot ? (
+              <p style={{ fontSize: "clamp(23px, 4.8vw, 30px)", fontWeight: 600, lineHeight: 1.65, maxWidth: "440px", color: hasScene ? "rgba(72, 62, 58, 0.94)" : "#7A736E", letterSpacing: "0.08em", textAlign: "center", margin: "0 auto", width: "100%", position: "relative", zIndex: 3, overflowWrap: "anywhere", textShadow: hasScene ? "0 1px 2px rgba(255, 250, 240, 0.92), 0 8px 28px rgba(255, 250, 240, 0.48)" : undefined }}>
+                {giftMessage || (locale === "ja" ? "ゆっくりで大丈夫。この祝福が少しだけ寄り添えますように。" : "慢慢來也沒關係，這份祝福會陪你一下。")}
+              </p>
+            ) : null}
             <p style={{ fontSize: "14px", fontWeight: 300, letterSpacing: "0.1em", color: hasScene ? "rgba(72, 62, 58, 0.72)" : "#A39B95", margin: "18px 0 0", position: "relative", zIndex: 2, textShadow: hasScene ? "0 1px 2px rgba(255, 250, 240, 0.92), 0 8px 28px rgba(255, 250, 240, 0.48)" : undefined }}>
               {fromName ? (locale === "ja" ? `${fromName} からの祝福` : `來自 ${fromName} 的祝福`) : ""}
             </p>
