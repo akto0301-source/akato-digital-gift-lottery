@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ExtraMessagePanel } from "@/app/confirm/extra-message-panel";
 import { BlessingMotif, getBlessingCardVisual } from "@/components/blessing-card-visuals";
 import { FlowerCardImage } from "@/components/flower-card-image";
-import { getAllLots, type ContentLot } from "@/lib/content";
+import type { ContentLot } from "@/lib/content";
 import type { GiftLocale } from "@/lib/gift-links";
 import { blessingCards } from "@/lib/i18n";
 import { defaultSceneId, resolveSceneId, sceneMap, type SceneId } from "@/lib/scene-map";
@@ -75,22 +75,6 @@ const PetalsBackground = () => {
   );
 };
 
-function isSharedFlowerLotMessage(categoryId: string | null, giftMessage: string | null) {
-  if (categoryId !== "shared-blessing" || !giftMessage) {
-    return false;
-  }
-
-  return giftMessage.includes("第") && giftMessage.includes("小籤詩") && giftMessage.includes("今日花語");
-}
-
-function getSharedFlowerLot(giftMessage: string | null) {
-  if (!giftMessage) {
-    return null;
-  }
-
-  return getAllLots().find((lot) => giftMessage.includes(`${lot.label}｜${lot.title}`) || giftMessage.includes(lot.title)) ?? null;
-}
-
 function getSharedFlowerFortunePoem(fortune: string | undefined) {
   if (!fortune) {
     return "";
@@ -102,30 +86,38 @@ function getSharedFlowerFortunePoem(fortune: string | undefined) {
     ?.trim() ?? "";
 }
 
-function getSharedFlowerLetterContent(giftMessage: string | null, lot: SharedFlowerLot) {
-  const lines = giftMessage
-    ?.split("\n")
-    .map((line) => line.trim())
-    .filter(Boolean) ?? [];
-  const headingLine = lines.find((line) => line.includes("｜")) ?? [lot.label, lot.title].filter(Boolean).join("｜") ?? lot.title;
-  const [parsedLabel, parsedTitle] = headingLine.split("｜").map((part) => part.trim());
-  const poemIndex = lines.findIndex((line) => line.startsWith("小籤詩"));
-  const blessingIndex = lines.findIndex((line) => line.startsWith("今日花語"));
-  const poemFromInlineLabel = poemIndex >= 0 ? lines[poemIndex]?.replace(/^小籤詩：?/, "").trim() : "";
-  const blessingFromInlineLabel = blessingIndex >= 0 ? lines[blessingIndex]?.replace(/^今日花語：?/, "").trim() : "";
-  const poemFromNextLine =
-    poemIndex >= 0 && !poemFromInlineLabel
-      ? lines.slice(poemIndex + 1, blessingIndex >= 0 ? blessingIndex : undefined).join(" ").trim()
-      : "";
-  const blessingFromNextLine =
-    blessingIndex >= 0 && !blessingFromInlineLabel ? lines.slice(blessingIndex + 1).join(" ").trim() : "";
+function getSharedFlowerFortuneInterpretation(fortune: string | undefined) {
+  if (!fortune || !fortune.includes("溫柔解讀：")) {
+    return "";
+  }
 
+  return fortune.split("溫柔解讀：")[1]?.trim() ?? "";
+}
+
+function getSharedFlowerLetterContent(lot: SharedFlowerLot) {
   return {
-    label: parsedTitle ? parsedLabel : lot.label ?? "",
-    title: parsedTitle || parsedLabel || lot.title,
-    poem: poemFromInlineLabel || poemFromNextLine || getSharedFlowerFortunePoem(lot.fortune),
-    blessing: blessingFromInlineLabel || blessingFromNextLine || lot.blessing || "",
+    label: lot.label ?? "",
+    title: lot.title,
+    poem: getSharedFlowerFortunePoem(lot.fortune),
+    interpretation: getSharedFlowerFortuneInterpretation(lot.fortune),
+    blessing: lot.blessing ?? "",
+    flowerName: lot.flowerName,
   };
+}
+
+function isGeneratedFlowerLotMessage(giftMessage: string | null, lot: SharedFlowerLot | null) {
+  if (!giftMessage || !lot) {
+    return false;
+  }
+
+  const message = giftMessage.trim();
+
+  return Boolean(
+    lot.label &&
+      message.includes(`${lot.label}｜${lot.title}`) &&
+      message.includes("小籤詩") &&
+      message.includes("今日花語"),
+  );
 }
 
 export function GiftLetterExperience({
@@ -148,16 +140,20 @@ export function GiftLetterExperience({
     [categoryId, hasScene],
   );
   const categoryCopy = !hasScene && categoryCard ? (locale === "ja" ? categoryCard.ja : categoryCard.zh) : null;
-  const isSharedFlowerLotLetter = Boolean(providedSharedFlowerLot) || isSharedFlowerLotMessage(categoryId, giftMessage);
+  const isSharedFlowerLotLetter = Boolean(providedSharedFlowerLot);
   const canRenderDecorativeVisuals = !hasScene;
   const sharedFlowerLot = useMemo(
-    () => (isSharedFlowerLotLetter && canRenderDecorativeVisuals ? providedSharedFlowerLot ?? getSharedFlowerLot(giftMessage) : null),
-    [canRenderDecorativeVisuals, giftMessage, isSharedFlowerLotLetter, providedSharedFlowerLot],
+    () => (isSharedFlowerLotLetter && canRenderDecorativeVisuals ? providedSharedFlowerLot : null),
+    [canRenderDecorativeVisuals, isSharedFlowerLotLetter, providedSharedFlowerLot],
   );
   const sharedFlowerLetterContent = useMemo(
-    () => (sharedFlowerLot ? getSharedFlowerLetterContent(giftMessage, sharedFlowerLot) : null),
-    [giftMessage, sharedFlowerLot],
+    () => (sharedFlowerLot ? getSharedFlowerLetterContent(sharedFlowerLot) : null),
+    [sharedFlowerLot],
   );
+  const primaryGiftMessage =
+    sharedFlowerLot && isGeneratedFlowerLotMessage(giftMessage, sharedFlowerLot)
+      ? null
+      : giftMessage;
   const categoryVisual = canRenderDecorativeVisuals && categoryCard && !isSharedFlowerLotLetter ? getBlessingCardVisual(categoryCard.id) : null;
 
   const handleOpenEnvelope = () => {
@@ -684,7 +680,7 @@ export function GiftLetterExperience({
         </h1>
 
         {isOpened ? (
-          <div style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", gap: sharedFlowerLot ? "12px" : hasScene ? "18px" : "14px", transition: "all 0.8s ease-out", marginTop: sharedFlowerLot ? "6px" : "18px", marginBottom: hasScene ? "44px" : sharedFlowerLot ? "24px" : "28px", padding: hasScene ? "24px 18px 30px" : undefined, background: hasScene ? "transparent" : undefined }}>
+          <div style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", gap: sharedFlowerLot ? "18px" : hasScene ? "18px" : "14px", transition: "all 0.8s ease-out", marginTop: sharedFlowerLot ? "6px" : "18px", marginBottom: hasScene ? "44px" : sharedFlowerLot ? "24px" : "28px", padding: hasScene ? "24px 18px 30px" : undefined, background: hasScene ? "transparent" : undefined }}>
             {canRenderDecorativeVisuals && categoryCopy && !isSharedFlowerLotLetter ? (
               <p style={{ fontSize: "12px", fontWeight: 400, letterSpacing: "0.16em", color: hasScene ? "rgba(72, 62, 58, 0.7)" : "#A39B95", margin: "0 0 2px", position: "relative", zIndex: 3, textShadow: hasScene ? "0 1px 2px rgba(255, 250, 240, 0.92), 0 8px 28px rgba(255, 250, 240, 0.48)" : undefined }}>
                 {categoryCopy.label} · {categoryCopy.title}
@@ -727,6 +723,12 @@ export function GiftLetterExperience({
                 />
               </div>
             ) : null}
+            <p style={{ fontSize: sharedFlowerLot ? "clamp(18px, 4.5vw, 24px)" : "clamp(23px, 4.8vw, 30px)", fontWeight: sharedFlowerLot ? 500 : 600, lineHeight: sharedFlowerLot ? 1.72 : 1.65, maxWidth: sharedFlowerLot ? "390px" : "440px", color: hasScene ? "rgba(72, 62, 58, 0.94)" : "#7A736E", letterSpacing: sharedFlowerLot ? "0.06em" : "0.08em", textAlign: "center", margin: "0 auto", width: "100%", position: "relative", zIndex: 3, overflowWrap: "anywhere", whiteSpace: "pre-wrap", textShadow: hasScene ? "0 1px 2px rgba(255, 250, 240, 0.92), 0 8px 28px rgba(255, 250, 240, 0.48)" : undefined }}>
+              {primaryGiftMessage || (locale === "ja" ? "ゆっくりで大丈夫。この祝福が少しだけ寄り添えますように。" : "慢慢來也沒關係，這份祝福會陪你一下。")}
+            </p>
+            <p style={{ fontSize: "14px", fontWeight: 300, letterSpacing: "0.1em", color: hasScene ? "rgba(72, 62, 58, 0.72)" : "#A39B95", margin: sharedFlowerLot ? "0 0 4px" : "18px 0 0", position: "relative", zIndex: 2, textShadow: hasScene ? "0 1px 2px rgba(255, 250, 240, 0.92), 0 8px 28px rgba(255, 250, 240, 0.48)" : undefined }}>
+              {fromName ? (locale === "ja" ? `${fromName} からの祝福` : `來自 ${fromName} 的祝福`) : ""}
+            </p>
             {sharedFlowerLot && sharedFlowerLetterContent ? (
               <div className="giftSharedFlowerCard">
                 <span className="giftSharedFlowerButterfly" aria-hidden="true">
@@ -759,6 +761,14 @@ export function GiftLetterExperience({
                   }}
                 />
                 <div style={{ position: "relative", zIndex: 3, width: "100%", display: "flex", flexDirection: "column", alignItems: "center", gap: "8px", textAlign: "center" }}>
+                  <p style={{ margin: "0 0 2px", fontSize: "12px", lineHeight: 1.45, fontWeight: 500, letterSpacing: "0.18em", color: "#A67972" }}>
+                    今日小花籤
+                  </p>
+                  {sharedFlowerLetterContent.flowerName ? (
+                    <p style={{ margin: "0", fontSize: "12px", lineHeight: 1.45, fontWeight: 400, letterSpacing: "0.14em", color: "#A08D83" }}>
+                      {sharedFlowerLetterContent.flowerName}
+                    </p>
+                  ) : null}
                   {sharedFlowerLetterContent.label ? (
                     <p style={{ margin: "0", fontSize: "12px", lineHeight: 1.45, fontWeight: 400, letterSpacing: "0.16em", color: "#A08D83" }}>
                       {sharedFlowerLetterContent.label}
@@ -775,6 +785,14 @@ export function GiftLetterExperience({
                       </p>
                     </div>
                   ) : null}
+                  {sharedFlowerLetterContent.interpretation ? (
+                    <div style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", gap: "5px", marginTop: "4px" }}>
+                      <p style={{ margin: "0", fontSize: "12px", fontWeight: 400, letterSpacing: "0.14em", color: "#A08D83" }}>溫柔解讀</p>
+                      <p style={{ margin: "0", maxWidth: "330px", fontSize: "clamp(13px, 3.5vw, 15px)", lineHeight: 1.84, fontWeight: 400, letterSpacing: "0.04em", color: "#877973", overflowWrap: "anywhere" }}>
+                        {sharedFlowerLetterContent.interpretation}
+                      </p>
+                    </div>
+                  ) : null}
                   {sharedFlowerLetterContent.blessing ? (
                     <div style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", gap: "5px", marginTop: "4px" }}>
                       <p style={{ margin: "0", fontSize: "12px", fontWeight: 400, letterSpacing: "0.14em", color: "#A08D83" }}>今日花語</p>
@@ -786,14 +804,6 @@ export function GiftLetterExperience({
                 </div>
               </div>
             ) : null}
-            {!sharedFlowerLot ? (
-              <p style={{ fontSize: "clamp(23px, 4.8vw, 30px)", fontWeight: 600, lineHeight: 1.65, maxWidth: "440px", color: hasScene ? "rgba(72, 62, 58, 0.94)" : "#7A736E", letterSpacing: "0.08em", textAlign: "center", margin: "0 auto", width: "100%", position: "relative", zIndex: 3, overflowWrap: "anywhere", textShadow: hasScene ? "0 1px 2px rgba(255, 250, 240, 0.92), 0 8px 28px rgba(255, 250, 240, 0.48)" : undefined }}>
-                {giftMessage || (locale === "ja" ? "ゆっくりで大丈夫。この祝福が少しだけ寄り添えますように。" : "慢慢來也沒關係，這份祝福會陪你一下。")}
-              </p>
-            ) : null}
-            <p style={{ fontSize: "14px", fontWeight: 300, letterSpacing: "0.1em", color: hasScene ? "rgba(72, 62, 58, 0.72)" : "#A39B95", margin: "18px 0 0", position: "relative", zIndex: 2, textShadow: hasScene ? "0 1px 2px rgba(255, 250, 240, 0.92), 0 8px 28px rgba(255, 250, 240, 0.48)" : undefined }}>
-              {fromName ? (locale === "ja" ? `${fromName} からの祝福` : `來自 ${fromName} 的祝福`) : ""}
-            </p>
             {!isSharedFlowerLotLetter ? <ExtraMessagePanel locale={locale} /> : null}
           </div>
         ) : null}
