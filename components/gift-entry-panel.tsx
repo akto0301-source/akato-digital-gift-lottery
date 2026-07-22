@@ -7,8 +7,6 @@ import { blessingCards, getLocaleCopy } from "@/lib/i18n";
 import type { GiftLocale } from "@/lib/gift-links";
 import { defaultSceneId, sceneItems, type SceneId } from "@/lib/scene-map";
 
-const DEFAULT_ORIGIN = "https://gift.akato.net";
-
 type FormState = {
   from: string;
   to: string;
@@ -18,10 +16,6 @@ type FormState = {
 type GiftEntryPanelProps = {
   locale: GiftLocale;
 };
-
-function getOrigin() {
-  return typeof window === "undefined" ? DEFAULT_ORIGIN : window.location.origin;
-}
 
 function getCardById(cardId: string) {
   return blessingCards.find((item) => item.id === cardId) ?? null;
@@ -87,18 +81,6 @@ export function GiftEntryPanel({ locale }: GiftEntryPanelProps) {
 
     return `${form.from.trim()} ➜ ${form.to.trim()}`;
   }, [copy.entry.summaryFallback, form.from, form.to]);
-
-  function buildGiftLink(from: string, to: string, message: string, localeValue: GiftLocale, cardId?: string | null, sceneId?: SceneId) {
-    const params = new URLSearchParams({ from, to, message, locale: localeValue });
-    if (cardId) {
-      params.set("cardId", cardId);
-    }
-    if (sceneId) {
-      params.set("sceneId", sceneId);
-    }
-
-    return `${getOrigin()}/letter?${params.toString()}`;
-  }
 
   function invalidateGiftLink() {
     setGiftLink((current) => {
@@ -169,7 +151,27 @@ export function GiftEntryPanel({ locale }: GiftEntryPanelProps) {
     setErrorMessage("");
 
     try {
-      const nextLink = buildGiftLink(from, to, message, locale, selectedTemplateId, selectedSceneId);
+      const response = await fetch("/api/gift-links", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          fromName: from,
+          toName: to,
+          message,
+          locale,
+          cardId: selectedTemplateId,
+          sceneId: selectedSceneId,
+        }),
+      });
+      const data = (await response.json()) as { error?: string; url?: string };
+
+      if (!response.ok || !data.url) {
+        throw new Error(data.error ?? copy.entry.errorMessage);
+      }
+
+      const nextLink = data.url;
       setGiftLink(nextLink);
       setNeedsRegeneration(false);
       setCopyLabel(copy.entry.copyButton);

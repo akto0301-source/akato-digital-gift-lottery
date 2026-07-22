@@ -58,8 +58,8 @@ export default async function ConfirmPage({ params, searchParams }: ConfirmPageP
 
   const locale = resolveLocale(gift?.locale ?? pickValue(queryParams.locale), "zh");
   const copy = getLocaleCopy(locale);
-  const from = gift?.from ?? pickValue(queryParams.from);
-  const to = gift?.to ?? pickValue(queryParams.to);
+  const from = gift?.fromName ?? pickValue(queryParams.from);
+  const to = gift?.toName ?? pickValue(queryParams.to);
   const message = gift?.message ?? pickValue(queryParams.message);
   const sceneIdParam = pickValue(queryParams.sceneId);
   const sceneIdCandidate = sceneIdParam ? resolveSceneId(sceneIdParam) : null;
