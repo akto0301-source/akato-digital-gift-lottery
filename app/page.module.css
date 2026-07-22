@@ -804,11 +804,8 @@
 
 .lotButterfly {
   position: absolute;
-  top: 11%;
-  right: clamp(30px, 17%, 96px);
   z-index: 3;
   display: block;
-  width: clamp(62px, 7.5vw, 78px);
   aspect-ratio: 1;
   opacity: 1;
   pointer-events: none;
@@ -858,7 +855,7 @@
   opacity: 1;
   animation:
     butterflyFlyingVisibility 8.8s linear infinite,
-    butterflyFlyingPose 0.42s step-end infinite;
+    butterflyFlyingPose 0.46s step-end infinite;
 }
 
 .lotButterflyRestingPose {
@@ -1353,6 +1350,15 @@
     opacity: 0;
   }
 }
+
+@media (min-width: 641px) {
+  .lotButterfly {
+    top: 11%;
+    right: clamp(30px, 17%, 96px);
+    width: clamp(62px, 7.5vw, 78px);
+  }
+}
+
 @media (max-width: 640px) {
   .page {
     padding-top: 24px;
