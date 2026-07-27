@@ -24,15 +24,13 @@ type SavedShareState = {
   lot: ContentLot | null;
   fromName: string;
   toName: string;
+  giftMessage: string;
+  hasEditedGiftMessage: boolean;
   letterLink: string;
   hasShareStarted: boolean;
 };
 
 const LOT_SHARE_STORAGE_KEY = "akato-lot-share-state";
-
-function getOrigin() {
-  return typeof window === "undefined" ? "" : window.location.origin;
-}
 
 function readSavedShareState() {
   if (typeof window === "undefined") {
@@ -79,24 +77,14 @@ function getLotInterpretation(fortune: string | undefined) {
   return fortune.split("溫柔解讀：")[1]?.trim() ?? "";
 }
 
-function buildLetterMessage(lot: ContentLot) {
-  return [
-    `${lot.label}｜${lot.title}`,
-    "",
-    "小籤詩：",
-    getLotPoem(lot.fortune),
-    "",
-    "今日花語：",
-    lot.blessing ?? "",
-  ].join("\n");
-}
-
 export function LotteryPanel({ library, initialLot, locale, showNotes = true, showShareForm = false }: LotteryPanelProps) {
   const [lot, setLot] = useState<ContentLot | null>(initialLot);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [fromName, setFromName] = useState("");
   const [toName, setToName] = useState("");
+  const [giftMessage, setGiftMessage] = useState(initialLot?.blessing ?? "");
+  const [hasEditedGiftMessage, setHasEditedGiftMessage] = useState(false);
   const [letterLink, setLetterLink] = useState("");
   const [hasShareStarted, setHasShareStarted] = useState(false);
   const [hasLoadedShareState, setHasLoadedShareState] = useState(!showShareForm);
@@ -112,6 +100,8 @@ export function LotteryPanel({ library, initialLot, locale, showNotes = true, sh
       setLot(savedState.lot);
       setFromName(savedState.fromName ?? "");
       setToName(savedState.toName ?? "");
+      setGiftMessage(savedState.giftMessage ?? savedState.lot?.blessing ?? "");
+      setHasEditedGiftMessage(Boolean(savedState.hasEditedGiftMessage));
       setLetterLink(savedState.letterLink ?? "");
       setHasShareStarted(Boolean(savedState.hasShareStarted));
     }
@@ -127,11 +117,13 @@ export function LotteryPanel({ library, initialLot, locale, showNotes = true, sh
     writeSavedShareState({
       lot,
       fromName,
+      giftMessage,
+      hasEditedGiftMessage,
       hasShareStarted,
       toName,
       letterLink,
     });
-  }, [fromName, hasLoadedShareState, hasShareStarted, letterLink, lot, showShareForm, toName]);
+  }, [fromName, giftMessage, hasEditedGiftMessage, hasLoadedShareState, hasShareStarted, letterLink, lot, showShareForm, toName]);
 
   async function drawLot() {
     setIsLoading(true);
@@ -149,6 +141,9 @@ export function LotteryPanel({ library, initialLot, locale, showNotes = true, sh
       }
 
       setLot(data.lot);
+      if (!hasEditedGiftMessage) {
+        setGiftMessage(data.lot.blessing ?? "");
+      }
       setLetterLink("");
       setHasShareStarted(showShareForm);
     } catch (caughtError) {
@@ -204,6 +199,12 @@ export function LotteryPanel({ library, initialLot, locale, showNotes = true, sh
     setLetterLink("");
   }
 
+  function updateGiftMessage(value: string) {
+    setGiftMessage(value);
+    setHasEditedGiftMessage(true);
+    setLetterLink("");
+  }
+
   async function copyLetterLink() {
     if (!letterLink) {
       return;
@@ -212,25 +213,59 @@ export function LotteryPanel({ library, initialLot, locale, showNotes = true, sh
     await navigator.clipboard.writeText(letterLink);
   }
 
-  function generateLetterLink() {
+  async function generateLetterLink() {
+    const trimmedMessage = giftMessage.trim();
+
     if (!lot || !fromName.trim() || !toName.trim()) {
       return;
     }
 
-    const message = buildLetterMessage(lot);
-    const origin = getOrigin();
-    const query = [
-      `from=${encodeURIComponent(fromName.trim())}`,
-      `to=${encodeURIComponent(toName.trim())}`,
-      `message=${encodeURIComponent(message)}`,
-      "locale=zh",
-      "cardId=shared-blessing",
-    ].join("&");
+    if (!trimmedMessage) {
+      setLetterLink("");
+      setError("請寫下一句想送給對方的祝福。");
+      return;
+    }
 
-    setLetterLink(`${origin}/letter?${query}`);
+    if (trimmedMessage.length > 2000) {
+      setLetterLink("");
+      setError("祝福內容請控制在 2000 字以內。");
+      return;
+    }
+
+    setError(null);
+
+    try {
+      const response = await fetch("/api/gift-links", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          fromName: fromName.trim(),
+          toName: toName.trim(),
+          message: trimmedMessage,
+          locale,
+          cardId: "shared-blessing",
+          lotKey: lot.id,
+          lotSnapshot: lot,
+        }),
+      });
+      const data = (await response.json()) as { error?: string; url?: string };
+
+      if (!response.ok || !data.url) {
+        throw new Error(data.error ?? library.fallbackMessages.error);
+      }
+
+      setLetterLink(data.url);
+    } catch (caughtError) {
+      const message =
+        caughtError instanceof Error ? caughtError.message : library.fallbackMessages.error;
+      setLetterLink("");
+      setError(message);
+    }
   }
 
-  const canGenerateLetter = Boolean(lot && fromName.trim() && toName.trim());
+  const canGenerateLetter = Boolean(lot && fromName.trim() && toName.trim() && giftMessage.trim());
   const lineShareHref = letterLink
     ? `https://line.me/R/msg/text/?${encodeURIComponent(`我抽到一張今日小花籤，想送給你。\n打開這封祝福信：${letterLink}`)}`
     : "";
@@ -304,6 +339,15 @@ export function LotteryPanel({ library, initialLot, locale, showNotes = true, sh
                       value={toName}
                       onChange={(event) => updateToName(event.target.value)}
                       placeholder="例如：重要的人"
+                    />
+                  </label>
+                  <label className={`${styles.field} ${styles.fieldFull}`}>
+                    <span>想送給對方的祝福</span>
+                    <textarea
+                      value={giftMessage}
+                      onChange={(event) => updateGiftMessage(event.target.value)}
+                      maxLength={2000}
+                      placeholder="寫下一句想送給對方的祝福。"
                     />
                   </label>
                 </div>
