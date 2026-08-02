@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { GiftLetterExperience } from "@/components/gift-letter-experience";
 import styles from "@/app/confirm/confirm-page.module.css";
 import { getGiftRecord, isGiftRecordAvailable } from "@/lib/gift-links";
@@ -26,17 +27,17 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.AKATO_GIFT_BASE_URL ?? "https://gift.akato.net"),
-  title: "Akato 今日小花籤",
-  description: "一封為你準備的數位祝福信",
+  title: "山腳貓綠光森林創意工坊｜Akato 赤兔數位回禮",
+  description: "由山腳貓綠光森林創意工坊協助送達的一封 Akato 赤兔數位回禮信",
   robots: {
     index: false,
     follow: false,
   },
   openGraph: {
-    title: "Akato 今日小花籤",
-    description: "一封為你準備的數位祝福信",
+    title: "山腳貓綠光森林創意工坊｜Akato 赤兔數位回禮",
+    description: "由山腳貓綠光森林創意工坊協助送達的一封 Akato 赤兔數位回禮信",
     images: ["/flowers/lily.png"],
-    siteName: "Akato",
+    siteName: "山腳貓綠光森林創意工坊 × Akato 赤兔",
     type: "website",
   },
 };
@@ -83,14 +84,14 @@ function MissingGiftMessage() {
     <main className={styles.page}>
       <PetalsLayer />
       <section className={styles.card}>
-        <p className={styles.eyebrow}>AKATO GIFT LETTER</p>
+        <p className={styles.eyebrow}>山腳貓綠光森林創意工坊 × AKATO 赤兔</p>
         <h1 className={styles.recipient}>這封祝福信暫時無法開啟</h1>
         <p className={styles.meta}>連結可能已過期，或短代碼不存在。</p>
         <div className={styles.messageCard}>請回到送禮人提供的最新連結，再試一次。</div>
         <div className={styles.footerAction}>
-          <a className={styles.backLink} href="/">
+          <Link className={styles.backLink} href="/">
             回到 Akato
-          </a>
+          </Link>
         </div>
       </section>
     </main>
