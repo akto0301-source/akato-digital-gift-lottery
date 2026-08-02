@@ -4,6 +4,251 @@
   padding: 32px 0 72px;
 }
 
+.intakePreview {
+  display: grid;
+  gap: 14px;
+  border: 1px solid rgba(150, 51, 31, 0.2);
+  border-radius: 22px;
+  padding: 18px;
+  background: rgba(255, 253, 248, 0.9);
+  box-shadow: 0 16px 36px rgba(86, 50, 34, 0.06);
+}
+
+.intakeHeader,
+.intakeStepTitle {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.intakeHeader span,
+.intakeStepTitle span,
+.intakeOutputs article > span {
+  color: rgba(150, 51, 31, 0.72);
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.intakeHeader h2,
+.intakeStepTitle h3,
+.intakeOutputs h3 {
+  margin: 4px 0 0;
+  color: #2d231f;
+}
+
+.intakeHeader p {
+  margin: 8px 0 0;
+  color: rgba(31, 26, 23, 0.68);
+  line-height: 1.55;
+}
+
+.intakeHeader > strong {
+  flex: 0 0 auto;
+  border-radius: 999px;
+  padding: 6px 10px;
+  background: rgba(74, 124, 83, 0.12);
+  color: #3f7048;
+  font-size: 0.76rem;
+}
+
+.intakeStep {
+  display: grid;
+  gap: 12px;
+  border-top: 1px solid rgba(215, 197, 171, 0.56);
+  padding-top: 14px;
+}
+
+.intakeStepTitle {
+  justify-content: flex-start;
+}
+
+.intakeStepTitle > strong {
+  display: grid;
+  flex: 0 0 30px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  place-items: center;
+  background: #96331f;
+  color: #fff8f1;
+}
+
+.intakeStepTitle h3 {
+  font-size: 1rem;
+}
+
+.intakeGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.intakeWideFields {
+  display: grid;
+  gap: 10px;
+}
+
+.intakeField {
+  display: grid;
+  min-width: 0;
+  gap: 6px;
+}
+
+.intakeField > span {
+  color: rgba(31, 26, 23, 0.76);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.intakeField input,
+.intakeField select,
+.intakeField textarea {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid rgba(150, 51, 31, 0.18);
+  border-radius: 12px;
+  padding: 10px 11px;
+  background: #fffdf8;
+  color: #2d231f;
+  font: inherit;
+}
+
+.intakeField textarea {
+  min-height: 88px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.intakeActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.intakeActions button {
+  border: 1px solid rgba(150, 51, 31, 0.22);
+  border-radius: 999px;
+  padding: 9px 14px;
+  background: #96331f;
+  color: #fff8f1;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+}
+
+.intakeActions button + button {
+  background: transparent;
+  color: #96331f;
+}
+
+.intakeWarnings {
+  border: 1px solid rgba(196, 119, 47, 0.3);
+  border-left: 4px solid rgba(196, 119, 47, 0.72);
+  border-radius: 14px;
+  padding: 12px;
+  background: rgba(255, 246, 226, 0.74);
+}
+
+.intakeWarnings ul,
+.intakeWorkCards ul {
+  margin: 8px 0 0;
+  padding-left: 20px;
+  line-height: 1.55;
+}
+
+.intakeOutputs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.intakeOutputs > article {
+  min-width: 0;
+  border: 1px solid rgba(215, 197, 171, 0.64);
+  border-radius: 16px;
+  padding: 14px;
+  background: rgba(255, 250, 241, 0.72);
+}
+
+.intakeOutputs dl {
+  display: grid;
+  gap: 8px;
+  margin: 12px 0 0;
+}
+
+.intakeOutputs dl div {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  gap: 8px;
+}
+
+.intakeOutputs dt {
+  color: rgba(31, 26, 23, 0.58);
+}
+
+.intakeOutputs dd {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.intakeWorkCards {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.intakeWorkCards details {
+  border: 1px solid rgba(150, 51, 31, 0.14);
+  border-radius: 12px;
+  padding: 10px;
+  background: rgba(255, 253, 248, 0.8);
+}
+
+.intakeWorkCards summary {
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.intakeWorkCards details > strong {
+  display: block;
+  margin-top: 10px;
+  color: #96331f;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 720px) {
+  .intakePreview {
+    gap: 12px;
+    border-radius: 16px;
+    padding: 12px;
+  }
+
+  .intakeHeader {
+    display: grid;
+  }
+
+  .intakeHeader > strong {
+    justify-self: start;
+  }
+
+  .intakeGrid,
+  .intakeOutputs {
+    grid-template-columns: 1fr;
+  }
+
+  .intakeField textarea {
+    min-height: 104px;
+  }
+
+  .intakeActions button {
+    flex: 1 1 140px;
+  }
+}
+
 .header {
   display: flex;
   align-items: flex-start;
