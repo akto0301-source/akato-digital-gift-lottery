@@ -660,6 +660,9 @@ export function GiftLetterExperience({
         </>
       ) : null}
       <div style={{ position: "relative", zIndex: 10, width: "min(560px, calc(100% - 32px))", padding: hasScene ? "32px 24px 108px" : "32px 24px", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", borderRadius: "0", background: "transparent", border: "0", boxShadow: "none", backdropFilter: "none" }}>
+        <p style={{ fontSize: "clamp(10px, 2.7vw, 12px)", letterSpacing: "0.08em", fontWeight: 400, margin: "0 0 6px", color: hasScene ? "rgba(72, 62, 58, 0.78)" : "#8B8580", textShadow: hasScene ? "0 1px 2px rgba(255, 250, 240, 0.92), 0 8px 28px rgba(255, 250, 240, 0.48)" : undefined }}>
+          山腳貓綠光森林創意工坊 × Akato 赤兔
+        </p>
         <p style={{ fontSize: "12px", letterSpacing: "0.25em", fontWeight: 300, marginBottom: "16px", transition: "opacity 0.7s ease", opacity: isOpened ? 0.46 : 0.62, color: hasScene ? "rgba(72, 62, 58, 0.78)" : undefined, textShadow: hasScene ? "0 1px 2px rgba(255, 250, 240, 0.92), 0 8px 28px rgba(255, 250, 240, 0.48)" : undefined }}>
           AKATO GIFT LETTER
         </p>
@@ -860,10 +863,14 @@ export function GiftLetterExperience({
               {locale === "ja" ? "封筒を開く" : "打開信封"}
             </button>
           </div>
-          <div style={{ transition: "all 0.9s ease-out 0.7s", transform: isOpened ? "translateY(0)" : "translateY(-20px)", opacity: 1, marginTop: hasScene ? "16px" : "0", marginBottom: hasScene ? "64px" : "0" }}>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "18px", transition: "all 0.9s ease-out 0.7s", transform: isOpened ? "translateY(0)" : "translateY(-20px)", opacity: 1, marginTop: hasScene ? "16px" : "0", marginBottom: hasScene ? "64px" : "0" }}>
             <Link href={locale === "ja" ? "/ja" : "/"} style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", minHeight: hasScene ? "40px" : "auto", padding: hasScene ? "9px 16px 8px" : "0 0 4px", borderRadius: hasScene ? "999px" : "0", background: hasScene ? "rgba(255, 250, 240, 0.34)" : "transparent", border: hasScene ? "1px solid rgba(255, 250, 240, 0.34)" : "0", boxShadow: hasScene ? "0 8px 22px rgba(64, 48, 38, 0.1)" : "none", backdropFilter: hasScene ? "blur(2px)" : "none", fontSize: "14px", letterSpacing: "0.1em", color: hasScene ? "rgba(72, 62, 58, 0.9)" : "#A39B95", textDecoration: "none", borderBottom: hasScene ? "0" : "1px solid rgba(163,155,149,0.3)", textShadow: hasScene ? "0 1px 2px rgba(255, 250, 240, 0.82), 0 6px 18px rgba(255, 250, 240, 0.36)" : "none", transition: "color 0.3s, border-color 0.3s, background 0.3s" }}>
               {locale === "ja" ? "わたしも祝福を届けたい" : "我也想送出一封祝福"}
             </Link>
+            <p style={{ margin: "0", maxWidth: "320px", fontSize: "11px", lineHeight: 1.8, letterSpacing: "0.06em", color: hasScene ? "rgba(72, 62, 58, 0.72)" : "#A39B95", textShadow: hasScene ? "0 1px 2px rgba(255, 250, 240, 0.82), 0 6px 18px rgba(255, 250, 240, 0.36)" : "none" }}>
+              Akato 赤兔數位回禮<br />
+              由山腳貓綠光森林創意工坊協助製作
+            </p>
           </div>
         </div>
       </div>
