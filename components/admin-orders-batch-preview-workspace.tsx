@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import styles from "@/app/admin/orders/admin-orders.module.css";
 import { AdminOrdersCardTextPreview } from "@/components/admin-orders-card-text-preview";
 import { AdminOrdersCardProductionPreview, type ProductionCard } from "@/components/admin-orders-card-production-preview";
@@ -28,6 +28,15 @@ export type BatchContext = {
   name: string;
   deliveryDate: string;
 };
+
+type WorkspaceTab = "paste" | "cards" | "routing" | "raw";
+
+const workspaceTabs: Array<{ id: WorkspaceTab; label: string }> = [
+  { id: "paste", label: "貼上資料" },
+  { id: "cards", label: "賀卡核對" },
+  { id: "routing", label: "配送分流" },
+  { id: "raw", label: "原始資料" },
+];
 
 const mockShipmentBatches: MockShipmentBatch[] = [
   {
@@ -71,12 +80,13 @@ const mockShipmentBatches: MockShipmentBatch[] = [
   },
 ];
 
+const mockDateFallbackYear = 2026;
+
 function formatPercent(value: number) {
   return `${Math.round(value * 100)}%`;
 }
 
 function toChineseDateNumber(value: string) {
-  const normalized = value.replace(/十/g, "10");
   const directMap: Record<string, number> = {
     一: 1,
     二: 2,
@@ -89,8 +99,9 @@ function toChineseDateNumber(value: string) {
     九: 9,
   };
 
-  if (/^\d+$/.test(normalized)) return Number(normalized);
+  if (/^\d+$/.test(value)) return Number(value);
   if (directMap[value]) return directMap[value];
+  if (value === "十") return 10;
 
   const tenPrefix = value.match(/^十([一二三四五六七八九])$/);
   if (tenPrefix) return 10 + directMap[tenPrefix[1]];
@@ -101,17 +112,7 @@ function toChineseDateNumber(value: string) {
   return Number.NaN;
 }
 
-function normalizeCustomDateValue(value: string) {
-  const trimmed = value.trim();
-  const numericDate = trimmed.match(/^(\d{4})[-/.年,，\s]+(\d{1,2})[-/.月,，\s]+(\d{1,2})(?:日|號)?$/);
-  const chineseDate = trimmed.match(/^(\d{4})[-/.年,，\s]+([一二三四五六七八九十]{1,3})月([一二三四五六七八九十]{1,3})(?:日|號)?$/);
-  const match = numericDate ?? chineseDate;
-
-  if (!match) return "";
-
-  const year = Number(match[1]);
-  const month = numericDate ? Number(match[2]) : toChineseDateNumber(match[2]);
-  const day = numericDate ? Number(match[3]) : toChineseDateNumber(match[3]);
+function formatValidDate(year: number, month: number, day: number) {
   const normalized = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
   const date = new Date(year, month - 1, day);
 
@@ -127,12 +128,45 @@ function normalizeCustomDateValue(value: string) {
   return normalized;
 }
 
+function normalizeCustomDateValue(value: string) {
+  const trimmed = value.trim();
+  const numericDate = trimmed.match(/^(\d{4})[-/.年,，\s]+(\d{1,2})[-/.月,，\s]+(\d{1,2})(?:日|號)?$/);
+  const chineseDate = trimmed.match(/^(\d{4})[-/.年,，\s]+([一二三四五六七八九十]{1,3})月([一二三四五六七八九十]{1,3})(?:日|號)?$/);
+  const shortNumericDate = trimmed.match(/^(\d{1,2})[-/.月,，\s]+(\d{1,2})(?:日|號)?$/);
+  const shortChineseDate = trimmed.match(/^([一二三四五六七八九十]{1,3})月([一二三四五六七八九十]{1,3})(?:日|號)?$/);
+
+  if (numericDate) {
+    return formatValidDate(Number(numericDate[1]), Number(numericDate[2]), Number(numericDate[3]));
+  }
+
+  if (chineseDate) {
+    return formatValidDate(Number(chineseDate[1]), toChineseDateNumber(chineseDate[2]), toChineseDateNumber(chineseDate[3]));
+  }
+
+  if (shortNumericDate) {
+    return formatValidDate(mockDateFallbackYear, Number(shortNumericDate[1]), Number(shortNumericDate[2]));
+  }
+
+  if (shortChineseDate) {
+    return formatValidDate(
+      mockDateFallbackYear,
+      toChineseDateNumber(shortChineseDate[1]),
+      toChineseDateNumber(shortChineseDate[2]),
+    );
+  }
+
+  return "";
+}
+
 export function AdminOrdersBatchPreviewWorkspace() {
-  const customBatchDateInputRef = useRef<HTMLInputElement>(null);
   const [selectedBatchId, setSelectedBatchId] = useState(mockShipmentBatches[2].id);
+  const [customBatchDateInput, setCustomBatchDateInput] = useState("");
   const [appliedCustomBatchDate, setAppliedCustomBatchDate] = useState("");
   const [customBatchWarning, setCustomBatchWarning] = useState("");
+  const [productionDraft, setProductionDraft] = useState("");
+  const [productionParseRequested, setProductionParseRequested] = useState(false);
   const [productionPreviewCards, setProductionPreviewCards] = useState<ProductionCard[]>([]);
+  const [activeWorkspaceTab, setActiveWorkspaceTab] = useState<WorkspaceTab>("cards");
   const selectedBatch = mockShipmentBatches.find((batch) => batch.id === selectedBatchId) ?? mockShipmentBatches[0];
   const activeBatchDate = appliedCustomBatchDate || selectedBatch.deliveryDate;
   const activeBatchName = appliedCustomBatchDate ? `自訂 ${appliedCustomBatchDate} 出貨批次` : selectedBatch.name;
@@ -150,23 +184,16 @@ export function AdminOrdersBatchPreviewWorkspace() {
 
   function handleBatchChange(batchId: string) {
     setSelectedBatchId(batchId);
-    if (customBatchDateInputRef.current) {
-      customBatchDateInputRef.current.value = "";
-    }
+    setCustomBatchDateInput("");
     setAppliedCustomBatchDate("");
     setCustomBatchWarning("");
   }
 
   function applyCustomBatchDate() {
-    const customDateInput = document.getElementById("custom-shipment-batch-date");
-    const inputValue =
-      customDateInput instanceof HTMLInputElement
-        ? customDateInput.value
-        : customBatchDateInputRef.current?.value ?? "";
-    const nextCustomDate = normalizeCustomDateValue(inputValue);
+    const nextCustomDate = normalizeCustomDateValue(customBatchDateInput);
 
     if (!nextCustomDate) {
-      setCustomBatchWarning("請輸入完整有效日期，例如 2026-07-15、2026/7/15 或 2026年7月15日。");
+      setCustomBatchWarning("請輸入完整有效日期，例如 2026-07-15、2026/7/15、2026年7月15日，或 7/15。");
       return;
     }
 
@@ -175,6 +202,7 @@ export function AdminOrdersBatchPreviewWorkspace() {
   }
 
   function previewCustomBatchDate(value: string) {
+    setCustomBatchDateInput(value);
     const nextCustomDate = normalizeCustomDateValue(value);
     setCustomBatchWarning("");
 
@@ -213,10 +241,10 @@ export function AdminOrdersBatchPreviewWorkspace() {
             <span>出貨日期</span>
             <input
               id="custom-shipment-batch-date"
-              ref={customBatchDateInputRef}
               type="text"
               inputMode="numeric"
-              placeholder="2026-07-15 / 2026年7月15日"
+              placeholder="2026-07-15 / 2026年7月15日 / 7/15"
+              value={customBatchDateInput}
               onInput={(event) => previewCustomBatchDate(event.currentTarget.value)}
               onChange={(event) => previewCustomBatchDate(event.currentTarget.value)}
             />
@@ -290,22 +318,76 @@ export function AdminOrdersBatchPreviewWorkspace() {
         </ol>
       </section>
 
-      <AdminOrdersCardProductionPreview
-        batchContext={batchContext}
-        onPreviewCardsChange={handleProductionPreviewCardsChange}
-      />
+      <nav className={styles.workspaceTabs} aria-label="admin orders 工作區切換">
+        {workspaceTabs.map((tab) => (
+          <button
+            key={tab.id}
+            type="button"
+            aria-pressed={activeWorkspaceTab === tab.id}
+            onClick={() => setActiveWorkspaceTab(tab.id)}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </nav>
 
-      <AdminOrdersCardRoutingPreview batchContext={batchContext} productionCards={productionPreviewCards} />
+      <section className={styles.workspacePanel} aria-label="目前工作區">
+        {activeWorkspaceTab === "paste" ? (
+          <div className={styles.workspaceStack}>
+            <details className={styles.workspaceToolGroup} open>
+              <summary>LINE 訊息預覽</summary>
+              <AdminOrdersLineMessagePreview batchContext={batchContext} />
+            </details>
+            <details className={styles.workspaceToolGroup}>
+              <summary>Google Form 回覆預覽</summary>
+              <AdminOrdersGoogleFormPreview batchContext={batchContext} />
+            </details>
+            <details className={styles.workspaceToolGroup}>
+              <summary>貼上表格預覽</summary>
+              <AdminOrdersPastePreview batchContext={batchContext} />
+            </details>
+          </div>
+        ) : null}
 
-      <AdminOrdersLineMessagePreview batchContext={batchContext} />
+        {activeWorkspaceTab === "cards" ? (
+          <div className={styles.workspaceStack}>
+            <AdminOrdersCardProductionPreview
+              batchContext={batchContext}
+              draft={productionDraft}
+              onDraftChange={setProductionDraft}
+              onParseRequestedChange={setProductionParseRequested}
+              onPreviewCardsChange={handleProductionPreviewCardsChange}
+              parseRequested={productionParseRequested}
+            />
+            {productionPreviewCards.length === 0 ? (
+              <details className={styles.workspaceToolGroup}>
+                <summary>mock 核對卡片範例</summary>
+                <AdminOrdersCheckCardPreview batchContext={batchContext} />
+              </details>
+            ) : null}
+          </div>
+        ) : null}
 
-      <AdminOrdersGoogleFormPreview batchContext={batchContext} />
+        {activeWorkspaceTab === "routing" ? (
+          <AdminOrdersCardRoutingPreview batchContext={batchContext} productionCards={productionPreviewCards} />
+        ) : null}
 
-      <AdminOrdersCheckCardPreview batchContext={batchContext} />
-
-      <AdminOrdersPastePreview batchContext={batchContext} />
-
-      <AdminOrdersCardTextPreview batchContext={batchContext} />
+        {activeWorkspaceTab === "raw" ? (
+          <div className={styles.workspaceStack}>
+            <details className={styles.workspaceToolGroup}>
+              <summary>賀卡文字預覽</summary>
+              <AdminOrdersCardTextPreview batchContext={batchContext} />
+            </details>
+            <details className={styles.workspaceToolGroup}>
+              <summary>原始資料與 mock 範例說明</summary>
+              <div className={styles.rawWorkspaceNote}>
+                <p>Mock only. 原始資料、mock 範例與解析細節預設收合，避免核對時佔用頁面高度。</p>
+                <p>有實際賀卡製作預覽結果時，分流區會優先使用 browser-memory 結果，不再用 mock 分流範例。</p>
+              </div>
+            </details>
+          </div>
+        ) : null}
+      </section>
     </>
   );
 }
