@@ -180,9 +180,6 @@ export function AdminOrdersIntakePreview({
           <Field label="完整賀卡內容">
             <textarea value={draft.cardText} onChange={(event) => update("cardText", event.target.value)} />
           </Field>
-          <Field label="下款／送禮人">
-            <textarea value={draft.senderText} onChange={(event) => update("senderText", event.target.value)} />
-          </Field>
         </div>
 
         <div className={styles.intakeGrid}>
@@ -220,8 +217,7 @@ export function AdminOrdersIntakePreview({
             <h3>賀卡任務｜{preview.cardTask.status}</h3>
             <dl>
               <div><dt>收禮</dt><dd>{preview.cardTask.recipient || "請人工確認"}</dd></div>
-              <div><dt>賀卡</dt><dd>{preview.cardTask.cardText || "請人工確認"}</dd></div>
-              <div><dt>下款</dt><dd>{preview.cardTask.senderText || "請人工確認"}</dd></div>
+              <div><dt>賀卡全文</dt><dd>{preview.cardTask.cardText || "請人工確認"}</dd></div>
             </dl>
           </article>
 

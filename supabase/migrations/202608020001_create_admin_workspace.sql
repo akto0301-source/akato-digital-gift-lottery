@@ -43,7 +43,6 @@ create table if not exists public.admin_work_order_items (
   recipient_title text,
   recipient_organization text,
   card_text text,
-  sender_text text,
   plant_request text,
   reference_focus text,
   must_keep text,

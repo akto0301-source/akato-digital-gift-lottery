@@ -26,7 +26,6 @@ export type AdminOrderIntakeDraft = {
   recipientName: string;
   recipientOrganization: string;
   recipientTitle: string;
-  senderText: string;
 };
 
 export type AdminOrderIntakePreview = {
@@ -34,7 +33,6 @@ export type AdminOrderIntakePreview = {
     assignee: "珊珊";
     cardText: string;
     recipient: string;
-    senderText: string;
     status: "待打卡";
   };
   deliveryLabel: string;
@@ -73,7 +71,6 @@ export function createEmptyAdminOrderIntakeDraft(): AdminOrderIntakeDraft {
     recipientName: "",
     recipientOrganization: "",
     recipientTitle: "",
-    senderText: "",
   };
 }
 
@@ -97,7 +94,6 @@ export function validateAdminOrderIntake(draft: AdminOrderIntakeDraft) {
   if (!draft.recipientName.trim()) warnings.push("缺少收禮人");
   if (!draft.recipientTitle.trim()) warnings.push("缺少收禮人職稱");
   if (!draft.cardText.trim()) warnings.push("缺少賀卡內容");
-  if (!draft.senderText.trim()) warnings.push("缺少下款／送禮人");
   if (!draft.deliveryAddress.trim()) warnings.push("缺少配送地址");
   if (draft.items.length === 0) warnings.push("至少需要一項作品明細");
 
@@ -168,7 +164,6 @@ export function createAdminOrderIntakePreview(draft: AdminOrderIntakeDraft): Adm
       assignee: "珊珊",
       cardText: draft.cardText.trim(),
       recipient,
-      senderText: draft.senderText.trim(),
       status: "待打卡",
     },
     deliveryLabel,
