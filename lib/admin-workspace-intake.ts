@@ -2,30 +2,34 @@ export type IntakeItemType = "蘭花" | "植物" | "永生花" | "落地花籃" 
 
 export type SubstitutionPolicy = "由花藝師調整" | "替換前詢問客戶" | "不可替換";
 
-export type AdminOrderIntakeDraft = {
+export type AdminOrderIntakeItemDraft = {
+  id: string;
   amount: string;
+  itemType: IntakeItemType;
+  mustKeep: string;
+  plantRequest: string;
+  quantity: string;
+  referenceFocus: string;
+  specialRequirements: string;
+  substitutionPolicy: SubstitutionPolicy;
+};
+
+export type AdminOrderIntakeDraft = {
   building: string;
   cardText: string;
   customerName: string;
   deliveryAddress: string;
   deliveryDate: string;
   floor: string;
-  itemType: IntakeItemType;
-  mustKeep: string;
-  plantRequest: string;
-  quantity: string;
+  items: AdminOrderIntakeItemDraft[];
   rawSourceText: string;
   recipientName: string;
   recipientOrganization: string;
   recipientTitle: string;
-  referenceFocus: string;
   senderText: string;
-  specialRequirements: string;
-  substitutionPolicy: SubstitutionPolicy;
 };
 
 export type AdminOrderIntakePreview = {
-  amount: number;
   cardTask: {
     assignee: "珊珊";
     cardText: string;
@@ -42,27 +46,34 @@ export type AdminOrderIntakePreview = {
   }>;
 };
 
+export function createEmptyAdminOrderIntakeItem(id: string): AdminOrderIntakeItemDraft {
+  return {
+    id,
+    amount: "",
+    itemType: "植物",
+    mustKeep: "",
+    plantRequest: "",
+    quantity: "1",
+    referenceFocus: "",
+    specialRequirements: "",
+    substitutionPolicy: "替換前詢問客戶",
+  };
+}
+
 export function createEmptyAdminOrderIntakeDraft(): AdminOrderIntakeDraft {
   return {
-    amount: "",
     building: "",
     cardText: "",
     customerName: "",
     deliveryAddress: "",
     deliveryDate: "",
     floor: "",
-    itemType: "植物",
-    mustKeep: "",
-    plantRequest: "",
-    quantity: "1",
+    items: [createEmptyAdminOrderIntakeItem("intake-item-1")],
     rawSourceText: "",
     recipientName: "",
     recipientOrganization: "",
     recipientTitle: "",
-    referenceFocus: "",
     senderText: "",
-    specialRequirements: "",
-    substitutionPolicy: "替換前詢問客戶",
   };
 }
 
@@ -72,7 +83,9 @@ function parsePositiveInteger(value: string) {
 }
 
 function parseNonNegativeAmount(value: string) {
-  const parsed = Number(value.replace(/[，,]/g, ""));
+  const normalized = value.replace(/[，,]/g, "").trim();
+  if (!normalized) return null;
+  const parsed = Number(normalized);
   return Number.isFinite(parsed) && parsed >= 0 ? parsed : null;
 }
 
@@ -86,9 +99,14 @@ export function validateAdminOrderIntake(draft: AdminOrderIntakeDraft) {
   if (!draft.cardText.trim()) warnings.push("缺少賀卡內容");
   if (!draft.senderText.trim()) warnings.push("缺少下款／送禮人");
   if (!draft.deliveryAddress.trim()) warnings.push("缺少配送地址");
-  if (!draft.plantRequest.trim()) warnings.push("尚未說明作品需求");
-  if (parsePositiveInteger(draft.quantity) === null) warnings.push("數量必須是大於 0 的整數");
-  if (parseNonNegativeAmount(draft.amount) === null) warnings.push("價位必須是 0 或正數");
+  if (draft.items.length === 0) warnings.push("至少需要一項作品明細");
+
+  draft.items.forEach((item, index) => {
+    const label = `作品 ${index + 1}`;
+    if (!item.plantRequest.trim()) warnings.push(`${label}：尚未說明作品需求`);
+    if (parsePositiveInteger(item.quantity) === null) warnings.push(`${label}：數量必須是大於 0 的整數`);
+    if (parseNonNegativeAmount(item.amount) === null) warnings.push(`${label}：價位必須是 0 或正數`);
+  });
 
   return warnings;
 }
@@ -98,10 +116,13 @@ function joinNonEmpty(parts: string[], separator: string) {
 }
 
 export function createAdminOrderIntakePreview(draft: AdminOrderIntakeDraft): AdminOrderIntakePreview | null {
-  const quantity = parsePositiveInteger(draft.quantity);
-  const amount = parseNonNegativeAmount(draft.amount);
+  const parsedItems = draft.items.map((item) => ({
+    draft: item,
+    amount: parseNonNegativeAmount(item.amount),
+    quantity: parsePositiveInteger(item.quantity),
+  }));
 
-  if (quantity === null || amount === null) {
+  if (parsedItems.length === 0 || parsedItems.some((item) => item.amount === null || item.quantity === null)) {
     return null;
   }
 
@@ -120,16 +141,29 @@ export function createAdminOrderIntakePreview(draft: AdminOrderIntakeDraft): Adm
     ],
     "｜",
   );
-  const requirements = [
-    `指定／期待：${draft.plantRequest.trim() || "請人工確認"}`,
-    `參考照片重點：${draft.referenceFocus.trim() || "請人工確認"}`,
-    `不可更動：${draft.mustKeep.trim() || "無／請人工確認"}`,
-    `缺貨處理：${draft.substitutionPolicy}`,
-    `特殊需求：${draft.specialRequirements.trim() || "無"}`,
-  ];
+  let workCardNumber = 0;
+  const workCards = parsedItems.flatMap(({ draft: item, amount, quantity }) => {
+    if (amount === null || quantity === null) return [];
+
+    const requirements = [
+      `指定／期待：${item.plantRequest.trim() || "請人工確認"}`,
+      `參考照片重點：${item.referenceFocus.trim() || "請人工確認"}`,
+      `不可更動：${item.mustKeep.trim() || "無／請人工確認"}`,
+      `缺貨處理：${item.substitutionPolicy}`,
+      `特殊需求：${item.specialRequirements.trim() || "無"}`,
+    ];
+
+    return Array.from({ length: quantity }, (_, itemIndex) => {
+      workCardNumber += 1;
+      return {
+        id: `intake-work-card-${item.id}-${itemIndex + 1}`,
+        itemLabel: `第 ${workCardNumber} 盆｜${item.itemType}｜NT$${amount.toLocaleString("zh-TW")}`,
+        requirements,
+      };
+    });
+  });
 
   return {
-    amount,
     cardTask: {
       assignee: "珊珊",
       cardText: draft.cardText.trim(),
@@ -138,11 +172,7 @@ export function createAdminOrderIntakePreview(draft: AdminOrderIntakeDraft): Adm
       status: "待打卡",
     },
     deliveryLabel,
-    quantity,
-    workCards: Array.from({ length: quantity }, (_, index) => ({
-      id: `intake-work-card-${index + 1}`,
-      itemLabel: `第 ${index + 1} 盆｜${draft.itemType}｜NT$${amount.toLocaleString("zh-TW")}`,
-      requirements,
-    })),
+    quantity: workCards.length,
+    workCards,
   };
 }

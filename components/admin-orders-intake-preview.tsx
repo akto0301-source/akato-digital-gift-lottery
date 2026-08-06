@@ -4,7 +4,9 @@ import styles from "@/app/admin/orders/admin-orders.module.css";
 import {
   createAdminOrderIntakePreview,
   createEmptyAdminOrderIntakeDraft,
+  createEmptyAdminOrderIntakeItem,
   type AdminOrderIntakeDraft,
+  type AdminOrderIntakeItemDraft,
   validateAdminOrderIntake,
 } from "@/lib/admin-workspace-intake";
 
@@ -41,6 +43,30 @@ export function AdminOrdersIntakePreview({
 
   function update<K extends keyof AdminOrderIntakeDraft>(key: K, value: AdminOrderIntakeDraft[K]) {
     onDraftChange({ ...draft, [key]: value });
+    onPreviewRequestedChange(false);
+  }
+
+  function updateItem<K extends keyof AdminOrderIntakeItemDraft>(
+    itemId: string,
+    key: K,
+    value: AdminOrderIntakeItemDraft[K],
+  ) {
+    onDraftChange({
+      ...draft,
+      items: draft.items.map((item) => item.id === itemId ? { ...item, [key]: value } : item),
+    });
+    onPreviewRequestedChange(false);
+  }
+
+  function addItem() {
+    const itemId = `intake-item-${Date.now()}-${draft.items.length + 1}`;
+    onDraftChange({ ...draft, items: [...draft.items, createEmptyAdminOrderIntakeItem(itemId)] });
+    onPreviewRequestedChange(false);
+  }
+
+  function removeItem(itemId: string) {
+    if (draft.items.length === 1) return;
+    onDraftChange({ ...draft, items: draft.items.filter((item) => item.id !== itemId) });
     onPreviewRequestedChange(false);
   }
 
@@ -91,37 +117,66 @@ export function AdminOrdersIntakePreview({
           <Field label="單位">
             <input value={draft.recipientOrganization} onChange={(event) => update("recipientOrganization", event.target.value)} />
           </Field>
-          <Field label="品項">
-            <select value={draft.itemType} onChange={(event) => update("itemType", event.target.value as AdminOrderIntakeDraft["itemType"])}>
-              <option>植物</option><option>蘭花</option><option>永生花</option><option>落地花籃</option><option>其他</option>
-            </select>
-          </Field>
-          <Field label="每盆價位">
-            <input inputMode="numeric" value={draft.amount} onChange={(event) => update("amount", event.target.value)} placeholder="3500" />
-          </Field>
-          <Field label="數量">
-            <input inputMode="numeric" min="1" type="number" value={draft.quantity} onChange={(event) => update("quantity", event.target.value)} />
-          </Field>
+        </div>
+
+        <div className={styles.intakeItems}>
+          <div className={styles.intakeItemsTitle}>
+            <div>
+              <span>作品明細</span>
+              <h3>不同品項或價位請分開建立</h3>
+            </div>
+            <strong>{draft.items.length} 項</strong>
+          </div>
+
+          {draft.items.map((item, index) => (
+            <article className={styles.intakeItemCard} key={item.id}>
+              <div className={styles.intakeItemHeader}>
+                <h4>作品 {index + 1}</h4>
+                {draft.items.length > 1 ? (
+                  <button type="button" onClick={() => removeItem(item.id)}>移除此項</button>
+                ) : null}
+              </div>
+
+              <div className={styles.intakeGrid}>
+                <Field label="品項">
+                  <select value={item.itemType} onChange={(event) => updateItem(item.id, "itemType", event.target.value as AdminOrderIntakeItemDraft["itemType"])}>
+                    <option>植物</option><option>蘭花</option><option>永生花</option><option>落地花籃</option><option>其他</option>
+                  </select>
+                </Field>
+                <Field label="每盆價位">
+                  <input inputMode="numeric" value={item.amount} onChange={(event) => updateItem(item.id, "amount", event.target.value)} placeholder="請輸入，例如 3500" />
+                </Field>
+                <Field label="數量">
+                  <input inputMode="numeric" min="1" type="number" value={item.quantity} onChange={(event) => updateItem(item.id, "quantity", event.target.value)} />
+                </Field>
+              </div>
+
+              <div className={styles.intakeWideFields}>
+                <Field label="客戶指定或期待什麼植物／作品？">
+                  <textarea value={item.plantRequest} onChange={(event) => updateItem(item.id, "plantRequest", event.target.value)} />
+                </Field>
+                <Field label="參考照片是參考哪一部分？">
+                  <textarea value={item.referenceFocus} onChange={(event) => updateItem(item.id, "referenceFocus", event.target.value)} placeholder="植物品種、盆器、顏色、整體感覺……" />
+                </Field>
+                <Field label="一定不能更換的部分">
+                  <textarea value={item.mustKeep} onChange={(event) => updateItem(item.id, "mustKeep", event.target.value)} />
+                </Field>
+                <Field label="指定品缺貨時">
+                  <select value={item.substitutionPolicy} onChange={(event) => updateItem(item.id, "substitutionPolicy", event.target.value as AdminOrderIntakeItemDraft["substitutionPolicy"])}>
+                    <option>替換前詢問客戶</option><option>由花藝師調整</option><option>不可替換</option>
+                  </select>
+                </Field>
+                <Field label="其他特殊需求">
+                  <textarea value={item.specialRequirements} onChange={(event) => updateItem(item.id, "specialRequirements", event.target.value)} />
+                </Field>
+              </div>
+            </article>
+          ))}
+
+          <button className={styles.intakeAddItem} type="button" onClick={addItem}>＋ 新增另一項作品</button>
         </div>
 
         <div className={styles.intakeWideFields}>
-          <Field label="客戶指定或期待什麼植物／作品？">
-            <textarea value={draft.plantRequest} onChange={(event) => update("plantRequest", event.target.value)} />
-          </Field>
-          <Field label="參考照片是參考哪一部分？">
-            <textarea value={draft.referenceFocus} onChange={(event) => update("referenceFocus", event.target.value)} placeholder="植物品種、盆器、顏色、整體感覺……" />
-          </Field>
-          <Field label="一定不能更換的部分">
-            <textarea value={draft.mustKeep} onChange={(event) => update("mustKeep", event.target.value)} />
-          </Field>
-          <Field label="指定品缺貨時">
-            <select value={draft.substitutionPolicy} onChange={(event) => update("substitutionPolicy", event.target.value as AdminOrderIntakeDraft["substitutionPolicy"])}>
-              <option>替換前詢問客戶</option><option>由花藝師調整</option><option>不可替換</option>
-            </select>
-          </Field>
-          <Field label="其他特殊需求">
-            <textarea value={draft.specialRequirements} onChange={(event) => update("specialRequirements", event.target.value)} />
-          </Field>
           <Field label="完整賀卡內容">
             <textarea value={draft.cardText} onChange={(event) => update("cardText", event.target.value)} />
           </Field>
