@@ -90,7 +90,7 @@ function rowToAdminOrder(row: SheetRow, index: number): AdminOrder | null {
   const greeting = row["賀詞"]?.trim();
   const signature = row["下款"]?.trim();
   const note = row["備註"]?.trim();
-  const timestamp = rawDeliveryDate ? `${rawDeliveryDate}T00:00:00+08:00` : "";
+  const timestamp = rawDeliveryDate ? `${rawDeliveryDate}T00:00:00+08:00` : new Date().toISOString();
 
   return {
     id: `sheet-${orderNumber}-${index + 2}`,
