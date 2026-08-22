@@ -4,14 +4,10 @@ import {
   filterAdminOrders,
   formatCurrency,
   formatDateTime,
-  getAdminOrderSummary,
-  getAdminOrderFocusLabels,
   getItemTypeSummary,
   getNotTakenPhotoOrders,
-  getTodayActionOrders,
   getUnconfirmedCardOrders,
   itemTypeLabels,
-  MOCK_TODAY,
   paymentStatusLabels,
   photoStatusLabels,
   productionStatusLabels,
@@ -52,6 +48,69 @@ function buildFilters(params: Record<string, string | string[] | undefined>): Ad
   };
 }
 
+function formatTaipeiDate(date: Date) {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Asia/Taipei",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(date);
+  const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+  return `${values.year}-${values.month}-${values.day}`;
+}
+
+function getTaipeiToday() {
+  return formatTaipeiDate(new Date());
+}
+
+function addDays(dateString: string, days: number) {
+  const date = new Date(`${dateString}T00:00:00+08:00`);
+  date.setUTCDate(date.getUTCDate() + days);
+  return formatTaipeiDate(date);
+}
+
+function getLiveFocusLabels(order: AdminOrder, today: string) {
+  const labels: string[] = [];
+
+  if (order.deliveryDate === today) {
+    labels.push("今日交付");
+  }
+
+  if (order.productionStatus === "pending" || order.productionStatus === "making") {
+    labels.push(productionStatusLabels[order.productionStatus]);
+  }
+
+  if (order.cardStatus === "unorganized") {
+    labels.push("賀卡未整理");
+  }
+
+  if (order.photoStatus === "not_taken") {
+    labels.push("未拍照");
+  }
+
+  return labels;
+}
+
+function getLiveTodayActionOrders(orders: AdminOrder[], today: string) {
+  return sortAdminOrdersByDeliveryDate(
+    orders.filter((order) => order.deliveryDate <= today && getLiveFocusLabels(order, today).length > 0),
+  );
+}
+
+function getLiveSummary(orders: AdminOrder[], today: string) {
+  const totalAmount = orders.reduce((sum, order) => sum + order.amount, 0);
+  const weekEnd = addDays(today, 6);
+
+  return {
+    totalOrders: orders.length,
+    pendingOrders: orders.filter((order) => order.productionStatus === "pending").length,
+    deliveryThisWeek: orders.filter((order) => order.deliveryDate >= today && order.deliveryDate <= weekEnd).length,
+    unconfirmedCards: orders.filter((order) => order.cardStatus === "unorganized").length,
+    notTakenPhotos: orders.filter((order) => order.photoStatus === "not_taken").length,
+    totalAmount,
+  };
+}
+
 async function loadOrders() {
   try {
     const sheetOrders = await loadGoogleSheetAdminOrders();
@@ -81,10 +140,12 @@ function StatusBadge({ tone, children }: { tone: string; children: React.ReactNo
 function CompactOrderList({
   emptyText,
   orders,
+  today,
   showFocus = false,
 }: {
   emptyText: string;
   orders: AdminOrder[];
+  today: string;
   showFocus?: boolean;
 }) {
   if (orders.length === 0) {
@@ -94,7 +155,7 @@ function CompactOrderList({
   return (
     <ul className={styles.compactList}>
       {orders.map((order) => {
-        const focusLabels = showFocus ? getAdminOrderFocusLabels(order) : [];
+        const focusLabels = showFocus ? getLiveFocusLabels(order, today) : [];
 
         return (
           <li className={styles.compactItem} key={order.id}>
@@ -156,10 +217,11 @@ export default async function AdminOrdersPage({ searchParams }: AdminOrdersPageP
   }
 
   const { orders, source, usingFallback } = await loadOrders();
+  const today = getTaipeiToday();
   const filters = buildFilters(params);
   const filteredOrders = sortAdminOrdersByDeliveryDate(filterAdminOrders(orders, filters));
-  const summary = getAdminOrderSummary(filteredOrders);
-  const todayActionOrders = getTodayActionOrders(orders);
+  const summary = getLiveSummary(filteredOrders, today);
+  const todayActionOrders = getLiveTodayActionOrders(orders, today);
   const unconfirmedCardOrders = getUnconfirmedCardOrders(orders);
   const notTakenPhotoOrders = getNotTakenPhotoOrders(orders);
   const itemTypeSummary = getItemTypeSummary(orders);
@@ -169,13 +231,13 @@ export default async function AdminOrdersPage({ searchParams }: AdminOrdersPageP
     <main className={styles.page}>
       <header className={styles.header}>
         <div>
-          <p className={styles.eyebrow}>Akato Internal Test</p>
+          <p className={styles.eyebrow}>Akato Internal / Google Sheet</p>
           <h1>訂單整理頁</h1>
-          <p className={styles.lede}>目前資料來源：{source}。此階段只讀、不回寫 Google Sheet。</p>
+          <p className={styles.lede}>目前資料來源：{source}。此階段只讀，不回寫 Google Sheet。</p>
           <p className={styles.safetyNotice}>
             {usingFallback
-              ? "Google Sheet 讀取失敗，現在顯示內建 mock 備援資料。"
-              : "Google Sheet read-only test. Changes in this page do not write back to the sheet."}
+              ? "Google Sheet 讀取失敗，目前顯示內建 mock 備援資料。"
+              : "Google Sheet 已連線。這個頁面目前只讀，不會修改試算表內容。"}
           </p>
         </div>
         <div className={styles.mockPill}>{usingFallback ? "Mock fallback" : "Sheet read-only"}</div>
@@ -184,7 +246,7 @@ export default async function AdminOrdersPage({ searchParams }: AdminOrdersPageP
       <section className={styles.summaryGrid} aria-label="訂單統計摘要">
         <article><span>總訂單數</span><strong>{summary.totalOrders}</strong></article>
         <article><span>待處理數</span><strong>{summary.pendingOrders}</strong></article>
-        <article><span>本週交付數</span><strong>{summary.deliveryThisWeek}</strong></article>
+        <article><span>未來 7 天交付</span><strong>{summary.deliveryThisWeek}</strong></article>
         <article><span>未確認賀卡</span><strong>{summary.unconfirmedCards}</strong></article>
         <article><span>未拍照</span><strong>{summary.notTakenPhotos}</strong></article>
         <article><span>總金額</span><strong>{formatCurrency(summary.totalAmount)}</strong></article>
@@ -194,14 +256,15 @@ export default async function AdminOrdersPage({ searchParams }: AdminOrdersPageP
         <article className={styles.workflowPanel}>
           <div className={styles.panelHeader}>
             <div>
-              <span>Test today: {MOCK_TODAY}</span>
+              <span>今日：{today}</span>
               <h2>今日要處理</h2>
             </div>
             <strong>{todayActionOrders.length}</strong>
           </div>
           <CompactOrderList
-            emptyText="目前沒有需要處理的測試訂單。"
+            emptyText="目前沒有今天以前仍需處理的訂單。"
             orders={todayActionOrders}
+            today={today}
             showFocus
           />
         </article>
@@ -217,6 +280,7 @@ export default async function AdminOrdersPage({ searchParams }: AdminOrdersPageP
           <CompactOrderList
             emptyText="目前沒有未確認賀卡。"
             orders={unconfirmedCardOrders}
+            today={today}
           />
         </article>
 
@@ -231,6 +295,7 @@ export default async function AdminOrdersPage({ searchParams }: AdminOrdersPageP
           <CompactOrderList
             emptyText="目前沒有未拍照訂單。"
             orders={notTakenPhotoOrders}
+            today={today}
           />
         </article>
       </section>
@@ -321,7 +386,7 @@ export default async function AdminOrdersPage({ searchParams }: AdminOrdersPageP
         ))}
 
         {filteredOrders.length === 0 ? (
-          <div className={styles.emptyState}>沒有符合條件的測試訂單。</div>
+          <div className={styles.emptyState}>沒有符合條件的訂單。</div>
         ) : null}
       </section>
     </main>
