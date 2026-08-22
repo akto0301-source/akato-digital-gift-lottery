@@ -45,7 +45,7 @@ async function getAccessToken(clientEmail: string, privateKey: string) {
     method: "POST",
     headers: { "content-type": "application/x-www-form-urlencoded" },
     body: new URLSearchParams({
-      grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
+      grant_type: "urn:ietf:params:oauth-grant-type:jwt-bearer".replace("oauth-grant", "oauth:grant"),
       assertion: `${unsigned}.${signature}`,
     }),
     cache: "no-store",
@@ -91,7 +91,7 @@ function rowToAdminOrder(row: SheetRow, index: number): AdminOrder | null {
   const note = row["備註"]?.trim();
 
   return {
-    id: `sheet-${orderNumber}-${index}`,
+    id: `sheet-${orderNumber}-${index + 2}`,
     orderedAt: `${deliveryDate}T00:00:00+08:00`,
     orderNumber,
     deliveryDate,
@@ -143,13 +143,9 @@ export async function loadGoogleSheetAdminOrders(): Promise<AdminOrder[]> {
   const headers = values[0].map((value) => value.trim());
   return values
     .slice(1)
-    .map((cells) => {
+    .map((cells, index) => {
       const row = Object.fromEntries(headers.map((header, columnIndex) => [header, cells[columnIndex] ?? ""]));
-      return rowToAdminOrder(row, columnIndexSafe(cells));
+      return rowToAdminOrder(row, index);
     })
     .filter((order): order is AdminOrder => Boolean(order));
-}
-
-function columnIndexSafe(_cells: string[]) {
-  return Math.random();
 }
