@@ -24,6 +24,7 @@ import {
   type PhotoStatus,
   type ProductionStatus,
 } from "@/lib/admin-orders";
+import { loadGoogleSheetAdminOrders } from "@/lib/google-sheets-admin-orders";
 import { AdminOrdersBatchPreviewWorkspace } from "@/components/admin-orders-batch-preview-workspace";
 import { notFound } from "next/navigation";
 import styles from "./admin-orders.module.css";
@@ -49,6 +50,24 @@ function buildFilters(params: Record<string, string | string[] | undefined>): Ad
     cardStatus: asFilterValue<CardStatus>(pickValue(params.card), Object.keys(cardStatusLabels) as CardStatus[]),
     photoStatus: asFilterValue<PhotoStatus>(pickValue(params.photo), Object.keys(photoStatusLabels) as PhotoStatus[]),
   };
+}
+
+async function loadOrders() {
+  try {
+    const sheetOrders = await loadGoogleSheetAdminOrders();
+    return {
+      orders: sheetOrders,
+      source: "Google Sheet 唯讀測試資料",
+      usingFallback: false,
+    };
+  } catch (error) {
+    console.error("Admin Orders Google Sheets read failed", error);
+    return {
+      orders: adminMockOrders,
+      source: "內建 Mock 備援資料",
+      usingFallback: true,
+    };
+  }
 }
 
 function StatusBadge({ tone, children }: { tone: string; children: React.ReactNode }) {
@@ -136,25 +155,30 @@ export default async function AdminOrdersPage({ searchParams }: AdminOrdersPageP
     notFound();
   }
 
+  const { orders, source, usingFallback } = await loadOrders();
   const filters = buildFilters(params);
-  const filteredOrders = sortAdminOrdersByDeliveryDate(filterAdminOrders(adminMockOrders, filters));
+  const filteredOrders = sortAdminOrdersByDeliveryDate(filterAdminOrders(orders, filters));
   const summary = getAdminOrderSummary(filteredOrders);
-  const todayActionOrders = getTodayActionOrders(adminMockOrders);
-  const unconfirmedCardOrders = getUnconfirmedCardOrders(adminMockOrders);
-  const notTakenPhotoOrders = getNotTakenPhotoOrders(adminMockOrders);
-  const itemTypeSummary = getItemTypeSummary(adminMockOrders);
+  const todayActionOrders = getTodayActionOrders(orders);
+  const unconfirmedCardOrders = getUnconfirmedCardOrders(orders);
+  const notTakenPhotoOrders = getNotTakenPhotoOrders(orders);
+  const itemTypeSummary = getItemTypeSummary(orders);
   const accessKeyField = <input type="hidden" name="key" value={requestKey} />;
 
   return (
     <main className={styles.page}>
       <header className={styles.header}>
         <div>
-          <p className={styles.eyebrow}>Akato Internal Mock</p>
+          <p className={styles.eyebrow}>Akato Internal Test</p>
           <h1>訂單整理頁</h1>
-          <p className={styles.lede}>Mock / 內部測試資料。此頁不接資料庫、不寫入資料、不代表真實付款狀態。</p>
-          <p className={styles.safetyNotice}>Mock data only. Do not store real customer/order data here.</p>
+          <p className={styles.lede}>目前資料來源：{source}。此階段只讀、不回寫 Google Sheet。</p>
+          <p className={styles.safetyNotice}>
+            {usingFallback
+              ? "Google Sheet 讀取失敗，現在顯示內建 mock 備援資料。"
+              : "Google Sheet read-only test. Changes in this page do not write back to the sheet."}
+          </p>
         </div>
-        <div className={styles.mockPill}>Protected mock</div>
+        <div className={styles.mockPill}>{usingFallback ? "Mock fallback" : "Sheet read-only"}</div>
       </header>
 
       <section className={styles.summaryGrid} aria-label="訂單統計摘要">
@@ -170,13 +194,13 @@ export default async function AdminOrdersPage({ searchParams }: AdminOrdersPageP
         <article className={styles.workflowPanel}>
           <div className={styles.panelHeader}>
             <div>
-              <span>Mock today: {MOCK_TODAY}</span>
+              <span>Test today: {MOCK_TODAY}</span>
               <h2>今日要處理</h2>
             </div>
             <strong>{todayActionOrders.length}</strong>
           </div>
           <CompactOrderList
-            emptyText="目前沒有需要處理的 mock 訂單。"
+            emptyText="目前沒有需要處理的測試訂單。"
             orders={todayActionOrders}
             showFocus
           />
@@ -214,7 +238,7 @@ export default async function AdminOrdersPage({ searchParams }: AdminOrdersPageP
       <section className={styles.itemStats} aria-label="品項統計">
         <div className={styles.itemStatsHeader}>
           <span>品項統計</span>
-          <strong>{adminMockOrders.length}</strong>
+          <strong>{orders.length}</strong>
         </div>
         <div className={styles.itemStatsGrid}>
           {itemTypeSummary.map((item) => (
@@ -288,8 +312,8 @@ export default async function AdminOrdersPage({ searchParams }: AdminOrdersPageP
                 <div><dt>聯絡方式</dt><dd>{order.contact}</dd></div>
                 <div><dt>賀卡狀態</dt><dd><StatusBadge tone={`card-${order.cardStatus}`}>{cardStatusLabels[order.cardStatus]}</StatusBadge></dd></div>
                 <div><dt>照片狀態</dt><dd><StatusBadge tone={`photo-${order.photoStatus}`}>{photoStatusLabels[order.photoStatus]}</StatusBadge></dd></div>
-                <div><dt>祝福信連結</dt><dd><a href={order.blessingLink}>{order.blessingLink}</a></dd></div>
-                <div><dt>備註</dt><dd>{order.note}</dd></div>
+                <div><dt>祝福信連結</dt><dd>{order.blessingLink === "#" ? "尚未建立" : <a href={order.blessingLink}>{order.blessingLink}</a>}</dd></div>
+                <div><dt>備註</dt><dd>{order.note || "—"}</dd></div>
                 <div><dt>最後更新時間</dt><dd>{formatDateTime(order.updatedAt)}</dd></div>
               </dl>
             </div>
@@ -297,7 +321,7 @@ export default async function AdminOrdersPage({ searchParams }: AdminOrdersPageP
         ))}
 
         {filteredOrders.length === 0 ? (
-          <div className={styles.emptyState}>沒有符合條件的 mock 訂單。</div>
+          <div className={styles.emptyState}>沒有符合條件的測試訂單。</div>
         ) : null}
       </section>
     </main>
