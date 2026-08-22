@@ -80,7 +80,8 @@ function rowToAdminOrder(row: SheetRow, index: number): AdminOrder | null {
   const orderNumber = row["訂單編號"]?.trim();
   if (!orderNumber) return null;
 
-  const deliveryDate = row["交付日期"]?.trim() || "2026-01-01";
+  const rawDeliveryDate = row["交付日期"]?.trim() || "";
+  const deliveryDate = rawDeliveryDate || "待確認日期";
   const itemName = row["品項"]?.trim() || "未填品項";
   const recipient = row["收禮人"]?.trim() || "未填收禮人";
   const title = row["職稱"]?.trim();
@@ -89,10 +90,11 @@ function rowToAdminOrder(row: SheetRow, index: number): AdminOrder | null {
   const greeting = row["賀詞"]?.trim();
   const signature = row["下款"]?.trim();
   const note = row["備註"]?.trim();
+  const timestamp = rawDeliveryDate ? `${rawDeliveryDate}T00:00:00+08:00` : "";
 
   return {
     id: `sheet-${orderNumber}-${index + 2}`,
-    orderedAt: `${deliveryDate}T00:00:00+08:00`,
+    orderedAt: timestamp,
     orderNumber,
     deliveryDate,
     recipientName: title ? `${recipient}｜${title}` : recipient,
@@ -110,7 +112,7 @@ function rowToAdminOrder(row: SheetRow, index: number): AdminOrder | null {
     note: [greeting ? `賀詞：${greeting}` : "", signature ? `下款：${signature}` : "", note]
       .filter(Boolean)
       .join("；"),
-    updatedAt: `${deliveryDate}T00:00:00+08:00`,
+    updatedAt: timestamp,
   };
 }
 
