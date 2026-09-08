@@ -20,14 +20,6 @@ create table if not exists public.admin_work_orders (
   updated_at timestamptz not null default now()
 );
 
-create table if not exists public.admin_work_order_access (
-  order_id uuid not null references public.admin_work_orders (id) on delete cascade,
-  user_id uuid not null references public.admin_workspace_staff (user_id) on delete cascade,
-  granted_by uuid references auth.users (id),
-  created_at timestamptz not null default now(),
-  primary key (order_id, user_id)
-);
-
 create table if not exists public.admin_work_order_sources (
   id uuid primary key default gen_random_uuid(),
   order_id uuid not null references public.admin_work_orders (id) on delete cascade,
@@ -97,9 +89,6 @@ create table if not exists public.admin_work_order_photos (
 create index if not exists admin_work_orders_delivery_date_idx
   on public.admin_work_orders (delivery_date, status);
 
-create index if not exists admin_work_order_access_user_idx
-  on public.admin_work_order_access (user_id, order_id);
-
 create index if not exists admin_work_order_sources_order_idx
   on public.admin_work_order_sources (order_id, sequence_number);
 
@@ -114,7 +103,6 @@ create index if not exists admin_work_order_photos_item_idx
 
 alter table public.admin_workspace_staff enable row level security;
 alter table public.admin_work_orders enable row level security;
-alter table public.admin_work_order_access enable row level security;
 alter table public.admin_work_order_sources enable row level security;
 alter table public.admin_work_order_items enable row level security;
 alter table public.admin_work_order_tasks enable row level security;
@@ -126,9 +114,6 @@ on conflict (id) do update set public = excluded.public;
 
 comment on table public.admin_work_orders is
   'Akato internal order lifecycle. No client-side access policy is installed in phase 1.';
-
-comment on table public.admin_work_order_access is
-  'Explicit order membership. Staff roles control capabilities; these rows control which orders a staff member may access.';
 
 comment on table public.admin_work_order_sources is
   'Append-only source evidence such as copied LINE text, screenshots, files, and later customer changes.';
