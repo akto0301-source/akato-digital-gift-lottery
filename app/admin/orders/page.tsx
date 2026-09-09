@@ -22,7 +22,8 @@ import {
 } from "@/lib/admin-orders";
 import { loadGoogleSheetAdminOrders } from "@/lib/google-sheets-admin-orders";
 import { AdminOrdersBatchPreviewWorkspace } from "@/components/admin-orders-batch-preview-workspace";
-import { notFound } from "next/navigation";
+import { getAuthorizedStaff } from "@/lib/supabase/admin-auth";
+import { notFound, redirect } from "next/navigation";
 import styles from "./admin-orders.module.css";
 
 type AdminOrdersPageProps = {
@@ -209,12 +210,10 @@ function FilterSelect({
 
 export default async function AdminOrdersPage({ searchParams }: AdminOrdersPageProps) {
   const params = searchParams ? await searchParams : {};
-  const configuredKey = process.env.ADMIN_ORDERS_ACCESS_KEY;
-  const requestKey = pickValue(params.key);
-
-  if (!configuredKey || !requestKey || requestKey !== configuredKey) {
-    notFound();
-  }
+  const staff = await getAuthorizedStaff();
+  if (!staff) redirect("/admin/login");
+  // Until role-scoped Sheets views exist, only full-board roles may load Sheets.
+  if (staff.role !== "owner" && staff.role !== "order_intake") notFound();
 
   const { orders, source, usingFallback } = await loadOrders();
   const today = getTaipeiToday();
@@ -225,7 +224,6 @@ export default async function AdminOrdersPage({ searchParams }: AdminOrdersPageP
   const unconfirmedCardOrders = getUnconfirmedCardOrders(orders);
   const notTakenPhotoOrders = getNotTakenPhotoOrders(orders);
   const itemTypeSummary = getItemTypeSummary(orders);
-  const accessKeyField = <input type="hidden" name="key" value={requestKey} />;
 
   return (
     <main className={styles.page}>
@@ -318,7 +316,6 @@ export default async function AdminOrdersPage({ searchParams }: AdminOrdersPageP
       <AdminOrdersBatchPreviewWorkspace />
 
       <form className={styles.filters} action="/admin/orders">
-        {accessKeyField}
         <label className={styles.searchField}>
           <span>搜尋</span>
           <input
@@ -335,7 +332,7 @@ export default async function AdminOrdersPage({ searchParams }: AdminOrdersPageP
         <FilterSelect label="照片狀態" name="photo" options={photoStatusLabels} value={filters.photoStatus} />
         <div className={styles.filterActions}>
           <button type="submit">套用</button>
-          <a href={`/admin/orders?key=${encodeURIComponent(requestKey)}`}>清除</a>
+          <a href="/admin/orders">清除</a>
         </div>
       </form>
 

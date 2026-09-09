@@ -7,8 +7,10 @@ import { AdminOrdersCardProductionPreview, type ProductionCard } from "@/compone
 import { AdminOrdersCardRoutingPreview } from "@/components/admin-orders-card-routing-preview";
 import { AdminOrdersCheckCardPreview } from "@/components/admin-orders-check-card-preview";
 import { AdminOrdersGoogleFormPreview } from "@/components/admin-orders-google-form-preview";
+import { AdminOrdersIntakePreview } from "@/components/admin-orders-intake-preview";
 import { AdminOrdersLineMessagePreview } from "@/components/admin-orders-line-message-preview";
 import { AdminOrdersPastePreview } from "@/components/admin-orders-paste-preview";
+import { createEmptyAdminOrderIntakeDraft } from "@/lib/admin-workspace-intake";
 
 type MockShipmentBatch = {
   id: string;
@@ -32,7 +34,7 @@ export type BatchContext = {
 type WorkspaceTab = "paste" | "cards" | "routing" | "raw";
 
 const workspaceTabs: Array<{ id: WorkspaceTab; label: string }> = [
-  { id: "paste", label: "貼上資料" },
+  { id: "paste", label: "建立訂單" },
   { id: "cards", label: "賀卡核對" },
   { id: "routing", label: "配送分流" },
   { id: "raw", label: "原始資料" },
@@ -166,7 +168,9 @@ export function AdminOrdersBatchPreviewWorkspace() {
   const [productionDraft, setProductionDraft] = useState("");
   const [productionParseRequested, setProductionParseRequested] = useState(false);
   const [productionPreviewCards, setProductionPreviewCards] = useState<ProductionCard[]>([]);
-  const [activeWorkspaceTab, setActiveWorkspaceTab] = useState<WorkspaceTab>("cards");
+  const [intakeDraft, setIntakeDraft] = useState(createEmptyAdminOrderIntakeDraft);
+  const [intakePreviewRequested, setIntakePreviewRequested] = useState(false);
+  const [activeWorkspaceTab, setActiveWorkspaceTab] = useState<WorkspaceTab>("paste");
   const selectedBatch = mockShipmentBatches.find((batch) => batch.id === selectedBatchId) ?? mockShipmentBatches[0];
   const activeBatchDate = appliedCustomBatchDate || selectedBatch.deliveryDate;
   const activeBatchName = appliedCustomBatchDate ? `自訂 ${appliedCustomBatchDate} 出貨批次` : selectedBatch.name;
@@ -334,8 +338,14 @@ export function AdminOrdersBatchPreviewWorkspace() {
       <section className={styles.workspacePanel} aria-label="目前工作區">
         {activeWorkspaceTab === "paste" ? (
           <div className={styles.workspaceStack}>
+            <AdminOrdersIntakePreview
+              draft={intakeDraft}
+              onDraftChange={setIntakeDraft}
+              onPreviewRequestedChange={setIntakePreviewRequested}
+              previewRequested={intakePreviewRequested}
+            />
             <details className={styles.workspaceToolGroup} open>
-              <summary>LINE 訊息預覽</summary>
+              <summary>舊版 LINE 單段解析預覽</summary>
               <AdminOrdersLineMessagePreview batchContext={batchContext} />
             </details>
             <details className={styles.workspaceToolGroup}>
