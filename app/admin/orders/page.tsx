@@ -4,14 +4,10 @@ import {
   filterAdminOrders,
   formatCurrency,
   formatDateTime,
-  getAdminOrderSummary,
-  getAdminOrderFocusLabels,
   getItemTypeSummary,
   getNotTakenPhotoOrders,
-  getTodayActionOrders,
   getUnconfirmedCardOrders,
   itemTypeLabels,
-  MOCK_TODAY,
   paymentStatusLabels,
   photoStatusLabels,
   productionStatusLabels,
@@ -24,9 +20,10 @@ import {
   type PhotoStatus,
   type ProductionStatus,
 } from "@/lib/admin-orders";
+import { loadGoogleSheetAdminOrders } from "@/lib/google-sheets-admin-orders";
 import { AdminOrdersBatchPreviewWorkspace } from "@/components/admin-orders-batch-preview-workspace";
 import { getAuthorizedStaff } from "@/lib/supabase/admin-auth";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import styles from "./admin-orders.module.css";
 
 type AdminOrdersPageProps = {
@@ -52,6 +49,87 @@ function buildFilters(params: Record<string, string | string[] | undefined>): Ad
   };
 }
 
+function formatTaipeiDate(date: Date) {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Asia/Taipei",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(date);
+  const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+  return `${values.year}-${values.month}-${values.day}`;
+}
+
+function getTaipeiToday() {
+  return formatTaipeiDate(new Date());
+}
+
+function addDays(dateString: string, days: number) {
+  const date = new Date(`${dateString}T00:00:00+08:00`);
+  date.setUTCDate(date.getUTCDate() + days);
+  return formatTaipeiDate(date);
+}
+
+function getLiveFocusLabels(order: AdminOrder, today: string) {
+  const labels: string[] = [];
+
+  if (order.deliveryDate === today) {
+    labels.push("今日交付");
+  }
+
+  if (order.productionStatus === "pending" || order.productionStatus === "making") {
+    labels.push(productionStatusLabels[order.productionStatus]);
+  }
+
+  if (order.cardStatus === "unorganized") {
+    labels.push("賀卡未整理");
+  }
+
+  if (order.photoStatus === "not_taken") {
+    labels.push("未拍照");
+  }
+
+  return labels;
+}
+
+function getLiveTodayActionOrders(orders: AdminOrder[], today: string) {
+  return sortAdminOrdersByDeliveryDate(
+    orders.filter((order) => order.deliveryDate <= today && getLiveFocusLabels(order, today).length > 0),
+  );
+}
+
+function getLiveSummary(orders: AdminOrder[], today: string) {
+  const totalAmount = orders.reduce((sum, order) => sum + order.amount, 0);
+  const weekEnd = addDays(today, 6);
+
+  return {
+    totalOrders: orders.length,
+    pendingOrders: orders.filter((order) => order.productionStatus === "pending").length,
+    deliveryThisWeek: orders.filter((order) => order.deliveryDate >= today && order.deliveryDate <= weekEnd).length,
+    unconfirmedCards: orders.filter((order) => order.cardStatus === "unorganized").length,
+    notTakenPhotos: orders.filter((order) => order.photoStatus === "not_taken").length,
+    totalAmount,
+  };
+}
+
+async function loadOrders() {
+  try {
+    const sheetOrders = await loadGoogleSheetAdminOrders();
+    return {
+      orders: sheetOrders,
+      source: "Google Sheet 唯讀測試資料",
+      usingFallback: false,
+    };
+  } catch (error) {
+    console.error("Admin Orders Google Sheets read failed", error);
+    return {
+      orders: adminMockOrders,
+      source: "內建 Mock 備援資料",
+      usingFallback: true,
+    };
+  }
+}
+
 function StatusBadge({ tone, children }: { tone: string; children: React.ReactNode }) {
   return (
     <span className={`${styles.badge} ${styles[tone] ?? ""}`}>
@@ -63,10 +141,12 @@ function StatusBadge({ tone, children }: { tone: string; children: React.ReactNo
 function CompactOrderList({
   emptyText,
   orders,
+  today,
   showFocus = false,
 }: {
   emptyText: string;
   orders: AdminOrder[];
+  today: string;
   showFocus?: boolean;
 }) {
   if (orders.length === 0) {
@@ -76,7 +156,7 @@ function CompactOrderList({
   return (
     <ul className={styles.compactList}>
       {orders.map((order) => {
-        const focusLabels = showFocus ? getAdminOrderFocusLabels(order) : [];
+        const focusLabels = showFocus ? getLiveFocusLabels(order, today) : [];
 
         return (
           <li className={styles.compactItem} key={order.id}>
@@ -130,32 +210,41 @@ function FilterSelect({
 
 export default async function AdminOrdersPage({ searchParams }: AdminOrdersPageProps) {
   const params = searchParams ? await searchParams : {};
-  if (!(await getAuthorizedStaff())) redirect("/admin/login");
+  const staff = await getAuthorizedStaff();
+  if (!staff) redirect("/admin/login");
+  // Until role-scoped Sheets views exist, only full-board roles may load Sheets.
+  if (staff.role !== "owner" && staff.role !== "order_intake") notFound();
 
+  const { orders, source, usingFallback } = await loadOrders();
+  const today = getTaipeiToday();
   const filters = buildFilters(params);
-  const filteredOrders = sortAdminOrdersByDeliveryDate(filterAdminOrders(adminMockOrders, filters));
-  const summary = getAdminOrderSummary(filteredOrders);
-  const todayActionOrders = getTodayActionOrders(adminMockOrders);
-  const unconfirmedCardOrders = getUnconfirmedCardOrders(adminMockOrders);
-  const notTakenPhotoOrders = getNotTakenPhotoOrders(adminMockOrders);
-  const itemTypeSummary = getItemTypeSummary(adminMockOrders);
+  const filteredOrders = sortAdminOrdersByDeliveryDate(filterAdminOrders(orders, filters));
+  const summary = getLiveSummary(filteredOrders, today);
+  const todayActionOrders = getLiveTodayActionOrders(orders, today);
+  const unconfirmedCardOrders = getUnconfirmedCardOrders(orders);
+  const notTakenPhotoOrders = getNotTakenPhotoOrders(orders);
+  const itemTypeSummary = getItemTypeSummary(orders);
 
   return (
     <main className={styles.page}>
       <header className={styles.header}>
         <div>
-          <p className={styles.eyebrow}>Akato Internal Mock</p>
+          <p className={styles.eyebrow}>Akato Internal / Google Sheet</p>
           <h1>訂單整理頁</h1>
-          <p className={styles.lede}>Mock / 內部測試資料。此頁不接資料庫、不寫入資料、不代表真實付款狀態。</p>
-          <p className={styles.safetyNotice}>Mock data only. Do not store real customer/order data here.</p>
+          <p className={styles.lede}>目前資料來源：{source}。此階段只讀，不回寫 Google Sheet。</p>
+          <p className={styles.safetyNotice}>
+            {usingFallback
+              ? "Google Sheet 讀取失敗，目前顯示內建 mock 備援資料。"
+              : "Google Sheet 已連線。這個頁面目前只讀，不會修改試算表內容。"}
+          </p>
         </div>
-        <div className={styles.mockPill}>Protected mock</div>
+        <div className={styles.mockPill}>{usingFallback ? "Mock fallback" : "Sheet read-only"}</div>
       </header>
 
       <section className={styles.summaryGrid} aria-label="訂單統計摘要">
         <article><span>總訂單數</span><strong>{summary.totalOrders}</strong></article>
         <article><span>待處理數</span><strong>{summary.pendingOrders}</strong></article>
-        <article><span>本週交付數</span><strong>{summary.deliveryThisWeek}</strong></article>
+        <article><span>未來 7 天交付</span><strong>{summary.deliveryThisWeek}</strong></article>
         <article><span>未確認賀卡</span><strong>{summary.unconfirmedCards}</strong></article>
         <article><span>未拍照</span><strong>{summary.notTakenPhotos}</strong></article>
         <article><span>總金額</span><strong>{formatCurrency(summary.totalAmount)}</strong></article>
@@ -165,14 +254,15 @@ export default async function AdminOrdersPage({ searchParams }: AdminOrdersPageP
         <article className={styles.workflowPanel}>
           <div className={styles.panelHeader}>
             <div>
-              <span>Mock today: {MOCK_TODAY}</span>
+              <span>今日：{today}</span>
               <h2>今日要處理</h2>
             </div>
             <strong>{todayActionOrders.length}</strong>
           </div>
           <CompactOrderList
-            emptyText="目前沒有需要處理的 mock 訂單。"
+            emptyText="目前沒有今天以前仍需處理的訂單。"
             orders={todayActionOrders}
+            today={today}
             showFocus
           />
         </article>
@@ -188,6 +278,7 @@ export default async function AdminOrdersPage({ searchParams }: AdminOrdersPageP
           <CompactOrderList
             emptyText="目前沒有未確認賀卡。"
             orders={unconfirmedCardOrders}
+            today={today}
           />
         </article>
 
@@ -202,6 +293,7 @@ export default async function AdminOrdersPage({ searchParams }: AdminOrdersPageP
           <CompactOrderList
             emptyText="目前沒有未拍照訂單。"
             orders={notTakenPhotoOrders}
+            today={today}
           />
         </article>
       </section>
@@ -209,7 +301,7 @@ export default async function AdminOrdersPage({ searchParams }: AdminOrdersPageP
       <section className={styles.itemStats} aria-label="品項統計">
         <div className={styles.itemStatsHeader}>
           <span>品項統計</span>
-          <strong>{adminMockOrders.length}</strong>
+          <strong>{orders.length}</strong>
         </div>
         <div className={styles.itemStatsGrid}>
           {itemTypeSummary.map((item) => (
@@ -282,8 +374,8 @@ export default async function AdminOrdersPage({ searchParams }: AdminOrdersPageP
                 <div><dt>聯絡方式</dt><dd>{order.contact}</dd></div>
                 <div><dt>賀卡狀態</dt><dd><StatusBadge tone={`card-${order.cardStatus}`}>{cardStatusLabels[order.cardStatus]}</StatusBadge></dd></div>
                 <div><dt>照片狀態</dt><dd><StatusBadge tone={`photo-${order.photoStatus}`}>{photoStatusLabels[order.photoStatus]}</StatusBadge></dd></div>
-                <div><dt>祝福信連結</dt><dd><a href={order.blessingLink}>{order.blessingLink}</a></dd></div>
-                <div><dt>備註</dt><dd>{order.note}</dd></div>
+                <div><dt>祝福信連結</dt><dd>{order.blessingLink === "#" ? "尚未建立" : <a href={order.blessingLink}>{order.blessingLink}</a>}</dd></div>
+                <div><dt>備註</dt><dd>{order.note || "—"}</dd></div>
                 <div><dt>最後更新時間</dt><dd>{formatDateTime(order.updatedAt)}</dd></div>
               </dl>
             </div>
@@ -291,7 +383,7 @@ export default async function AdminOrdersPage({ searchParams }: AdminOrdersPageP
         ))}
 
         {filteredOrders.length === 0 ? (
-          <div className={styles.emptyState}>沒有符合條件的 mock 訂單。</div>
+          <div className={styles.emptyState}>沒有符合條件的訂單。</div>
         ) : null}
       </section>
     </main>
